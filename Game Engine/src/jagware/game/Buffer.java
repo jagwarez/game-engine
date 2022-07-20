@@ -80,13 +80,13 @@ public class Buffer {
         glVertexAttribPointer(attributeIndex++, stride, GL_FLOAT, false, 0, 0L);
     }
     
-    public void attribute(IntBuffer jointBuffer, int stride) {
+    public void attribute(IntBuffer buffer, int stride) {
         int vboId = glGenBuffers();
         
         buffers.add(vboId);
         
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        glBufferData(GL_ARRAY_BUFFER, jointBuffer, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
         glVertexAttribPointer(attributeIndex++, stride, GL_INT, false, 0, 0L);
     }
     

@@ -19,20 +19,20 @@ public class Model {
     public final String name;
     public final Map<String,Mesh> meshes;
     public final Map<String,Animation> animations;
-    public final List<Joint> joints;
+    public final List<Bone> bones;
     
     public Model(String name) {
         this.name = name;
         this.meshes = new HashMap<>();
         this.animations = new HashMap<>();
-        this.joints = new ArrayList<>();
+        this.bones = new ArrayList<>();
     }
     
     public void animate(float time) {
         for(Animation animation : animations.values())
             animation.play(time);
         
-        joints.get(0).animate();
+        bones.get(0).animate();
     }
     
     public boolean animated() {
@@ -40,6 +40,6 @@ public class Model {
     }
     
     public boolean skeletal() {
-        return !joints.isEmpty();
+        return !bones.isEmpty();
     }
 }

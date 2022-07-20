@@ -75,7 +75,7 @@ public class Graphics {
         
         world.entities.sort((Entity a, Entity b) -> {
             if(a.model != null && b.model != null) 
-                return Integer.compare(b.model.joints.size(), a.model.joints.size());
+                return Integer.compare(b.model.bones.size(), a.model.bones.size());
             else if(a.model != null)
                 return -1;
             else if(b.model != null)

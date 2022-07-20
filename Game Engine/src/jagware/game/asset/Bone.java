@@ -12,14 +12,14 @@ import org.joml.Matrix4f;
  *
  * @author jacob
  */
-public class Joint extends Animated {
+public class Bone extends Animated {
     
     public final int index;
-    public final Joint parent;
-    public final List<Joint> children;
+    public final Bone parent;
+    public final List<Bone> children;
     public final Matrix4f inverse;
 
-    public Joint(String name, int index, Joint parent) {
+    public Bone(String name, int index, Bone parent) {
         super(name);
         this.index = index;
         this.parent = parent;
@@ -29,10 +29,10 @@ public class Joint extends Animated {
     
     @Override
     public void animate() {
-        //System.out.println("Animating joint "+name+" parent="+(parent != null ? parent.name : "null"));
+        //System.out.println("Animating bone "+name+" parent="+(parent != null ? parent.name : "null"));
         if(parent != null)
             parent.transform.mul(transform, transform);
-        for(Joint child : children)
+        for(Bone child : children)
             child.animate();
         transform.mul(inverse);
     }

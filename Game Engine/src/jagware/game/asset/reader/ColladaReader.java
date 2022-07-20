@@ -5,12 +5,11 @@ import jagware.game.asset.Animation;
 import jagware.game.asset.Channel;
 import jagware.game.asset.Color;
 import jagware.game.asset.Effect;
-import jagware.game.asset.Joint;
+import jagware.game.asset.Bone;
 import jagware.game.asset.Keyframe;
 import jagware.game.asset.Model;
 import jagware.game.asset.Mesh;
 import jagware.game.asset.Texture;
-import jagware.game.asset.Triangle;
 import jagware.game.asset.Vertex;
 import java.io.File;
 import java.net.URLDecoder;
@@ -42,7 +41,7 @@ public class ColladaReader implements AssetReader<Model> {
     private File colladaFile;
     private Document document;
     private XPath xpath;
-    private Map<String,Joint> jointMap;
+    private Map<String,Bone> boneMap;
     
     public ColladaReader(File file) {
         this.files = new FilesReader(file);
@@ -56,7 +55,7 @@ public class ColladaReader implements AssetReader<Model> {
         if(this.colladaFile == null)
             return null;
         
-        jointMap = new HashMap<>();
+        boneMap = new HashMap<>();
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -138,22 +137,22 @@ public class ColladaReader implements AssetReader<Model> {
         }
     }
     
-    private void readJoint(Model model, Element jointElement, Joint parent) throws Exception {
+    private void readJoint(Model model, Element boneElement, Bone parent) throws Exception {
         
-        if(!"JOINT".equals(jointElement.getAttribute("type")))
+        if(!"JOINT".equals(boneElement.getAttribute("type")))
             return;
         
-        String jointName = jointElement.getAttribute("sid");
+        String boneName = boneElement.getAttribute("sid");
         
-        Joint joint = new Joint(jointName, model.joints.size(), parent);
-        model.joints.add(joint);
+        Bone bone = new Bone(boneName, model.bones.size(), parent);
+        model.bones.add(bone);
         
-        jointMap.put(jointName, joint);
+        boneMap.put(boneName, bone);
         
         if(parent != null)
-            parent.children.add(joint);
+            parent.children.add(bone);
         
-        NodeList childNodes = (NodeList) xpath.evaluate("child::*", jointElement, XPathConstants.NODESET);
+        NodeList childNodes = (NodeList) xpath.evaluate("child::*", boneElement, XPathConstants.NODESET);
         for(int childIndex = 0; childIndex < childNodes.getLength(); childIndex++) {
 
             Element childElement = (Element) childNodes.item(childIndex);
@@ -161,12 +160,12 @@ public class ColladaReader implements AssetReader<Model> {
             switch(childElement.getTagName()) {
                 case "matrix":
                     
-                    joint.local.set(readMatrix4f(childElement));
+                    bone.local.set(readMatrix4f(childElement));
  
                     break;
                 case "node":
                     
-                    readJoint(model, childElement, joint);
+                    readJoint(model, childElement, bone);
                     
                     break;
             }
@@ -178,8 +177,8 @@ public class ColladaReader implements AssetReader<Model> {
         Element controllerElement = getElementById("//library_controllers/controller", skinId);
         Element skinElement = (Element) xpath.evaluate("child::skin", controllerElement, XPathConstants.NODE);
 
-        List<Map<Joint,Float>> skin = new ArrayList<>();
-        String[] joints = null;
+        List<Map<Bone,Float>> skin = new ArrayList<>();
+        String[] bones = null;
         float[] weights = null;
            
         Element jointsElement = (Element) skinElement.getElementsByTagName("joints").item(0);
@@ -191,8 +190,8 @@ public class ColladaReader implements AssetReader<Model> {
             
             switch(inputElement.getAttribute("semantic")) {
                 case "JOINT":
-                    String jointData = (String) xpath.evaluate("child::Name_array/text()", sourceElement, XPathConstants.STRING);
-                    joints = jointData.split(" ");
+                    String boneData = (String) xpath.evaluate("child::Name_array/text()", sourceElement, XPathConstants.STRING);
+                    bones = boneData.split(" ");
                     
                     break;
                 case "INV_BIND_MATRIX":
@@ -200,17 +199,17 @@ public class ColladaReader implements AssetReader<Model> {
                     Matrix4f[] inverses = readMatrix4fArray(matrixElement);
                     
                     for(int matrixIndex = 0; matrixIndex < inverses.length; matrixIndex++) {
-                        String jointId = joints[matrixIndex];
-                        Joint joint = jointMap.get(jointId);
+                        String boneId = bones[matrixIndex];
+                        Bone bone = boneMap.get(boneId);
                         
-                        joint.inverse.set(inverses[matrixIndex]);
+                        bone.inverse.set(inverses[matrixIndex]);
                     }
                     
                     break;
             }
         }
         
-        int jointOffset = -1, weightOffset = -1;
+        int boneOffset = -1, weightOffset = -1;
         Element vertexElement = (Element) xpath.evaluate("vertex_weights", skinElement, XPathConstants.NODE);
         inputNodes = vertexElement.getElementsByTagName("input");
         for(int inputIndex = 0; inputIndex < inputNodes.getLength(); inputIndex++) {
@@ -218,7 +217,7 @@ public class ColladaReader implements AssetReader<Model> {
    
             switch(inputElement.getAttribute("semantic")) {
                 case "JOINT":
-                    jointOffset = Integer.parseInt(inputElement.getAttribute("offset"));
+                    boneOffset = Integer.parseInt(inputElement.getAttribute("offset"));
                     break;
                 case "WEIGHT":
                     String weightsId = inputElement.getAttribute("source").substring(1);
@@ -232,21 +231,21 @@ public class ColladaReader implements AssetReader<Model> {
         int dataIndex = 0;
         String vcountData = (String) xpath.evaluate("child::vcount/text()", vertexElement, XPathConstants.STRING);
         String vData = (String) xpath.evaluate("child::v/text()", vertexElement, XPathConstants.STRING);
-        String[] jointCounts = vcountData.split(" ");
-        String[] vertexJoints = vData.split(" ");
-        for(int vertexIndex = 0; vertexIndex < jointCounts.length; vertexIndex++) {
+        String[] boneCounts = vcountData.split(" ");
+        String[] vertexBones = vData.split(" ");
+        for(int vertexIndex = 0; vertexIndex < boneCounts.length; vertexIndex++) {
             
-            HashMap<Joint,Float> jointWeights = new HashMap<>();
-            skin.add(jointWeights);
+            HashMap<Bone,Float> boneWeights = new HashMap<>();
+            skin.add(boneWeights);
             
-            int jointCount = Integer.parseInt(jointCounts[vertexIndex]);
+            int boneCount = Integer.parseInt(boneCounts[vertexIndex]);
             
-            for(int countIndex = 0; countIndex < jointCount; countIndex++) {
-                int jointIndex = Integer.parseInt(vertexJoints[dataIndex + jointOffset]);
-                int weightIndex = Integer.parseInt(vertexJoints[dataIndex + weightOffset]);
+            for(int countIndex = 0; countIndex < boneCount; countIndex++) {
+                int boneIndex = Integer.parseInt(vertexBones[dataIndex + boneOffset]);
+                int weightIndex = Integer.parseInt(vertexBones[dataIndex + weightOffset]);
                 
-                Joint joint = jointMap.get(joints[jointIndex]);
-                jointWeights.put(joint, weights[weightIndex]);
+                Bone bone = boneMap.get(bones[boneIndex]);
+                boneWeights.put(bone, weights[weightIndex]);
                 
                 dataIndex += 2;
             }
@@ -256,11 +255,10 @@ public class ColladaReader implements AssetReader<Model> {
  
     }
     
-    private Mesh readMesh(String meshId, List<Map<Joint,Float>> skin) throws Exception {
+    private Mesh readMesh(String meshId, List<Map<Bone,Float>> skin) throws Exception {
         
         Mesh mesh = new Mesh(meshId);
-        //model.meshes.put(meshId, mesh);
-        
+
         Element meshElement = (Element) getElementById("//library_geometries/geometry", meshId);
         ArrayList<Vector4f> positions = new ArrayList<>();
         ArrayList<Vector4f> normals = new ArrayList<>();
@@ -460,7 +458,7 @@ public class ColladaReader implements AssetReader<Model> {
                     Element targetNode = (Element) getElementById("//library_visual_scenes/visual_scene/descendant::node", targetId);
                     String targetType = targetNode.getAttribute("type");
                     Animated target = "NODE".equals(targetType) ? model.meshes.get(targetId) : 
-                                      "JOINT".equals(targetType) ? jointMap.get(targetNode.getAttribute("sid")) : null;
+                                      "JOINT".equals(targetType) ? boneMap.get(targetNode.getAttribute("sid")) : null;
                     
                     if(target == null)
                         continue;

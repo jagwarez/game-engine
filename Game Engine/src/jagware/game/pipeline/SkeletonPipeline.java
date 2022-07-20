@@ -8,7 +8,7 @@ import jagware.game.Assets.Models;
 import jagware.game.Pipeline;
 import jagware.game.Shader;
 import jagware.game.asset.Effect;
-import jagware.game.asset.Joint;
+import jagware.game.asset.Bone;
 import jagware.game.asset.Mesh;
 import jagware.game.asset.Model;
 import jagware.game.asset.Texture;
@@ -44,7 +44,7 @@ public class SkeletonPipeline extends Pipeline<Model> {
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(models.animationVertex*3);
         FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(models.animationVertex*3);
         FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(models.animationVertex*2);
-        IntBuffer jointBuffer = BufferUtils.createIntBuffer(models.animationVertex*4);
+        IntBuffer boneBuffer = BufferUtils.createIntBuffer(models.animationVertex*4);
         FloatBuffer weightBuffer = BufferUtils.createFloatBuffer(models.animationVertex*4);
 
         int meshOffset = 0;
@@ -67,23 +67,23 @@ public class SkeletonPipeline extends Pipeline<Model> {
                     texcoordBuffer.put(vertex.texcoord.x);
                     texcoordBuffer.put(vertex.texcoord.y);
 
-                    ArrayList<Map.Entry<Joint,Float>> topJoints = new ArrayList<>(vertex.weights.entrySet());
-                    topJoints.sort((Map.Entry<Joint,Float> a, Map.Entry<Joint,Float> b) -> b.getValue().compareTo(a.getValue()));
+                    ArrayList<Map.Entry<Bone,Float>> topWeights = new ArrayList<>(vertex.weights.entrySet());
+                    topWeights.sort((Map.Entry<Bone,Float> a, Map.Entry<Bone,Float> b) -> b.getValue().compareTo(a.getValue()));
                     
                     float totalWeight = 0f;
                     for(int i = 0; i < 4; i++) {
-                        totalWeight += i < topJoints.size() ? topJoints.get(i).getValue() : 0f;
+                        totalWeight += i < topWeights.size() ? topWeights.get(i).getValue() : 0f;
                     }
                     
-                    Map.Entry<Joint,Float>[] jointWeights = new Map.Entry[4];
-                    for(int i = 0; i < jointWeights.length; i++) {
-                        jointWeights[i] = i < topJoints.size() ? topJoints.get(i) : null;
-                        if(jointWeights[i] != null) {
-                            //System.out.println("joint-"+i+": "+jointWeights[i].getKey().index+"="+Math.min(jointWeights[i].getValue()/totalWeight, 1));
-                            jointBuffer.put(jointWeights[i].getKey().index);
-                            weightBuffer.put(Math.min(jointWeights[i].getValue()/totalWeight, 1));
+                    Map.Entry<Bone,Float>[] boneWeights = new Map.Entry[4];
+                    for(int i = 0; i < boneWeights.length; i++) {
+                        boneWeights[i] = i < topWeights.size() ? topWeights.get(i) : null;
+                        if(boneWeights[i] != null) {
+                            //System.out.println("bone-"+i+": "+boneWeights[i].getKey().index+"="+Math.min(boneWeights[i].getValue()/totalWeight, 1));
+                            boneBuffer.put(boneWeights[i].getKey().index);
+                            weightBuffer.put(Math.min(boneWeights[i].getValue()/totalWeight, 1));
                         } else {
-                            jointBuffer.put(-1);
+                            boneBuffer.put(-1);
                             weightBuffer.put(0f);
                         }
                     }
@@ -96,8 +96,6 @@ public class SkeletonPipeline extends Pipeline<Model> {
 
                 meshOffset += mesh.vertices.size();
             }
-            
-           
         }
 
         program.bindShader(new Shader("jagware/game/pipeline/program/animation/vs.glsl", Shader.Type.VERTEX));
@@ -105,7 +103,7 @@ public class SkeletonPipeline extends Pipeline<Model> {
         program.bindAttribute(0, "position");
         program.bindAttribute(1, "normal");
         program.bindAttribute(2, "texcoord");
-        program.bindAttribute(3, "joints");
+        program.bindAttribute(3, "bones");
         program.bindAttribute(4, "weights");
         program.bindFragment(0, "color");
 
@@ -114,7 +112,7 @@ public class SkeletonPipeline extends Pipeline<Model> {
         buffer.attribute((FloatBuffer) vertexBuffer.flip(), 3);
         buffer.attribute((FloatBuffer) normalsBuffer.flip(), 3);
         buffer.attribute((FloatBuffer) texcoordBuffer.flip(), 2);
-        buffer.attribute((IntBuffer) jointBuffer.flip(), 4);
+        buffer.attribute((IntBuffer) boneBuffer.flip(), 4);
         buffer.attribute((FloatBuffer) weightBuffer.flip(), 4);
         
         buffer.unbind();
@@ -129,8 +127,8 @@ public class SkeletonPipeline extends Pipeline<Model> {
         
         program.bindUniform("transform").setMatrix4fv(transform);
         
-        for(int i = 0; i < model.joints.size(); i++) {
-            program.bindUniform("joint_transforms["+i+"]").setMatrix4fv(model.joints.get(i).transform, false);
+        for(int i = 0; i < model.bones.size(); i++) {
+            program.bindUniform("bone_transforms["+i+"]").setMatrix4fv(model.bones.get(i).transform, false);
         }
         
         //program.bindUniform("useDiffuseMap").setBool(false);

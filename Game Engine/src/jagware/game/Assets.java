@@ -38,7 +38,7 @@ public class Assets {
         }
 
         public void add(Model model) {
-            if(model.joints.isEmpty()) {
+            if(model.bones.isEmpty()) {
                 modelMap.put(model.name, model);
                 for(Mesh mesh : model.meshes.values()) {
                     modelVertex += mesh.vertices.size();

@@ -19,7 +19,7 @@ public class Vertex {
     public final Vector4f position;
     public final Vector4f normal;
     public final Vector2f texcoord;
-    public final Map<Joint,Float> weights;
+    public final Map<Bone,Float> weights;
 
     public Vertex(int index) {
         this.index = index;
