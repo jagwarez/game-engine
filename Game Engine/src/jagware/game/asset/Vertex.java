@@ -13,15 +13,16 @@ import org.joml.Vector4f;
  *
  * @author jacob
  */
-public class Vertex extends Indexed {
+public class Vertex {
 
+    public final int index;
     public final Vector4f position;
     public final Vector4f normal;
     public final Vector2f texcoord;
     public final Map<Joint,Float> weights;
 
     public Vertex(int index) {
-        super(index);
+        this.index = index;
         this.position = new Vector4f();
         this.normal = new Vector4f();
         this.texcoord = new Vector2f();

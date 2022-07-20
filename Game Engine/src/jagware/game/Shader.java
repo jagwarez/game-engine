@@ -8,6 +8,7 @@ package jagware.game;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
@@ -33,7 +34,7 @@ public class Shader {
     public final Type type;
     
     public Shader(String source, Type type) throws IOException {
-        this(new File(Thread.currentThread().getContextClassLoader().getResource(source).getFile()), type);
+        this(new File(URLDecoder.decode(Thread.currentThread().getContextClassLoader().getResource(source).getFile(), "UTF-8")), type);
     }
     
     public Shader(File source, Type type) throws IOException {

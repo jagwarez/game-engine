@@ -7,18 +7,12 @@ package jagware.game.pipeline;
 import jagware.game.Assets.Models;
 import jagware.game.Pipeline;
 import jagware.game.Shader;
-import jagware.game.Window;
 import jagware.game.asset.Mesh;
 import jagware.game.asset.Model;
-import jagware.game.asset.Triangle;
 import jagware.game.asset.Vertex;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glDrawElements;
 
 /**
  *
@@ -35,7 +29,6 @@ public class ModelPipeline extends Pipeline<Model> {
     @Override
     public ModelPipeline load() throws Exception {
         
-        IntBuffer indexBuffer = BufferUtils.createIntBuffer(models.modelIndex);
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(models.modelVertex*3);
         FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(models.modelVertex*3);
         FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(models.modelVertex*2);
@@ -46,11 +39,6 @@ public class ModelPipeline extends Pipeline<Model> {
             for(Mesh mesh : model.meshes.values()) {
 
                 mesh.index = meshOffset;
-
-                for(Triangle triangle : mesh.triangles) {
-                    for(Vertex vertex : triangle.vertices)
-                        indexBuffer.put(vertex.index);
-                }
 
                 for(Vertex vertex : mesh.vertices) {
 
@@ -66,7 +54,7 @@ public class ModelPipeline extends Pipeline<Model> {
                     texcoordBuffer.put(vertex.texcoord.y);
                 }
 
-                meshOffset += mesh.triangles.size()*3;
+                meshOffset += mesh.vertices.size();
             }
         }
 
@@ -78,12 +66,13 @@ public class ModelPipeline extends Pipeline<Model> {
         program.bindAttribute(2, "texcoord");
         program.bindFragment(0, "color");
 
-        buffer.enable();
+        buffer.bind();
         
-        buffer.indices((IntBuffer) indexBuffer.flip());
-        buffer.vertices((FloatBuffer) vertexBuffer.flip());
-        buffer.normals((FloatBuffer) normalsBuffer.flip());
-        buffer.texcoords((FloatBuffer) texcoordBuffer.flip());
+        buffer.attribute((FloatBuffer) vertexBuffer.flip(), 3);
+        buffer.attribute((FloatBuffer) normalsBuffer.flip(), 3);
+        buffer.attribute((FloatBuffer) texcoordBuffer.flip(), 2);
+        
+        buffer.unbind();
         
         return this;
     }
@@ -96,7 +85,7 @@ public class ModelPipeline extends Pipeline<Model> {
         program.bindUniform("transform").setMatrix4fv(transform);
         program.bindUniform("diffuse").set4f(.5f, .5f, .5f, 1.0f);
         
-        for(Mesh mesh : model.meshes.values())
-            glDrawElements(GL_TRIANGLES, mesh.triangles.size()*3, GL_UNSIGNED_INT, 0);
+        //for(Mesh mesh : model.meshes.values())
+            //glDrawElements(GL_TRIANGLES, mesh.triangles.size()*3, GL_UNSIGNED_INT, 0);
     }
 }

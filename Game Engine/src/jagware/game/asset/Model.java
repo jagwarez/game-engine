@@ -18,21 +18,19 @@ public class Model {
     
     public final String name;
     public final Map<String,Mesh> meshes;
-    public final Map<String,Texture> textures;
     public final Map<String,Animation> animations;
     public final List<Joint> joints;
     
     public Model(String name) {
         this.name = name;
         this.meshes = new HashMap<>();
-        this.textures = new HashMap<>();
         this.animations = new HashMap<>();
         this.joints = new ArrayList<>();
     }
     
     public void animate(float time) {
         for(Animation animation : animations.values())
-            animation.animate(time);
+            animation.play(time);
         
         joints.get(0).animate();
     }

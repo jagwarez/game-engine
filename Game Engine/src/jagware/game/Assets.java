@@ -28,11 +28,9 @@ public class Assets {
         
         private final Map<String,Model> modelMap;
         public int modelVertex = 0;
-        public int modelIndex = 0;
         
         private final Map<String,Model> animationMap;
         public int animationVertex = 0;
-        public int animationIndex = 0;
 
         public Models() {
             this.modelMap = new HashMap<>();
@@ -43,13 +41,11 @@ public class Assets {
             if(model.joints.isEmpty()) {
                 modelMap.put(model.name, model);
                 for(Mesh mesh : model.meshes.values()) {
-                    modelIndex += mesh.triangles.size()*3;
                     modelVertex += mesh.vertices.size();
                 }
             } else {
                 animationMap.put(model.name, model);
                 for(Mesh mesh : model.meshes.values()) {
-                    animationIndex += mesh.triangles.size()*3;
                     animationVertex += mesh.vertices.size();
                 }
             }

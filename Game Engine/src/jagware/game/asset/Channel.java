@@ -27,28 +27,29 @@ public class Channel {
         this.keyframes = new ArrayList<>();
     }
     
-    public void animate(float time) {
+    public void play(float time) {
         
-        if(target != null) {
-            time %= keyframes.get(keyframes.size()-1).time;
-            Keyframe lastframe = keyframes.get(0);
-            for(Keyframe keyframe : keyframes) {              
-                if(keyframe.time > time) {
-                    //System.out.println("Animation "+name+": time="+time+" key="+keyframe.time+" transform=\n"+keyframe.transform);
+        time %= keyframes.get(keyframes.size()-1).time;
 
-                    float progression = (time-lastframe.time)/(keyframe.time - lastframe.time);
-                    Vector3f position = lastframe.position.lerp(keyframe.position, progression, new Vector3f());
-                    Quaternionf rotation = lastframe.rotation.nlerp(keyframe.rotation, progression, new Quaternionf());
-                    
-                    Matrix4f transform = target.transform;                  
-                    transform.identity(); 
-                    transform.translate(position);
-                    transform.rotate(rotation);
-                    
-                    break;
-                }
-                lastframe = keyframe;
-            }
+        Keyframe nextframe = keyframes.get(0);
+        Keyframe lastframe = keyframes.get(0);
+        for(Keyframe keyframe : keyframes) {
+            nextframe = keyframe;
+
+            if(keyframe.time > time)
+                break;
+
+            lastframe = keyframe;
         }
+
+        float progression = (time-lastframe.time)/(nextframe.time - lastframe.time);
+        Vector3f position = lastframe.position.lerp(nextframe.position, progression, new Vector3f());
+        Quaternionf rotation = lastframe.rotation.nlerp(nextframe.rotation, progression, new Quaternionf());
+
+        Matrix4f transform = target.transform;                  
+        transform.identity(); 
+        transform.translate(position);
+        transform.rotate(rotation);
+
     }
 }

@@ -14,22 +14,22 @@ import org.joml.Matrix4f;
  */
 public class Joint extends Animated {
     
-    public final String name;
-    public final Matrix4f inverse;
+    public final int index;
     public final Joint parent;
     public final List<Joint> children;
+    public final Matrix4f inverse;
 
     public Joint(String name, int index, Joint parent) {
-        super(index);
-        this.name = name;
-        this.inverse = new Matrix4f();
+        super(name);
+        this.index = index;
         this.parent = parent;
         this.children = new ArrayList<>();
+        this.inverse = new Matrix4f();
     }
     
     @Override
     public void animate() {
-        System.out.println("Animating joint "+name+" parent="+(parent != null ? parent.name : "null"));
+        //System.out.println("Animating joint "+name+" parent="+(parent != null ? parent.name : "null"));
         if(parent != null)
             parent.transform.mul(transform, transform);
         for(Joint child : children)

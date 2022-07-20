@@ -6,7 +6,6 @@ package jagware.game.asset;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.joml.Matrix4f;
 
 /**
  *
@@ -15,13 +14,12 @@ import org.joml.Matrix4f;
 public class Mesh extends Animated {
     
     public final List<Vertex> vertices;
-    public final List<Triangle> triangles;
     public final Material material;
+    public int index = 0;
     
-    public Mesh(int index) {
-        super(index);
+    public Mesh(String name) {
+        super(name);
         this.vertices = new ArrayList<>();
-        this.triangles = new ArrayList<>();
         this.material = new Material();
     }
     

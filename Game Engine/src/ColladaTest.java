@@ -11,6 +11,7 @@ import jagware.game.asset.Joint;
 import jagware.game.asset.Keyframe;
 import jagware.game.asset.Mesh;
 import jagware.game.asset.Model;
+import jagware.game.asset.Vertex;
 import jagware.game.asset.reader.ColladaReader;
 import java.io.File;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @author jacob
  */
-public class Testing {
+public class ColladaTest {
     
     public static void main(String[] args) throws Exception {
         
@@ -33,7 +34,9 @@ public class Testing {
             Mesh mesh = model.meshes.get(meshId);
             System.out.println("mesh="+meshId);  
             System.out.println("vertices="+mesh.vertices.size());  
-            System.out.println("triangles="+mesh.triangles.size());
+            
+            for(Vertex vertex : mesh.vertices)
+                System.out.println("vert"+vertex.index+"="+vertex.texcoord.x+","+vertex.texcoord.y);
             
             for(Effect.Parameter param : mesh.material.effects.keySet()) {
                 Effect effect = mesh.material.effects.get(param);
@@ -48,12 +51,15 @@ public class Testing {
                 System.out.println("\tchannel="+channel.name);
                 for(Keyframe keyframe : channel.keyframes) {
                     System.out.println("\t\tkeyframe="+keyframe.time);
-                    //System.out.println("\t\ttransform=\n"+keyframe.transform);
+                    System.out.println("\t\tposition="+keyframe.position);
+                    System.out.println("\t\trotation="+keyframe.rotation);
+                    System.out.println("\t\ttransform=\n"+keyframe.transform);
+                    System.out.println("");
                 }
             }
         }
         
-        //printJoints(model.joints, "");
+        printJoints(model.joints, "");
         
     }
     

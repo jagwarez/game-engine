@@ -33,7 +33,7 @@ void main(void){
 
     }
 
-    gl_Position = transform * final_position;
+    gl_Position = transform * vec4(position, 1.0);
     pass_normal = final_normal.xyz;
     pass_texcoord = texcoord;
 

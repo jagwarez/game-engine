@@ -4,13 +4,8 @@
  */
 package jagware.game.asset;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 /**
  *
@@ -27,8 +22,8 @@ public class Animation {
         this.channels = new HashMap<>();
     }
     
-    public void animate(float time) {
+    public void play(float time) {
         for(Channel channel : channels.values())
-            channel.animate(time);
+            channel.play(time);
     }
 }

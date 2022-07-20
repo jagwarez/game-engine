@@ -5,7 +5,6 @@
 package jagware.game.pipeline;
 
 import jagware.game.Assets.Models;
-import jagware.game.Game;
 import jagware.game.Pipeline;
 import jagware.game.Shader;
 import jagware.game.asset.Effect;
@@ -13,7 +12,6 @@ import jagware.game.asset.Joint;
 import jagware.game.asset.Mesh;
 import jagware.game.asset.Model;
 import jagware.game.asset.Texture;
-import jagware.game.asset.Triangle;
 import jagware.game.asset.Vertex;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -23,11 +21,10 @@ import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL32.glDrawElementsBaseVertex;
+import static org.lwjgl.opengl.GL32.glDrawArrays;
 
 /**
  *
@@ -43,8 +40,7 @@ public class SkeletonPipeline extends Pipeline<Model> {
     
     @Override
     public SkeletonPipeline load() throws Exception {
-        Game.log("Indexes="+models.animationIndex);
-        IntBuffer indexBuffer = BufferUtils.createIntBuffer(models.animationIndex);
+        
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(models.animationVertex*3);
         FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(models.animationVertex*3);
         FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(models.animationVertex*2);
@@ -57,11 +53,6 @@ public class SkeletonPipeline extends Pipeline<Model> {
             for(Mesh mesh : model.meshes.values()) {
 
                 mesh.index = meshOffset;
-
-                for(Triangle triangle : mesh.triangles) {
-                    for(Vertex vertex : triangle.vertices)
-                        indexBuffer.put(vertex.index);
-                }
 
                 for(Vertex vertex : mesh.vertices) {
 
@@ -97,12 +88,16 @@ public class SkeletonPipeline extends Pipeline<Model> {
                         }
                     }
                 }
+                
+                for(Effect effect : mesh.material.effects.values())
+                    if(effect.type == Effect.Type.TEXTURE)
+                        load((Texture)effect);
+                    
 
-                meshOffset += mesh.triangles.size()*3;
+                meshOffset += mesh.vertices.size();
             }
             
-            for(Texture texture : model.textures.values())
-                load(texture);
+           
         }
 
         program.bindShader(new Shader("jagware/game/pipeline/program/animation/vs.glsl", Shader.Type.VERTEX));
@@ -114,14 +109,15 @@ public class SkeletonPipeline extends Pipeline<Model> {
         program.bindAttribute(4, "weights");
         program.bindFragment(0, "color");
 
-        buffer.enable();
+        buffer.bind();
         
-        buffer.indices((IntBuffer) indexBuffer.flip());
-        buffer.vertices((FloatBuffer) vertexBuffer.flip());
-        buffer.normals((FloatBuffer) normalsBuffer.flip());
-        buffer.texcoords((FloatBuffer) texcoordBuffer.flip());
-        buffer.joints((IntBuffer) jointBuffer.flip());
-        buffer.weights((FloatBuffer) weightBuffer.flip());
+        buffer.attribute((FloatBuffer) vertexBuffer.flip(), 3);
+        buffer.attribute((FloatBuffer) normalsBuffer.flip(), 3);
+        buffer.attribute((FloatBuffer) texcoordBuffer.flip(), 2);
+        buffer.attribute((IntBuffer) jointBuffer.flip(), 4);
+        buffer.attribute((FloatBuffer) weightBuffer.flip(), 4);
+        
+        buffer.unbind();
         
         return this;
     }
@@ -152,9 +148,9 @@ public class SkeletonPipeline extends Pipeline<Model> {
                 program.bindUniform("diffuseMap").set1i(0);
             }
             
-            int indices = mesh.triangles.size()*3;
-            glDrawElementsBaseVertex(GL_TRIANGLES, indices, GL_UNSIGNED_INT​, mesh.index * 4, mesh.index);
+            glDrawArrays(GL_TRIANGLES, mesh.index, mesh.vertices.size());
             //glDrawElements(GL_TRIANGLES, mesh.triangles.size()*3, GL_UNSIGNED_INT, 0);
+            
         }
         
         disable();

@@ -47,10 +47,12 @@ public class TerrainPipeline extends Pipeline<Terrain> {
         indexBuffer.flip();
         vertexBuffer.flip();
         
-        buffer.enable();
+        buffer.bind();
         
-        buffer.indices(indexBuffer);
-        buffer.vertices(vertexBuffer);
+        buffer.elements(indexBuffer);
+        buffer.attribute(vertexBuffer, 3);
+        
+        buffer.unbind();
         
         return this;
     }

@@ -62,7 +62,7 @@ public abstract class Game implements AutoCloseable {
         window.initialize();
         mouse.initialize();
         graphics.initialize();
-        
+  
         this.initialized = true;
 
     }
