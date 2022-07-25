@@ -22,9 +22,9 @@ import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL32.glDrawArrays;
 
 /**
  *
@@ -71,17 +71,15 @@ public class SkeletonPipeline extends Pipeline<Model> {
                     topWeights.sort((Map.Entry<Bone,Float> a, Map.Entry<Bone,Float> b) -> b.getValue().compareTo(a.getValue()));
                     
                     float totalWeight = 0f;
-                    for(int i = 0; i < 4; i++) {
-                        totalWeight += i < topWeights.size() ? topWeights.get(i).getValue() : 0f;
-                    }
+                    for(int i = 0; i < topWeights.size(); i++)
+                        totalWeight += topWeights.get(i).getValue();
                     
-                    Map.Entry<Bone,Float>[] boneWeights = new Map.Entry[4];
-                    for(int i = 0; i < boneWeights.length; i++) {
-                        boneWeights[i] = i < topWeights.size() ? topWeights.get(i) : null;
-                        if(boneWeights[i] != null) {
-                            //System.out.println("bone-"+i+": "+boneWeights[i].getKey().index+"="+Math.min(boneWeights[i].getValue()/totalWeight, 1));
-                            boneBuffer.put(boneWeights[i].getKey().index);
-                            weightBuffer.put(Math.min(boneWeights[i].getValue()/totalWeight, 1));
+                    for(int i = 0; i < 4; i++) {
+                        Map.Entry<Bone,Float> boneWeight = i < topWeights.size() ? topWeights.get(i) : null;
+                        if(boneWeight != null) {
+                            //System.out.println("vertex="+vertex.index+",bone"+i+"-"+boneWeight.getKey().name+": "+Math.min(boneWeight.getValue()/totalWeight, 1));
+                            boneBuffer.put(boneWeight.getKey().index);
+                            weightBuffer.put(Math.min(boneWeight.getValue()/totalWeight, 1));
                         } else {
                             boneBuffer.put(-1);
                             weightBuffer.put(0f);
@@ -128,7 +126,8 @@ public class SkeletonPipeline extends Pipeline<Model> {
         program.bindUniform("transform").setMatrix4fv(transform);
         
         for(int i = 0; i < model.bones.size(); i++) {
-            program.bindUniform("bone_transforms["+i+"]").setMatrix4fv(model.bones.get(i).transform, false);
+            //System.out.println("bone="+model.bones.get(i).name+": transform=\n"+model.bones.get(i).transform);
+            program.bindUniform("bone_transforms["+i+"]").setMatrix4fv(model.bones.get(i).transform);
         }
         
         //program.bindUniform("useDiffuseMap").setBool(false);

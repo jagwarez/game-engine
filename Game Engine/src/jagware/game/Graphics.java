@@ -57,9 +57,9 @@ public class Graphics {
         
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         
-        modelPipeline = new ModelPipeline(game.assets.models).load();
+        //modelPipeline = new ModelPipeline(game.assets.models).load();
         skeletonPipeline = new SkeletonPipeline(game.assets.models).load();
-        terrainPipeline = new TerrainPipeline().load();
+        //terrainPipeline = new TerrainPipeline().load();
 
     }
     
@@ -70,8 +70,6 @@ public class Graphics {
         
         world.setPerspective((float) Math.toRadians(70), (float) window.width / window.height, 0.1f, 1000.0f);
         world.mul(world.camera.transform());
-        
-        //System.out.println("Camera=\n"+world);
         
         world.entities.sort((Entity a, Entity b) -> {
             if(a.model != null && b.model != null) 
@@ -98,8 +96,8 @@ public class Graphics {
                 
                 if(model.skeletal()) {
                     skeletonPipeline.render(model, entity);
-                } else
-                    modelPipeline.render(model, entity);
+                } //else
+                    //modelPipeline.render(model, entity);
                     
             }
         }
@@ -109,9 +107,9 @@ public class Graphics {
     
     public void destroy() {
         
-        modelPipeline.destroy();
+        //modelPipeline.destroy();
         skeletonPipeline.destroy();
-        terrainPipeline.destroy();
+        //terrainPipeline.destroy();
         
         Game.log("Graphics destroyed");
     }

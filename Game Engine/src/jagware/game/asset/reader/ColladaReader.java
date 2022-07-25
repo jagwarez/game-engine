@@ -120,11 +120,12 @@ public class ColladaReader implements AssetReader<Model> {
                 case "instance_controller":
                     
                     String skinId = childElement.getAttribute("url").substring(1);
-                    Mesh skinMesh = readSkin(model, skinId);
+                    Mesh skinMesh = readSkin(skinId);
                     model.meshes.put(skinMesh.name, skinMesh);
                     
                     break;
                 case "node":
+                    
                     String nodeType = childElement.getAttribute("type");
                     if("NODE".equals(nodeType))
                         readNodes(model, childElement);
@@ -133,26 +134,21 @@ public class ColladaReader implements AssetReader<Model> {
 
                     break;
             }
-
         }
     }
     
-    private void readJoint(Model model, Element boneElement, Bone parent) throws Exception {
+    private void readJoint(Model model, Element jointElement, Bone parent) throws Exception {
         
-        if(!"JOINT".equals(boneElement.getAttribute("type")))
+        if(!"JOINT".equals(jointElement.getAttribute("type")))
             return;
         
-        String boneName = boneElement.getAttribute("sid");
+        String boneName = jointElement.getAttribute("sid");
         
         Bone bone = new Bone(boneName, model.bones.size(), parent);
-        model.bones.add(bone);
-        
+        model.bones.add(bone);     
         boneMap.put(boneName, bone);
         
-        if(parent != null)
-            parent.children.add(bone);
-        
-        NodeList childNodes = (NodeList) xpath.evaluate("child::*", boneElement, XPathConstants.NODESET);
+        NodeList childNodes = (NodeList) xpath.evaluate("child::*", jointElement, XPathConstants.NODESET);
         for(int childIndex = 0; childIndex < childNodes.getLength(); childIndex++) {
 
             Element childElement = (Element) childNodes.item(childIndex);
@@ -172,11 +168,13 @@ public class ColladaReader implements AssetReader<Model> {
         }
     }
     
-    private Mesh readSkin(Model model, String skinId) throws Exception {
+    private Mesh readSkin(String skinId) throws Exception {
         
         Element controllerElement = getElementById("//library_controllers/controller", skinId);
         Element skinElement = (Element) xpath.evaluate("child::skin", controllerElement, XPathConstants.NODE);
-
+        Element bindElement = (Element) xpath.evaluate("child::bind_shape_matrix", skinElement, XPathConstants.NODE);
+        Matrix4f bindMatrix = readMatrix4f(bindElement);
+        
         List<Map<Bone,Float>> skin = new ArrayList<>();
         String[] bones = null;
         float[] weights = null;
@@ -233,13 +231,11 @@ public class ColladaReader implements AssetReader<Model> {
         String vData = (String) xpath.evaluate("child::v/text()", vertexElement, XPathConstants.STRING);
         String[] boneCounts = vcountData.split(" ");
         String[] vertexBones = vData.split(" ");
-        for(int vertexIndex = 0; vertexIndex < boneCounts.length; vertexIndex++) {
-            
+        
+        for (String boneCount1 : boneCounts) {
             HashMap<Bone,Float> boneWeights = new HashMap<>();
             skin.add(boneWeights);
-            
-            int boneCount = Integer.parseInt(boneCounts[vertexIndex]);
-            
+            int boneCount = Integer.parseInt(boneCount1);
             for(int countIndex = 0; countIndex < boneCount; countIndex++) {
                 int boneIndex = Integer.parseInt(vertexBones[dataIndex + boneOffset]);
                 int weightIndex = Integer.parseInt(vertexBones[dataIndex + weightOffset]);
@@ -355,20 +351,15 @@ public class ColladaReader implements AssetReader<Model> {
                     int normalIndex = Integer.parseInt(triangles[i + normalOffset]);
                     int texIndex = Integer.parseInt(triangles[i + texcoordOffset]);
                     
-                    Vector4f position = positions.get(positionIndex);
-                    Vector4f normal = normals.get(normalIndex);
-                    Vector2f texcoord = texcoords.get(texIndex);
-                    
                     Vertex vertex = new Vertex(mesh.vertices.size());
-                    vertex.position.set(position);
-                    vertex.normal.set(normal);
-                    vertex.texcoord.set(texcoord);
+                    vertex.position.set(positions.get(positionIndex));
+                    vertex.normal.set(normals.get(normalIndex));
+                    vertex.texcoord.set(texcoords.get(texIndex));
                     
                     if(skin != null)
                         vertex.weights.putAll(skin.get(positionIndex));
 
                     mesh.vertices.add(vertex);
-
                 }
             }
         }
@@ -420,7 +411,6 @@ public class ColladaReader implements AssetReader<Model> {
                         }
                         
                         break;
-                    
                 }
             }
         }

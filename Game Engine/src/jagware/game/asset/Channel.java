@@ -6,7 +6,6 @@ package jagware.game.asset;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -33,6 +32,7 @@ public class Channel {
 
         Keyframe nextframe = keyframes.get(0);
         Keyframe lastframe = keyframes.get(0);
+        
         for(Keyframe keyframe : keyframes) {
             nextframe = keyframe;
 
@@ -42,14 +42,13 @@ public class Channel {
             lastframe = keyframe;
         }
 
-        float progression = (time-lastframe.time)/(nextframe.time - lastframe.time);
-        Vector3f position = lastframe.position.lerp(nextframe.position, progression, new Vector3f());
-        Quaternionf rotation = lastframe.rotation.nlerp(nextframe.rotation, progression, new Quaternionf());
-
-        Matrix4f transform = target.transform;                  
-        transform.identity(); 
-        transform.translate(position);
-        transform.rotate(rotation);
-
+        float blend = (time-lastframe.time)/(nextframe.time-lastframe.time);
+        Vector3f position = lastframe.position.lerp(nextframe.position, blend, new Vector3f());
+        Quaternionf rotation = lastframe.rotation.slerp(nextframe.rotation, blend, new Quaternionf());
+        
+        target.transform.identity();
+        target.transform.translate(position);
+        target.transform.rotate(rotation);
+        
     }
 }

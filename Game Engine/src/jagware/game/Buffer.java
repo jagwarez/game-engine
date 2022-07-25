@@ -18,9 +18,10 @@ import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL30.glVertexAttribIPointer;
 
 /**
  *
@@ -28,9 +29,8 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
  */
 public class Buffer {
     
+    private final ArrayList<Integer> buffers;
     private int vaoId = -1;
-    
-    private ArrayList<Integer> buffers;
     private int attributeIndex = 0;
     
     public Buffer() {
@@ -54,7 +54,7 @@ public class Buffer {
        
         for(int i = 0; i < attributeIndex; i++) {
             Game.log("Disabling attribute "+i);
-            glDisableVertexAttribArray(i-1);
+            glDisableVertexAttribArray(i);
         }
         
         glBindVertexArray(0);
@@ -70,24 +70,24 @@ public class Buffer {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
     }
     
-    public void attribute(FloatBuffer buffer, int stride) {
+    public void attribute(FloatBuffer buffer, int size) {
         int vboId = glGenBuffers();
         
         buffers.add(vboId);
-        
+        System.out.println("Float buffer "+attributeIndex+": size="+size);
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
         glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(attributeIndex++, stride, GL_FLOAT, false, 0, 0L);
+        glVertexAttribPointer(attributeIndex++, size, GL_FLOAT, false, size*Float.BYTES, 0L);
     }
     
-    public void attribute(IntBuffer buffer, int stride) {
+    public void attribute(IntBuffer buffer, int size) {
         int vboId = glGenBuffers();
         
         buffers.add(vboId);
-        
+        System.out.println("Int buffer "+attributeIndex+": size="+size);
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
         glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(attributeIndex++, stride, GL_INT, false, 0, 0L);
+        glVertexAttribIPointer(attributeIndex++, size, GL_INT, size*Integer.BYTES, 0L);
     }
     
     public void destroy() {

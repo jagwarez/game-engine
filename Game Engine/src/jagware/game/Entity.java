@@ -41,6 +41,7 @@ public class Entity extends Matrix4f {
         translate(position.x, position.y, position.z);
         rotateXYZ((float) Math.toRadians(rotation.x), (float) Math.toRadians(rotation.y), (float) Math.toRadians(rotation.z));
         
+
         return this;
     }
     
