@@ -41,12 +41,14 @@ public class Assets {
             if(model.bones.isEmpty()) {
                 modelMap.put(model.name, model);
                 for(Mesh mesh : model.meshes.values()) {
-                    modelVertex += mesh.vertices.size();
+                    for(Mesh.Group group : mesh.groups)
+                        modelVertex += group.vertices.size();
                 }
             } else {
                 animationMap.put(model.name, model);
                 for(Mesh mesh : model.meshes.values()) {
-                    animationVertex += mesh.vertices.size();
+                    for(Mesh.Group group : mesh.groups)
+                        animationVertex += group.vertices.size();
                 }
             }
         }

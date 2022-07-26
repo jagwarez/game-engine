@@ -6,6 +6,7 @@ package jagware.game.asset;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -29,22 +30,29 @@ public class Channel {
     public void play(float time) {
         
         time %= keyframes.get(keyframes.size()-1).time;
-
-        Keyframe nextframe = keyframes.get(0);
-        Keyframe lastframe = keyframes.get(0);
+        
+        Keyframe nextFrame = null;
+        Keyframe prevFrame = null;
+        float prevTime;
         
         for(Keyframe keyframe : keyframes) {
-            nextframe = keyframe;
+            nextFrame = keyframe;
 
             if(keyframe.time > time)
                 break;
 
-            lastframe = keyframe;
+            prevFrame = keyframe;
         }
+        
+        if(prevFrame == null) {
+            prevFrame = keyframes.get(keyframes.size()-1);
+            prevTime = 0f;
+        } else
+            prevTime = prevFrame.time;
 
-        float blend = (time-lastframe.time)/(nextframe.time-lastframe.time);
-        Vector3f position = lastframe.position.lerp(nextframe.position, blend, new Vector3f());
-        Quaternionf rotation = lastframe.rotation.slerp(nextframe.rotation, blend, new Quaternionf());
+        float blend = (time-prevTime)/(nextFrame.time-prevTime);
+        Vector3f position = prevFrame.position.lerp(nextFrame.position, blend, new Vector3f());
+        Quaternionf rotation = prevFrame.rotation.slerp(nextFrame.rotation, blend, new Quaternionf());
         
         target.local.identity();
         target.local.translate(position);

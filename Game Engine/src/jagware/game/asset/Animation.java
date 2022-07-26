@@ -14,11 +14,13 @@ import java.util.Map;
 public class Animation {
 
     public final String name;
+    public final Model model;
     public final Map<String,Channel> channels;
     private float duration = 0f;
     
-    public Animation(String name) {
+    public Animation(String name, Model model) {
         this.name = name;
+        this.model = model;
         this.channels = new HashMap<>();
     }
     

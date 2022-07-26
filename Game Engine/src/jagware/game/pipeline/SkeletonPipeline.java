@@ -46,53 +46,56 @@ public class SkeletonPipeline extends Pipeline<Model> {
         FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(models.animationVertex*2);
         IntBuffer boneBuffer = BufferUtils.createIntBuffer(models.animationVertex*4);
         FloatBuffer weightBuffer = BufferUtils.createFloatBuffer(models.animationVertex*4);
-
-        int meshOffset = 0;
+        int groupOffset = 0;
+        
         for(Model model : models.animations()) {
-
+            
             for(Mesh mesh : model.meshes.values()) {
-
-                mesh.index = meshOffset;
-
-                for(Vertex vertex : mesh.vertices) {
-
-                    vertexBuffer.put(vertex.position.x);
-                    vertexBuffer.put(vertex.position.y);
-                    vertexBuffer.put(vertex.position.z);
-
-                    normalsBuffer.put(vertex.normal.x);
-                    normalsBuffer.put(vertex.normal.y);
-                    normalsBuffer.put(vertex.normal.z);
-
-                    texcoordBuffer.put(vertex.texcoord.x);
-                    texcoordBuffer.put(vertex.texcoord.y);
-
-                    ArrayList<Map.Entry<Bone,Float>> topWeights = new ArrayList<>(vertex.weights.entrySet());
-                    topWeights.sort((Map.Entry<Bone,Float> a, Map.Entry<Bone,Float> b) -> b.getValue().compareTo(a.getValue()));
+                
+                for(Mesh.Group group : mesh.groups) {
                     
-                    float totalWeight = 0f;
-                    for(int i = 0; i < topWeights.size(); i++)
-                        totalWeight += topWeights.get(i).getValue();
-                    
-                    for(int i = 0; i < 4; i++) {
-                        Map.Entry<Bone,Float> boneWeight = i < topWeights.size() ? topWeights.get(i) : null;
-                        if(boneWeight != null) {
-                            //System.out.println("vertex="+vertex.index+",bone"+i+"-"+boneWeight.getKey().name+": "+Math.min(boneWeight.getValue()/totalWeight, 1));
-                            boneBuffer.put(boneWeight.getKey().index);
-                            weightBuffer.put(Math.min(boneWeight.getValue()/totalWeight, 1));
-                        } else {
-                            boneBuffer.put(-1);
-                            weightBuffer.put(0f);
+                    group.offset = groupOffset;
+
+                    for(Vertex vertex : group.vertices) {
+
+                        vertexBuffer.put(vertex.position.x);
+                        vertexBuffer.put(vertex.position.y);
+                        vertexBuffer.put(vertex.position.z);
+
+                        normalsBuffer.put(vertex.normal.x);
+                        normalsBuffer.put(vertex.normal.y);
+                        normalsBuffer.put(vertex.normal.z);
+
+                        texcoordBuffer.put(vertex.texcoord.x);
+                        texcoordBuffer.put(vertex.texcoord.y);
+
+                        ArrayList<Map.Entry<Bone,Float>> topWeights = new ArrayList<>(vertex.weights.entrySet());
+                        topWeights.sort((Map.Entry<Bone,Float> a, Map.Entry<Bone,Float> b) -> b.getValue().compareTo(a.getValue()));
+
+                        float totalWeight = 0f;
+                        for(int i = 0; i < topWeights.size(); i++)
+                            totalWeight += topWeights.get(i).getValue();
+
+                        for(int i = 0; i < 4; i++) {
+                            Map.Entry<Bone,Float> boneWeight = i < topWeights.size() ? topWeights.get(i) : null;
+                            if(boneWeight != null) {
+                                //System.out.println("vertex="+vertex.index+",bone"+i+"-"+boneWeight.getKey().name+": "+Math.min(boneWeight.getValue()/totalWeight, 1));
+                                boneBuffer.put(boneWeight.getKey().index);
+                                weightBuffer.put(Math.min(boneWeight.getValue()/totalWeight, 1));
+                            } else {
+                                boneBuffer.put(-1);
+                                weightBuffer.put(0f);
+                            }
                         }
                     }
-                }
-                
-                for(Effect effect : mesh.material.effects.values())
-                    if(effect.type == Effect.Type.TEXTURE)
-                        load((Texture)effect);
-                    
 
-                meshOffset += mesh.vertices.size();
+                    for(Effect effect : group.material.effects.values())
+                        if(effect.type == Effect.Type.TEXTURE)
+                            load((Texture)effect);
+
+
+                    groupOffset += group.vertices.size();
+                }
             }
         }
 
@@ -136,19 +139,20 @@ public class SkeletonPipeline extends Pipeline<Model> {
         //Game.log("Drawing "+model.name);
         for(Mesh mesh : model.meshes.values()) {
             
-            Effect diffuse = mesh.material.effects.get(Effect.Parameter.DIFFUSE);
-            if(diffuse.type == Effect.Type.TEXTURE) {
-                Texture diffuseMap = (Texture) diffuse;
-                
-                glActiveTexture(GL_TEXTURE0 + 0);
-                glBindTexture(GL_TEXTURE_2D, diffuseMap.id);
-                
-                program.bindUniform("diffuseMap").set1i(0);
+            for(Mesh.Group group : mesh.groups) {
+                Effect diffuse = group.material.effects.get(Effect.Parameter.DIFFUSE);
+                if(diffuse != null && diffuse.type == Effect.Type.TEXTURE) {
+                    Texture diffuseMap = (Texture) diffuse;
+
+                    glActiveTexture(GL_TEXTURE0 + 0);
+                    glBindTexture(GL_TEXTURE_2D, diffuseMap.id);
+
+                    program.bindUniform("diffuseMap").set1i(0);
+                }
+
+                glDrawArrays(GL_TRIANGLES, group.offset, group.vertices.size());
+                //glDrawElements(GL_TRIANGLES, mesh.triangles.size()*3, GL_UNSIGNED_INT, 0);
             }
-            
-            glDrawArrays(GL_TRIANGLES, mesh.index, mesh.vertices.size());
-            //glDrawElements(GL_TRIANGLES, mesh.triangles.size()*3, GL_UNSIGNED_INT, 0);
-            
         }
         
         disable();

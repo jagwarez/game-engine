@@ -32,29 +32,32 @@ public class ModelPipeline extends Pipeline<Model> {
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(models.modelVertex*3);
         FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(models.modelVertex*3);
         FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(models.modelVertex*2);
-
-        int meshOffset = 0;
+        int groupOffset = 0;
+        
         for(Model model : models.models()) {
 
             for(Mesh mesh : model.meshes.values()) {
 
-                mesh.index = meshOffset;
+                for(Mesh.Group group : mesh.groups) {
+                    
+                    group.offset = groupOffset;
 
-                for(Vertex vertex : mesh.vertices) {
+                    for(Vertex vertex : group.vertices) {
 
-                    vertexBuffer.put(vertex.position.x);
-                    vertexBuffer.put(vertex.position.y);
-                    vertexBuffer.put(vertex.position.z);
+                        vertexBuffer.put(vertex.position.x);
+                        vertexBuffer.put(vertex.position.y);
+                        vertexBuffer.put(vertex.position.z);
 
-                    normalsBuffer.put(vertex.normal.x);
-                    normalsBuffer.put(vertex.normal.y);
-                    normalsBuffer.put(vertex.normal.z);
+                        normalsBuffer.put(vertex.normal.x);
+                        normalsBuffer.put(vertex.normal.y);
+                        normalsBuffer.put(vertex.normal.z);
 
-                    texcoordBuffer.put(vertex.texcoord.x);
-                    texcoordBuffer.put(vertex.texcoord.y);
+                        texcoordBuffer.put(vertex.texcoord.x);
+                        texcoordBuffer.put(vertex.texcoord.y);
+                    }
+
+                    groupOffset += group.vertices.size();
                 }
-
-                meshOffset += mesh.vertices.size();
             }
         }
 

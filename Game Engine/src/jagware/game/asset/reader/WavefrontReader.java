@@ -5,6 +5,7 @@
  */
 package jagware.game.asset.reader;
 
+import jagware.game.asset.Mesh;
 import jagware.game.asset.Model;
 import jagware.game.asset.Vertex;
 import java.io.BufferedReader;
@@ -31,6 +32,9 @@ public class WavefrontReader implements AssetReader<Model> {
     public Model read() throws IOException {
         
         Model model = new Model(objFile.getName().replaceAll("\\.\\w+$",""));
+        Mesh mesh = null;
+        Mesh.Group group = null;
+        
         BufferedReader reader = null;
 
         try {
@@ -44,7 +48,13 @@ public class WavefrontReader implements AssetReader<Model> {
                 String[] fields = line.split("\\s+");
 
                 if(fields.length > 1) {
-                    if(fields[0].equalsIgnoreCase("v")) {
+                    
+                    if(fields[0].equalsIgnoreCase("o")) {
+                        
+                        mesh = new Mesh(fields[1]);
+                        model.meshes.put(mesh.name, mesh);
+                        
+                    } else if(fields[0].equalsIgnoreCase("v")) {
                         Vertex vertex = new Vertex(vertices.size());
 
                         vertex.position.x = Float.parseFloat(fields[1]);
@@ -70,6 +80,17 @@ public class WavefrontReader implements AssetReader<Model> {
                         uvcoords.add(uv);
 
                     } else if(fields[0].equalsIgnoreCase("f")) {
+                        
+                        if(mesh == null) {
+                            mesh = new Mesh(model.name);
+                            model.meshes.put(mesh.name, mesh);
+                        }
+                        
+                        if(group == null) {
+                            group = new Mesh.Group(mesh.groups.size());
+                            mesh.groups.add(group);
+                        }
+                        
                         if(fields.length == 4) {
                             Vertex[] face = new Vertex[3];
 
@@ -83,10 +104,8 @@ public class WavefrontReader implements AssetReader<Model> {
                                 if(field.length > 2)
                                     vertex.normal.set(normals.get(Integer.parseInt(field[2])-1));
 
-                                face[vi] = vertex;
+                                group.vertices.add(vertex);
                             }
-
-                            //model.mesh.faces.add(new Face(face));
 
                         } else if(fields.length == 5) { // quad
                             Vertex[] face1 = new Vertex[3];
@@ -115,8 +134,14 @@ public class WavefrontReader implements AssetReader<Model> {
                                 }                                 
                             }
 
-                            //model.mesh.faces.add(new Face(face1));
-                            //.mesh.faces.add(new Face(face2));
+                            group.vertices.add(face1[0]);
+                            group.vertices.add(face1[1]);
+                            group.vertices.add(face1[2]);
+                            
+                            group.vertices.add(face2[0]);
+                            group.vertices.add(face2[1]);
+                            group.vertices.add(face2[2]);
+
                         }
                     }    
                 }

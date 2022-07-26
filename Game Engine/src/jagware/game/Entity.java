@@ -52,6 +52,6 @@ public class Entity extends Matrix4f {
     
     public void animate() {
         if(model != null)
-            model.animate(animation, ((float)(Game.time()-time)/1000f)*.5f);
+            model.animate(animation, ((float)(Game.time()-time)/1000f)*2f);
     }
 }

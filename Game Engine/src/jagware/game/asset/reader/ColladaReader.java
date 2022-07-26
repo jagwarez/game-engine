@@ -113,15 +113,13 @@ public class ColladaReader implements AssetReader<Model> {
                 case "instance_geometry":
                     
                     String meshId = childElement.getAttribute("url").substring(1);
-                    Mesh mesh = readMesh(meshId, null);
-                    model.meshes.put(mesh.name, mesh);
+                    readMesh(model, meshId, null);
                     
                     break;
                 case "instance_controller":
                     
                     String skinId = childElement.getAttribute("url").substring(1);
-                    Mesh skinMesh = readSkin(skinId);
-                    model.meshes.put(skinMesh.name, skinMesh);
+                    readSkin(model, skinId);
                     
                     break;
                 case "node":
@@ -168,7 +166,7 @@ public class ColladaReader implements AssetReader<Model> {
         }
     }
     
-    private Mesh readSkin(String skinId) throws Exception {
+    private void readSkin(Model model, String skinId) throws Exception {
         
         Element controllerElement = getElementById("//library_controllers/controller", skinId);
         Element skinElement = (Element) xpath.evaluate("child::skin", controllerElement, XPathConstants.NODE);
@@ -200,7 +198,8 @@ public class ColladaReader implements AssetReader<Model> {
                         String boneId = bones[matrixIndex];
                         Bone bone = boneMap.get(boneId);
                         
-                        bone.inverse.set(inverses[matrixIndex]);
+                        if(bone != null)
+                            bone.inverse.set(inverses[matrixIndex]);
                     }
                     
                     break;
@@ -247,18 +246,17 @@ public class ColladaReader implements AssetReader<Model> {
             }
         }
          
-        return readMesh(skinElement.getAttribute("source").substring(1), skin);
+        readMesh(model, skinElement.getAttribute("source").substring(1), skin);
  
     }
     
-    private Mesh readMesh(String meshId, List<Map<Bone,Float>> skin) throws Exception {
+    private void readMesh(Model model, String meshId, List<Map<Bone,Float>> skin) throws Exception {
         
         Mesh mesh = new Mesh(meshId);
+        model.meshes.put(mesh.name, mesh);
 
         Element meshElement = (Element) getElementById("//library_geometries/geometry", meshId);
-        ArrayList<Vector4f> positions = new ArrayList<>();
-        ArrayList<Vector4f> normals = new ArrayList<>();
-        ArrayList<Vector2f> texcoords = new ArrayList<>();
+        HashMap<String,List> sources = new HashMap<>();
         
         for(String trianglesNodeName : new String[]{"triangles", "polylist"}) {
             
@@ -266,11 +264,18 @@ public class ColladaReader implements AssetReader<Model> {
             
             for(int trianglesIndex = 0; trianglesIndex < trianglesNodes.getLength(); trianglesIndex++) {
                 
+                Mesh.Group group = new Mesh.Group(mesh.groups.size());
+                mesh.groups.add(group);
+                
                 int positionOffset = -1, normalOffset = -1, texcoordOffset = -1;
                 Element trianglesElement = (Element) trianglesNodes.item(trianglesIndex);
                 
                 String materialId = trianglesElement.getAttribute("material");
-                readMaterial(mesh, materialId);
+                readMaterial(group, materialId);
+                
+                List<Vector4f> positions = null;
+                List<Vector4f> normals = null;
+                List<Vector2f> texcoords = null;
                 
                 NodeList inputNodes = trianglesElement.getElementsByTagName("input");
                 int inputCount = inputNodes.getLength();
@@ -286,14 +291,22 @@ public class ColladaReader implements AssetReader<Model> {
                     switch (inputType) {
                         case "VERTEX":
                             
+                            positionOffset = inputOffset;
+                            
+                            if(sources.containsKey(sourceId)) {
+                                positions = sources.get(sourceId);
+                                continue;
+                            }
+                            
+                            positions = new ArrayList<>();
+                            sources.put(sourceId, positions);
+                            
                             Element verticesElement = getElementById("mesh/vertices[1]", sourceId, meshElement);
                             inputElement = (Element) xpath.evaluate("input[1]", verticesElement, XPathConstants.NODE);
                             sourceId = inputElement.getAttribute("source").substring(1);
                             sourceElement = getElementById("mesh/source", sourceId, meshElement);
                             String vertexData = (String) xpath.evaluate("child::float_array[1]", sourceElement, XPathConstants.STRING);
                             String[] vertexArray = vertexData.split(" ");
-
-                            positionOffset = inputOffset;
 
                             for(int i = 0; i < vertexArray.length;) {
                                 Vector4f position = new Vector4f();
@@ -309,11 +322,19 @@ public class ColladaReader implements AssetReader<Model> {
                             break;
                             
                         case "NORMAL":
-                             
-                            String normalData = (String) xpath.evaluate("child::float_array[1]", sourceElement, XPathConstants.STRING);
-                            String[] normalArray = normalData.split(" ");
                             
                             normalOffset = inputOffset;
+                            
+                            if(sources.containsKey(sourceId)) {
+                                normals = sources.get(sourceId);
+                                continue;
+                            }
+                            
+                            normals = new ArrayList<>();
+                            sources.put(sourceId, normals);
+                            
+                            String normalData = (String) xpath.evaluate("child::float_array[1]", sourceElement, XPathConstants.STRING);
+                            String[] normalArray = normalData.split(" ");
                             
                             for(int i = 0; i < normalArray.length;) {
                                 float x = Float.parseFloat(normalArray[i++]);
@@ -329,11 +350,19 @@ public class ColladaReader implements AssetReader<Model> {
                             
                         case "TEXCOORD":
                             
-                            String coordData = (String) xpath.evaluate("child::float_array[1]", sourceElement, XPathConstants.STRING);
-                            String[] coordArray = coordData.split(" ");
-                            
                             texcoordOffset = inputOffset;
                             
+                            if(sources.containsKey(sourceId)) {
+                                texcoords = sources.get(sourceId);
+                                continue;
+                            }
+                            
+                            texcoords = new ArrayList<>();
+                            sources.put(sourceId, texcoords);
+                            
+                            String coordData = (String) xpath.evaluate("child::float_array[1]", sourceElement, XPathConstants.STRING);
+                            String[] coordArray = coordData.split(" ");
+                                                     
                             for(int i = 0; i < coordArray.length;) {
                                 float s = Float.parseFloat(coordArray[i++]);
                                 float t = 1f - Float.parseFloat(coordArray[i++]);
@@ -350,24 +379,23 @@ public class ColladaReader implements AssetReader<Model> {
                     int positionIndex = Integer.parseInt(triangles[i + positionOffset]);
                     int normalIndex = Integer.parseInt(triangles[i + normalOffset]);
                     int texIndex = Integer.parseInt(triangles[i + texcoordOffset]);
-                    
-                    Vertex vertex = new Vertex(mesh.vertices.size());
+
+                    Vertex vertex = new Vertex(group.vertices.size());
                     vertex.position.set(positions.get(positionIndex));
                     vertex.normal.set(normals.get(normalIndex));
                     vertex.texcoord.set(texcoords.get(texIndex));
-                    
+
                     if(skin != null)
                         vertex.weights.putAll(skin.get(positionIndex));
 
-                    mesh.vertices.add(vertex);
+                    group.vertices.add(vertex);
                 }
             }
         }
-        
-        return mesh;
+     
     }
     
-    private void readMaterial(Mesh mesh, String materialId) throws Exception {
+    private void readMaterial(Mesh.Group group, String materialId) throws Exception {
         Element materialElement = getElementById("//library_materials/material", materialId);
         NodeList effectNodes = materialElement.getElementsByTagName("instance_effect");
         
@@ -395,7 +423,7 @@ public class ColladaReader implements AssetReader<Model> {
                         color.b = values[2];
                         color.a = values[3];
                         
-                        mesh.material.effects.put(param, color);
+                        group.material.effects.put(param, color);
                         
                         break;
                     case "texture":
@@ -407,7 +435,7 @@ public class ColladaReader implements AssetReader<Model> {
                         File imageFile = new File(colladaFile.getParentFile(), URLDecoder.decode(imageName, "UTF-8"));
                         if(imageFile.exists()) {
                             Texture texture = new Texture(imageFile);
-                            mesh.material.effects.put(param, texture);
+                            group.material.effects.put(param, texture);
                         }
                         
                         break;
@@ -424,7 +452,7 @@ public class ColladaReader implements AssetReader<Model> {
                                         animationElement.getAttribute("id").replaceAll("_.*", "");
             
             if(!model.animations.containsKey(animationName)) {
-                animation = new Animation(animationName);
+                animation = new Animation(animationName, model);
                 model.animations.put(animationName, animation);
             } else
                 animation = model.animations.get(animationName);
@@ -446,6 +474,10 @@ public class ColladaReader implements AssetReader<Model> {
                     //String targetAction = targetData[1];
 
                     Element targetNode = (Element) getElementById("//library_visual_scenes/visual_scene/descendant::node", targetId);
+                    
+                    if(targetNode == null)
+                        continue;
+                    
                     String targetType = targetNode.getAttribute("type");
                     Animated target = "NODE".equals(targetType) ? model.meshes.get(targetId) : 
                                       "JOINT".equals(targetType) ? boneMap.get(targetNode.getAttribute("sid")) : null;
