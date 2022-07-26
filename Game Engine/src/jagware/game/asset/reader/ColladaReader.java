@@ -157,7 +157,7 @@ public class ColladaReader implements AssetReader<Model> {
                 case "matrix":
                     
                     bone.local.set(readMatrix4f(childElement));
- 
+                    
                     break;
                 case "node":
                     

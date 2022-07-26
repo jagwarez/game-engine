@@ -128,6 +128,7 @@ public class SkeletonPipeline extends Pipeline<Model> {
         for(int i = 0; i < model.bones.size(); i++) {
             //System.out.println("bone="+model.bones.get(i).name+": transform=\n"+model.bones.get(i).transform);
             program.bindUniform("bone_transforms["+i+"]").setMatrix4fv(model.bones.get(i).transform);
+            //model.bones.get(i).transform.set(model.bones.get(i).local);
         }
         
         //program.bindUniform("useDiffuseMap").setBool(false);

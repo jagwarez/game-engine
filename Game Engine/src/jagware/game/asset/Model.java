@@ -28,11 +28,10 @@ public class Model {
         this.bones = new ArrayList<>();
     }
     
-    public void animate(float time) {
-        for(Animation animation : animations.values())
-            animation.play(time);
-        
-        bones.get(0).animate();
+    public void animate(Animation animation, float time) {
+       animation.play(time);
+       if(!bones.isEmpty())
+            bones.get(0).animate();
     }
     
     public boolean animated() {
