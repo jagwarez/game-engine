@@ -4,12 +4,14 @@
  * and open the template in the editor.
  */
 
-import jagware.game.*;
-import jagware.game.Keyboard.Key;
-import jagware.game.Mouse.Button;
-import jagware.game.asset.Model;
-import jagware.game.asset.Terrain;
-import jagware.game.asset.reader.ColladaReader;
+import jagwarez.game.Entity;
+import jagwarez.game.Game;
+import jagwarez.game.Settings;
+import jagwarez.game.Keyboard.Key;
+import jagwarez.game.Mouse.Button;
+import jagwarez.game.asset.Model;
+import jagwarez.game.asset.Terrain;
+import jagwarez.game.asset.reader.ColladaReader;
 import java.io.File;
 
 /**
@@ -28,23 +30,23 @@ public class TestGame extends Game {
         
         File assetsDir = new File("games/hello/assets");
         
-        assets.terrain = new Terrain(1000);
+        //assets.terrain = new Terrain(1000);
         
         Model model = new ColladaReader(new File(assetsDir, "models/thinmatrix/model.dae")).read();
         assets.models.add(model);
         
         for(int count = 0; count < 1; count++) {
             Entity entity = new Entity(model.name, model);
-            entity.position.x = 10f; //count * 5;
-            entity.position.z = 20f; //(float)Math.random()*100f;
-            entity.rotation.x = 90;
-            entity.rotation.y = 180;
-            entity.animation("1");
+            entity.position.x = count * 10 * (count % 1 == 0 ? 1 : -1);
+            entity.position.z = 10f; //(float)Math.random()*100f;
+            //entity.rotation.x = 270; //(float)Math.random()*100f;
+            //entity.rotation.y = 0;
+            //entity.animation("Alien-Animal_1_5_Baked");
             world.entities.add(entity);
         }
         
-        world.camera.position.x = 10f;
-        //world.camera.position.y = 0f;
+        //world.camera.position.z = -10f;
+        world.camera.position.y = 5f;
         world.camera.rotation.y = 180;
     }
     
@@ -57,8 +59,9 @@ public class TestGame extends Game {
 
         float fx = 0f, fy = 0f, fz = 0f;
 
-        if(keyboard.pressed(Key._W))
+        if(keyboard.pressed(Key._W)) {
             fz += .2f;
+        }
 
         if(keyboard.pressed(Key._S))
             fz += -.2f;
