@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jagwarez.game.asset;
+package jagwarez.game;
 
+import jagwarez.game.asset.Texture;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class Terrain {
     
     public final List<Texture> surfaces;
     public final List<Patch> patches;
+    public final float scale = .5f;
     
     public Terrain() {
         surfaces = new ArrayList<>();
@@ -23,6 +25,11 @@ public class Terrain {
     }
     
     public static class Patch {
+        
+        public static final int SIZE = 256;
+        public static final int INDEX_COUNT = (SIZE)*(SIZE)*6;
+        public static final int VERTEX_COUNT = (SIZE+1)*(SIZE+1)*3;
+
         public final Texture heightMap;
         public final Texture surfaceMap;
         

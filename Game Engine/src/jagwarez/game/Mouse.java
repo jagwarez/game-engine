@@ -18,8 +18,8 @@ public class Mouse {
     private final Window window;
     private int x,y;
     
-    public Mouse(Game game) {
-        this.window = game.window;
+    public Mouse(Window window) {
+        this.window = window;
     }
     
     protected void initialize() {

@@ -43,8 +43,8 @@ public abstract class Game implements AutoCloseable {
     public Game(Settings settings) {
         log("Creating game");
         this.window = new Window(settings);
-        this.keyboard = new Keyboard(this);
-        this.mouse = new Mouse(this);
+        this.keyboard = new Keyboard(window);
+        this.mouse = new Mouse(window);
         this.assets = new Assets();
         this.world = new World();
         this.graphics = new Graphics(this);
@@ -59,10 +59,10 @@ public abstract class Game implements AutoCloseable {
         
         GLFWErrorCallback.createPrint(System.err).set(); 
         
-        window.initialize();
-        mouse.initialize();
+        window.initialize();  
         graphics.initialize();
-  
+        mouse.initialize();
+        
         this.initialized = true;
 
     }

@@ -4,7 +4,6 @@
  */
 package jagwarez.game;
 
-import jagwarez.game.pipeline.ModelPipeline;
 import jagwarez.game.asset.Color;
 import jagwarez.game.asset.Model;
 import jagwarez.game.pipeline.SkeletonPipeline;
@@ -59,7 +58,7 @@ public class Graphics {
         
         //modelPipeline = new ModelPipeline(game.assets.models).load();
         skeletonPipeline = new SkeletonPipeline(game.assets.models).load();
-        //terrainPipeline = new TerrainPipeline().load();
+        terrainPipeline = new TerrainPipeline().load();
 
     }
     
@@ -81,35 +80,41 @@ public class Graphics {
             else return 0;
         });
         
-        for(Entity entity : world.entities) {
-               
-            Model model = entity.model;
-            
-            if(model != null) {
-                         
-                world.mul(entity.transform(), entity);
-                
-                if(entity.model.animated())
-                    entity.animate();
-                
-                //System.out.println("Entity=\n"+entity);
-                
-                if(model.skeletal()) {
-                    skeletonPipeline.render(model, entity);
-                } //else
-                    //modelPipeline.render(model, entity);
-                    
-            }
-        }
+        terrainPipeline.render(world.terrain, world);
+        
+        render(world.player);
+        
+        for(Entity entity : world.entities)
+            render(entity);
         
         window.swap();
+    }
+    
+    private void render(Entity entity) throws Exception {
+        
+        Model model = entity.model;
+            
+        if(model != null) {
+
+            world.mul(entity.transform(), entity);
+
+            if(entity.model.animated())
+                entity.animate();
+
+            //System.out.println("Entity=\n"+entity);
+
+            if(model.skeletal()) {
+                skeletonPipeline.render(model, entity);
+            } //else
+                //modelPipeline.render(model, entity);
+        }
     }
     
     public void destroy() {
         
         //modelPipeline.destroy();
         skeletonPipeline.destroy();
-        //terrainPipeline.destroy();
+        terrainPipeline.destroy();
         
         Game.log("Graphics destroyed");
     }

@@ -14,11 +14,15 @@ import org.joml.Vector3f;
  * @author Dad
  */
 public class Entity extends Matrix4f {
+    
+    private static int ID = 0;
+            
+    public final int id = ++ID;
     public final String name;
-    public final Model model;
     public final Vector3f position;
     public final Vector3f rotation;
     public final Vector3f scale;
+    public Model model;
     
     private Animation animation = null;
     private long time = 0L;
@@ -32,22 +36,24 @@ public class Entity extends Matrix4f {
         this.model = model;
         position = new Vector3f(0f);
         rotation = new Vector3f(0f);
-        scale    = new Vector3f(.1f, .1f, .1f);
+        scale    = new Vector3f(.5f);
     }
     
     public Entity transform() {
         identity();
-        //scale(scale.x, scale.y, scale.z);
+        
         translate(position.x, position.y, position.z);
         rotateXYZ((float) Math.toRadians(rotation.x), (float) Math.toRadians(rotation.y), (float) Math.toRadians(rotation.z));
+        scale(scale.x, scale.y, scale.z);
         
-
         return this;
     }
     
     public void animation(String name) {
-        animation = model.animations.get(name);
-        time = Game.time();
+        if(animation == null || !animation.name.equals(name)) {
+            animation = model.animations.get(name);
+            time = Game.time();
+        }
     }
     
     public void animate() {

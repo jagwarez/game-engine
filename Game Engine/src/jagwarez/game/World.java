@@ -4,7 +4,6 @@
  */
 package jagwarez.game;
 
-import jagwarez.game.asset.Terrain;
 import java.util.ArrayList;
 import java.util.List;
 import org.joml.Matrix4f;
@@ -15,12 +14,15 @@ import org.joml.Matrix4f;
  */
 public class World extends Matrix4f {
     
-    public Terrain[][] map;
+    public Terrain terrain;
     public final Camera camera;
+    public final Player player;
     public final List<Entity> entities;
     
     public World() {
+        this.terrain = new Terrain();
         this.camera = new Camera();
+        this.player = new Player();
         this.entities = new ArrayList<>();
     }
     

@@ -14,8 +14,8 @@ public class Keyboard {
     
     private final Window window;
     
-    public Keyboard(Game game) { 
-        this.window = game.window;
+    public Keyboard(Window window) { 
+        this.window = window;
     }
     
     public boolean pressed(Key key) {

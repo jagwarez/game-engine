@@ -6,7 +6,6 @@
 package jagwarez.game;
 
 import jagwarez.game.asset.Mesh;
-import jagwarez.game.asset.Terrain;
 import jagwarez.game.asset.Model;
 import jagwarez.game.asset.reader.AssetReader;
 import java.util.Collection;
