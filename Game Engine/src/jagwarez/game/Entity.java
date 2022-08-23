@@ -36,7 +36,7 @@ public class Entity extends Matrix4f {
         this.model = model;
         position = new Vector3f(0f);
         rotation = new Vector3f(0f);
-        scale    = new Vector3f(.5f);
+        scale    = new Vector3f(.25f);
     }
     
     public Entity transform() {
@@ -58,6 +58,6 @@ public class Entity extends Matrix4f {
     
     public void animate() {
         if(model != null && animation != null)
-            model.animate(animation, ((float)(Game.time()-time)/1000f)*2f);
+            model.animate(animation, ((float)(Game.time()-time)/1000f));
     }
 }

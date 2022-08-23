@@ -6,7 +6,6 @@ package jagwarez.game.asset;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -33,12 +32,12 @@ public class Channel {
         
         Keyframe nextFrame = null;
         Keyframe prevFrame = null;
-        float prevTime;
+        float prevTime = 0f;
         
         for(Keyframe keyframe : keyframes) {
             nextFrame = keyframe;
 
-            if(keyframe.time > time)
+            if(nextFrame.time > time)
                 break;
 
             prevFrame = keyframe;
@@ -46,7 +45,6 @@ public class Channel {
         
         if(prevFrame == null) {
             prevFrame = keyframes.get(keyframes.size()-1);
-            prevTime = 0f;
         } else
             prevTime = prevFrame.time;
 

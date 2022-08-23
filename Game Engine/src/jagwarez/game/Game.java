@@ -92,6 +92,9 @@ public abstract class Game implements AutoCloseable {
             
             loop();
             
+            world.player.position.x %= world.terrain.width;
+            world.player.position.z %= world.terrain.length;
+            
             graphics.render();
              
         } while(window.open());

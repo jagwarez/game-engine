@@ -58,7 +58,7 @@ public class Graphics {
         
         //modelPipeline = new ModelPipeline(game.assets.models).load();
         skeletonPipeline = new SkeletonPipeline(game.assets.models).load();
-        terrainPipeline = new TerrainPipeline().load();
+        terrainPipeline = new TerrainPipeline(world.player).load();
 
     }
     

@@ -2,13 +2,13 @@ package jagwarez.game.asset.reader;
 
 import jagwarez.game.asset.Animated;
 import jagwarez.game.asset.Animation;
+import jagwarez.game.asset.Bone;
 import jagwarez.game.asset.Channel;
 import jagwarez.game.asset.Color;
 import jagwarez.game.asset.Effect;
-import jagwarez.game.asset.Bone;
 import jagwarez.game.asset.Keyframe;
-import jagwarez.game.asset.Model;
 import jagwarez.game.asset.Mesh;
+import jagwarez.game.asset.Model;
 import jagwarez.game.asset.Texture;
 import jagwarez.game.asset.Vertex;
 import java.io.File;
@@ -40,11 +40,12 @@ public class ColladaReader implements AssetReader<Model> {
     private final FilesReader files;
     private File colladaFile;
     private Document document;
-    private XPath xpath;
+    private final XPath xpath;
     private Map<String,Bone> boneMap;
     
     public ColladaReader(File file) {
         this.files = new FilesReader(file);
+        this.xpath = XPathFactory.newInstance().newXPath();
     }
     
     @Override
@@ -60,7 +61,6 @@ public class ColladaReader implements AssetReader<Model> {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         this.document = builder.parse(colladaFile);
-        this.xpath = XPathFactory.newInstance().newXPath();
         
         Model model = new Model(colladaFile.getName().replace(".dae", ""));
         
@@ -433,9 +433,9 @@ public class ColladaReader implements AssetReader<Model> {
                         String samplerId = valueElement.getAttribute("texture");
                         String sourceId = (String) xpath.evaluate("descendant::newparam[@sid='"+samplerId+"']/sampler2D/source/text()", effectElement, XPathConstants.STRING);
                         String imageId = (String) xpath.evaluate("descendant::newparam[@sid='"+sourceId+"']/surface/init_from/text()", effectElement, XPathConstants.STRING);
-                        String imageName = (String) xpath.evaluate("//library_images/image[@id='"+imageId+"']/init_from/text()", effectElement, XPathConstants.STRING);
-                        
+                        String imageName = (String) xpath.evaluate("//library_images/image[@id='"+imageId+"']/init_from/text()", effectElement, XPathConstants.STRING);                       
                         File imageFile = new File(colladaFile.getParentFile(), URLDecoder.decode(imageName, "UTF-8"));
+                        
                         if(imageFile.exists()) {
                             Texture texture = new Texture(imageFile);
                             group.material.effects.put(param, texture);

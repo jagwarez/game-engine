@@ -5,6 +5,7 @@
 package jagwarez.game.pipeline;
 
 import jagwarez.game.Pipeline;
+import jagwarez.game.Player;
 import jagwarez.game.Shader;
 import jagwarez.game.Terrain;
 import java.nio.FloatBuffer;
@@ -20,6 +21,12 @@ import static org.lwjgl.opengl.GL11.glDrawElements;
  * @author jacob
  */
 public class TerrainPipeline extends Pipeline<Terrain> {
+    
+    private final Player player;
+    
+    public TerrainPipeline(Player player) {
+        this.player = player;
+    }
     
     @Override
     public TerrainPipeline load() throws Exception {
@@ -66,17 +73,37 @@ public class TerrainPipeline extends Pipeline<Terrain> {
     @Override
     public void render(Terrain terrain, Matrix4f camera) throws Exception {
         
+        int row = (int)Math.floor(player.position.x/(Terrain.Patch.SIZE*terrain.scale));
+        int col = (int)Math.floor(player.position.z/(Terrain.Patch.SIZE*terrain.scale));
+        
+        System.out.println("Tile row="+row+", col="+col);
+        
         enable();
 
-        for(int x = 0; x < 3; x++) {
-            for(int z = 0; z < 3; z++) {
+        for(int x = -1; x < 2; x++) {
+            
+            int patchX = row + x;
+            
+            if(patchX < 0 || patchX >= terrain.rows)
+                continue;
+            
+            for(int y = -1; y < 2; y++) {
                 
-                Matrix4f patch = camera.get(new Matrix4f());
-                patch.translate(x * Terrain.Patch.SIZE * terrain.scale, 0f, z * Terrain.Patch.SIZE * terrain.scale);
-                patch.scale(terrain.scale);
+                int patchY = col + y;
                 
-                program.bindUniform("transform").setMatrix4fv(patch);
-                program.bindUniform("patch_color").set3f(x/3f, z/3f, 0f);
+                if(patchY < 0 || patchY >= terrain.columns)
+                    continue;
+                
+                //System.out.println("Drawing patch x="+patchX+", y="+patchY);
+                
+                Terrain.Patch patch = terrain.grid[patchX][patchY];
+                
+                Matrix4f transform = camera.get(new Matrix4f());
+                transform.translate(patch.x * Terrain.Patch.SIZE * terrain.scale, 0f, patch.y * Terrain.Patch.SIZE * terrain.scale);
+                transform.scale(terrain.scale);
+                
+                program.bindUniform("transform").setMatrix4fv(transform);
+                program.bindUniform("patch_color").set3f((float)patchX/terrain.rows, (float)patchY/terrain.columns, 0f);
 
                 glDrawElements(GL_TRIANGLES, Terrain.Patch.INDEX_COUNT, GL_UNSIGNED_INT, 0);
             }
