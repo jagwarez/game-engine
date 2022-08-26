@@ -40,33 +40,17 @@ public class Terrain {
         this.length = Patch.SIZE*columns*scale;
     }
     
-    public Patch[][] region(int x, int y) {
-        Patch[][] region = new Patch[3][3];
-        
-        x %= width;
-        y %= length;
-        
-        for(int nx = -1; nx < 2; nx++) {
-            int posX = x + nx < 0 ? rows-1 : x + nx > rows ? 0 : x + nx;
-            for(int ny = -1; ny < 2; ny++) {
-                int posY = y + ny < 0 ? columns-1 : y + ny > columns ? 0 : y + ny;
-                region[nx+1][ny+1] = grid[posX][posY];
-            }
-        }
-
-        return region;
-    }
-    
     public static class Patch {
         
         public static final int SIZE = 512;
-        public static final int INDEX_COUNT = (SIZE)*(SIZE)*6;
-        public static final int VERTEX_COUNT = (SIZE+1)*(SIZE+1)*3;
+        public static final int WIDTH = SIZE-1;
+        public static final int INDEX_COUNT = (SIZE-1)*(SIZE-1)*6;
+        public static final int VERTEX_COUNT = (SIZE)*(SIZE)*3;
         
         public final int x;
         public final int y;
 
-        //public final Texture heightMap;
+        public Texture heightmap = null;
         //public final Texture surfaceMap;
         
         public Patch(int x, int y) {

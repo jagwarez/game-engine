@@ -12,9 +12,13 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 
 /**
  *
@@ -22,9 +26,11 @@ import static org.lwjgl.opengl.GL11.glDrawElements;
  */
 public class TerrainPipeline extends Pipeline<Terrain> {
     
+    private final Terrain terrain;
     private final Player player;
     
-    public TerrainPipeline(Player player) {
+    public TerrainPipeline(Terrain terrain, Player player) {
+        this.terrain = terrain;
         this.player = player;
     }
     
@@ -33,7 +39,7 @@ public class TerrainPipeline extends Pipeline<Terrain> {
         
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(Terrain.Patch.VERTEX_COUNT);
         IntBuffer indexBuffer = BufferUtils.createIntBuffer(Terrain.Patch.INDEX_COUNT);
-        int vertexRowCount = (Terrain.Patch.SIZE)+1;
+        int vertexRowCount = (Terrain.Patch.SIZE);
         
         for(int x = 0; x < vertexRowCount; x++) {
             for(int z = 0; z < vertexRowCount; z++) {
@@ -60,6 +66,10 @@ public class TerrainPipeline extends Pipeline<Terrain> {
         program.bindAttribute(0, "position");
         program.bindFragment(0, "color");
         
+        for(int row = 0; row < terrain.rows; row++)
+            for(int col = 0; col < terrain.columns; col++)
+                load(terrain.grid[row][col].heightmap);
+        
         buffer.bind();
         
         buffer.elements((IntBuffer) indexBuffer.flip());
@@ -73,10 +83,8 @@ public class TerrainPipeline extends Pipeline<Terrain> {
     @Override
     public void render(Terrain terrain, Matrix4f camera) throws Exception {
         
-        int row = (int)Math.floor(player.position.x/(Terrain.Patch.SIZE*terrain.scale));
-        int col = (int)Math.floor(player.position.z/(Terrain.Patch.SIZE*terrain.scale));
-        
-        System.out.println("Tile row="+row+", col="+col);
+        int row = (int)Math.floor(player.position.x/((Terrain.Patch.WIDTH)*terrain.scale));
+        int col = (int)Math.floor(player.position.z/((Terrain.Patch.WIDTH)*terrain.scale));
         
         enable();
 
@@ -98,13 +106,27 @@ public class TerrainPipeline extends Pipeline<Terrain> {
                 
                 Terrain.Patch patch = terrain.grid[patchX][patchY];
                 
-                Matrix4f transform = camera.get(new Matrix4f());
-                transform.translate(patch.x * Terrain.Patch.SIZE * terrain.scale, 0f, patch.y * Terrain.Patch.SIZE * terrain.scale);
+                Matrix4f transform = new Matrix4f();
+                transform.translate(patch.x * Terrain.Patch.WIDTH * terrain.scale, 0f, patch.y * Terrain.Patch.WIDTH * terrain.scale);
                 transform.scale(terrain.scale);
                 
+                program.bindUniform("camera").setMatrix4fv(camera);
                 program.bindUniform("transform").setMatrix4fv(transform);
+                program.bindUniform("sky_color").set3f(0.1f, 0.1f, .5f);
                 program.bindUniform("patch_color").set3f((float)patchX/terrain.rows, (float)patchY/terrain.columns, 0f);
 
+                if(patch.heightmap != null) {
+                    
+                    glActiveTexture(GL_TEXTURE0 + 0);
+                    glBindTexture(GL_TEXTURE_2D, patch.heightmap.id);
+                    
+                    program.bindUniform("use_hmap").setBool(true);
+                    program.bindUniform("hmap").set1i(0);
+                    
+                } else {
+                    program.bindUniform("use_hmap").setBool(false);
+                }
+                
                 glDrawElements(GL_TRIANGLES, Terrain.Patch.INDEX_COUNT, GL_UNSIGNED_INT, 0);
             }
         }
