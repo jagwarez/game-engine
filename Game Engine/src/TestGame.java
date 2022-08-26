@@ -4,13 +4,12 @@
  * and open the template in the editor.
  */
 
-import jagwarez.game.Entity;
 import jagwarez.game.Game;
-import jagwarez.game.Settings;
 import jagwarez.game.Keyboard.Key;
 import jagwarez.game.Mouse.Button;
+import jagwarez.game.Settings;
 import jagwarez.game.asset.Model;
-import jagwarez.game.asset.Terrain;
+import jagwarez.game.asset.Texture;
 import jagwarez.game.asset.reader.ColladaReader;
 import java.io.File;
 
@@ -30,24 +29,20 @@ public class TestGame extends Game {
         
         File assetsDir = new File("games/hello/assets");
         
-        //assets.terrain = new Terrain(1000);
+        world.terrain.grid[0][0].heightmap = new Texture(new File(assetsDir, "terrain/heightmap1.png"));
         
         Model model = new ColladaReader(new File(assetsDir, "models/thinmatrix/model.dae")).read();
         assets.models.add(model);
         
-        for(int count = 0; count < 1; count++) {
-            Entity entity = new Entity(model.name, model);
-            entity.position.x = count * 10 * (count % 1 == 0 ? 1 : -1);
-            entity.position.z = 10f; //(float)Math.random()*100f;
-            //entity.rotation.x = 270; //(float)Math.random()*100f;
-            //entity.rotation.y = 0;
-            //entity.animation("Alien-Animal_1_5_Baked");
-            world.entities.add(entity);
-        }
+        world.player.model = model;
+        //world.player.position.x = world.terrain.width/2;
+        //world.player.position.z = world.terrain.length/2;
+        world.player.rotation.y = 180;
         
-        //world.camera.position.z = -10f;
-        world.camera.position.y = 5f;
+        System.out.println("width="+world.terrain.width);
+        
         world.camera.rotation.y = 180;
+        world.camera.tether(world.player);
     }
     
     @Override
@@ -60,7 +55,10 @@ public class TestGame extends Game {
         float fx = 0f, fy = 0f, fz = 0f;
 
         if(keyboard.pressed(Key._W)) {
+            world.player.animation("Armature");
             fz += .2f;
+        } else {
+            world.player.animation(null);
         }
 
         if(keyboard.pressed(Key._S))
@@ -74,17 +72,18 @@ public class TestGame extends Game {
 
         if(keyboard.pressed(Key._SPACE))
             fy += .2f;
+        
+        if(keyboard.pressed(Key._V))
+            fy -= .2f;
 
         if(mouse.pressed(Button.RIGHT)) {
             world.camera.rotation.x += mouse.y() >= window.height()/2 ? .2f : -.2f;
             world.camera.rotation.y += mouse.x() >= window.width()/2 ? .2f : -.2f;
         }
         
-        world.camera.position.x += fx; //mouse.x() >= window.width()/2 ? .3f : -.3f;
-        world.camera.position.z += fz;
-
-        //for(Entity entity : world.entities)
-            //entity.rotation.y++;
+        world.player.position.x += fx; //mouse.x() >= window.width()/2 ? .3f : -.3f;
+        world.player.position.y += fy;
+        world.player.position.z += fz;
        
     }
     
