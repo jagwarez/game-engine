@@ -17,7 +17,7 @@ public class Terrain {
     
     public final List<Texture> surfaces;
     public final Patch[][] grid;
-    public final float scale = .5f;
+    public final float scale = 1f;
     public float width, length;
     public int rows, columns;
     
@@ -32,7 +32,7 @@ public class Terrain {
         
         for(int x = 0; x <  rows; x++)
             for(int y = 0; y < columns; y++)
-                grid[x][y] = new Patch(x, y);
+                grid[x][y] = new Patch(x, y, scale);
         
         this.rows = rows;
         this.columns = columns;
@@ -42,20 +42,24 @@ public class Terrain {
     
     public static class Patch {
         
-        public static final int SIZE = 512;
+        public static final int SIZE = 384;
         public static final int WIDTH = SIZE-1;
         public static final int INDEX_COUNT = (SIZE-1)*(SIZE-1)*6;
         public static final int VERTEX_COUNT = (SIZE)*(SIZE)*3;
         
-        public final int x;
-        public final int y;
+        public final int row;
+        public final int col;
+        public final float x;
+        public final float y;
 
         public Texture heightmap = null;
         //public final Texture surfaceMap;
         
-        public Patch(int x, int y) {
-            this.x = x;
-            this.y = y;
+        public Patch(int row, int col, float scale) {
+            this.row = row;
+            this.col = col;
+            this.x = row * WIDTH * scale;
+            this.y = col * WIDTH * scale;
         }
     }
 }

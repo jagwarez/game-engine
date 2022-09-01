@@ -12,9 +12,12 @@ import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
+import static org.lwjgl.opengl.GL11.GL_LINE;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.opengl.GL11.glViewport;
 
 /**
@@ -54,7 +57,8 @@ public class Graphics {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        if(false)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         
         //modelPipeline = new ModelPipeline(game.assets.models).load();
         skeletonPipeline = new SkeletonPipeline(game.assets.models).load();
@@ -63,13 +67,7 @@ public class Graphics {
     }
     
     protected void render() throws Exception {
-        
-        glViewport(0, 0, window.width, window.height);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        world.setPerspective((float) Math.toRadians(70), (float) window.width / window.height, 0.1f, 1000.0f);
-        world.mul(world.camera.transform());
-        
+         
         world.entities.sort((Entity a, Entity b) -> {
             if(a.model != null && b.model != null) 
                 return Integer.compare(b.model.bones.size(), a.model.bones.size());
@@ -79,6 +77,12 @@ public class Graphics {
                 return 1;
             else return 0;
         });
+         
+        world.setPerspective((float) Math.toRadians(70), (float) window.width / window.height, 0.1f, 1000.0f);
+        world.mul(world.camera.transform());
+        
+        glViewport(0, 0, window.width, window.height);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         terrainPipeline.render(world.terrain, world);
         

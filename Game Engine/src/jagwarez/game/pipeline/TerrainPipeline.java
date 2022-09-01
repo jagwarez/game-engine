@@ -84,7 +84,9 @@ public class TerrainPipeline extends Pipeline<Terrain> {
     public void render(Terrain terrain, Matrix4f camera) throws Exception {
         
         int row = (int)Math.floor(player.position.x/((Terrain.Patch.WIDTH)*terrain.scale));
-        int col = (int)Math.floor(player.position.z/((Terrain.Patch.WIDTH)*terrain.scale));
+        int col = (int)Math.floor((player.position.z+10f)/((Terrain.Patch.WIDTH)*terrain.scale));
+        
+        //System.out.println("row="+row+", col="+col+", x="+player.position.x+", z="+player.position.z);
         
         enable();
 
@@ -107,7 +109,7 @@ public class TerrainPipeline extends Pipeline<Terrain> {
                 Terrain.Patch patch = terrain.grid[patchX][patchY];
                 
                 Matrix4f transform = new Matrix4f();
-                transform.translate(patch.x * Terrain.Patch.WIDTH * terrain.scale, 0f, patch.y * Terrain.Patch.WIDTH * terrain.scale);
+                transform.translate(patch.x, 0f, patch.y);
                 transform.scale(terrain.scale);
                 
                 program.bindUniform("camera").setMatrix4fv(camera);

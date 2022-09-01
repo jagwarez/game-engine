@@ -4,12 +4,11 @@
  */
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Assets.Models;
 import jagwarez.game.Pipeline;
 import jagwarez.game.Shader;
-import jagwarez.game.asset.Effect;
 import jagwarez.game.asset.Bone;
 import jagwarez.game.asset.Color;
+import jagwarez.game.asset.Effect;
 import jagwarez.game.asset.Mesh;
 import jagwarez.game.asset.Model;
 import jagwarez.game.asset.Texture;
@@ -17,6 +16,7 @@ import jagwarez.game.asset.Vertex;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
@@ -33,23 +33,37 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  */
 public class SkeletonPipeline extends Pipeline<Model> {
     
-    private final Models models;
+    private final List<Model> models;
+    private int vertexCount = 0;
     
-    public SkeletonPipeline(Models models) {
-        this.models = models;
+    public SkeletonPipeline(List<Model> models) {
+        
+        this.models = new ArrayList<>();
+        
+        for(Model model : models) {
+            
+            if(!model.animated())
+                continue;
+            
+            this.models.add(model);
+            
+            for(Mesh mesh : model.meshes.values())
+                for(Mesh.Group group : mesh.groups)
+                    vertexCount += group.vertices.size();
+        }
     }
     
     @Override
     public SkeletonPipeline load() throws Exception {
         
-        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(models.animationVertex*3);
-        FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(models.animationVertex*3);
-        FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(models.animationVertex*2);
-        IntBuffer boneBuffer = BufferUtils.createIntBuffer(models.animationVertex*4);
-        FloatBuffer weightBuffer = BufferUtils.createFloatBuffer(models.animationVertex*4);
+        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
+        FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
+        FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(vertexCount*2);
+        IntBuffer boneBuffer = BufferUtils.createIntBuffer(vertexCount*4);
+        FloatBuffer weightBuffer = BufferUtils.createFloatBuffer(vertexCount*4);
         int groupOffset = 0;
         
-        for(Model model : models.animations()) {
+        for(Model model : models) {
             
             for(Mesh mesh : model.meshes.values()) {
                 

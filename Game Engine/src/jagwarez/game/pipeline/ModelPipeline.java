@@ -4,13 +4,14 @@
  */
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Assets.Models;
 import jagwarez.game.Pipeline;
 import jagwarez.game.Shader;
 import jagwarez.game.asset.Mesh;
 import jagwarez.game.asset.Model;
 import jagwarez.game.asset.Vertex;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 
@@ -20,21 +21,35 @@ import org.lwjgl.BufferUtils;
  */
 public class ModelPipeline extends Pipeline<Model> {
     
-    private final Models models;
+    private final List<Model> models;
+    private int vertexCount = 0;
     
-    public ModelPipeline(Models models) {
-        this.models = models;
+    public ModelPipeline(List<Model> models) {
+        
+        this.models = new ArrayList<>();
+        
+        for(Model model : models) {
+            
+            if(model.animated())
+                continue;
+            
+            this.models.add(model);
+            
+            for(Mesh mesh : model.meshes.values())
+                for(Mesh.Group group : mesh.groups)
+                    vertexCount += group.vertices.size();
+        }
     }
     
     @Override
     public ModelPipeline load() throws Exception {
         
-        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(models.modelVertex*3);
-        FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(models.modelVertex*3);
-        FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(models.modelVertex*2);
+        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
+        FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
+        FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(vertexCount*2);
         int groupOffset = 0;
         
-        for(Model model : models.models()) {
+        for(Model model : models) {
 
             for(Mesh mesh : model.meshes.values()) {
 

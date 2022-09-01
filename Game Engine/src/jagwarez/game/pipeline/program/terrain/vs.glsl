@@ -1,7 +1,7 @@
 #version 150
 
-const float density = 0.005;
-const float gradient = 1.5;
+const float density = 0.004;
+const float gradient = 10;
 
 in vec2 position;
 
@@ -15,8 +15,8 @@ uniform sampler2D hmap;
 
 void main(void) {
     
-    float height = use_hmap == true ? texture(hmap, vec2(position.x/511.0,position.y/511.0)).r : 0;
-    vec4 world_pos = transform * vec4(position.x, height*100, position.y, 1.0);
+    float height = use_hmap == true ? texture(hmap, vec2(position.x/512.0,position.y/512.0)).r : 0;
+    vec4 world_pos = transform * vec4(position.x, height*50, position.y, 1.0);
    
     camera_vec = (inverse(camera)*vec4(0,0,0,1)).xyz - world_pos.xyz;
 
