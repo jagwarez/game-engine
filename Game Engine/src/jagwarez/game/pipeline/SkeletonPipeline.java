@@ -16,11 +16,18 @@ import jagwarez.game.asset.Vertex;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_REPEAT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
@@ -103,10 +110,16 @@ public class SkeletonPipeline extends Pipeline<Model> {
                             }
                         }
                     }
+                    
+                    Map<Integer,Integer> parameters = new HashMap<>();
+                    parameters.put(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                    parameters.put(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                    parameters.put(GL_TEXTURE_WRAP_S, GL_REPEAT);
+                    parameters.put(GL_TEXTURE_WRAP_T, GL_REPEAT);
 
                     for(Effect effect : group.material.effects.values())
                         if(effect.type == Effect.Type.TEXTURE)
-                            load((Texture)effect);
+                            texture((Texture)effect, parameters);
 
 
                     groupOffset += group.vertices.size();

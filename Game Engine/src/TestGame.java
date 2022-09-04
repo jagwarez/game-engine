@@ -8,6 +8,7 @@ import jagwarez.game.Game;
 import jagwarez.game.Keyboard.Key;
 import jagwarez.game.Mouse.Button;
 import jagwarez.game.Settings;
+import jagwarez.game.Sky;
 import jagwarez.game.asset.Model;
 import jagwarez.game.asset.Texture;
 import jagwarez.game.asset.reader.ColladaReader;
@@ -29,14 +30,22 @@ public class TestGame extends Game {
         
         File assetsDir = new File("games/hello/assets");
         
+        world.sky.textures[Sky.RIGHT] = new Texture(new File(assetsDir, "textures/skybox/right.png"));
+        world.sky.textures[Sky.LEFT] = new Texture(new File(assetsDir, "textures/skybox/left.png"));
+        world.sky.textures[Sky.TOP] = new Texture(new File(assetsDir, "textures/skybox/top.png"));
+        world.sky.textures[Sky.BOTTOM] = new Texture(new File(assetsDir, "textures/skybox/bottom.png"));
+        world.sky.textures[Sky.FRONT] = new Texture(new File(assetsDir, "textures/skybox/front.png"));
+        world.sky.textures[Sky.BACK] = new Texture(new File(assetsDir, "textures/skybox/back.png"));
+        
         world.terrain.grid[0][0].heightmap = new Texture(new File(assetsDir, "terrain/heightmap1.png"));
+        world.terrain.grid[0][1].heightmap = new Texture(new File(assetsDir, "terrain/heightmap.png"));
         
         Model model = new ColladaReader(new File(assetsDir, "models/thinmatrix/model.dae")).read();
         assets.models.add(model);
         
         world.player.model = model;
-        //world.player.position.x = world.terrain.width/2;
-        //world.player.position.z = world.terrain.length/2;
+        //world.player.position.x = Terrain.Patch.WIDTH/2;
+        //world.player.position.z = Terrain.Patch.WIDTH/2;
         world.player.rotation.y = 180;
         
         System.out.println("width="+world.terrain.width);

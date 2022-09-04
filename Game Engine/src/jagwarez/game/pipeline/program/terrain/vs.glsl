@@ -1,7 +1,7 @@
 #version 150
 
-const float density = 0.004;
-const float gradient = 10;
+const float density = 0.006;
+const float gradient = 1.5;
 
 in vec2 position;
 

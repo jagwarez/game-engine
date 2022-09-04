@@ -14,12 +14,14 @@ import org.joml.Matrix4f;
  */
 public class World extends Matrix4f {
     
+    public Sky sky;
     public Terrain terrain;
     public final Camera camera;
     public final Player player;
     public final List<Entity> entities;
     
     public World() {
+        this.sky = new Sky();
         this.terrain = new Terrain();
         this.camera = new Camera();
         this.player = new Player();

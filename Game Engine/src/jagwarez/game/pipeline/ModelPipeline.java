@@ -105,5 +105,7 @@ public class ModelPipeline extends Pipeline<Model> {
         
         //for(Mesh mesh : model.meshes.values())
             //glDrawElements(GL_TRIANGLES, mesh.triangles.size()*3, GL_UNSIGNED_INT, 0);
+            
+        disable();
     }
 }

@@ -7,7 +7,9 @@ package jagwarez.game;
 import jagwarez.game.asset.Color;
 import jagwarez.game.asset.Model;
 import jagwarez.game.pipeline.SkeletonPipeline;
+import jagwarez.game.pipeline.SkyPipeline;
 import jagwarez.game.pipeline.TerrainPipeline;
+import org.joml.Matrix4f;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -32,6 +34,7 @@ public class Graphics {
     
     private final Color color = new Color(0.1f,0.1f,.5f,1f);
     
+    private Pipeline skyPipeline;
     private Pipeline terrainPipeline;
     private Pipeline modelPipeline;
     private Pipeline skeletonPipeline;
@@ -60,9 +63,10 @@ public class Graphics {
         if(false)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         
+        skyPipeline = new SkyPipeline(world).load();
         //modelPipeline = new ModelPipeline(game.assets.models).load();
         skeletonPipeline = new SkeletonPipeline(game.assets.models).load();
-        terrainPipeline = new TerrainPipeline(world.terrain, world.player).load();
+        terrainPipeline = new TerrainPipeline(world).load();
 
     }
     
@@ -84,12 +88,14 @@ public class Graphics {
         glViewport(0, 0, window.width, window.height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        terrainPipeline.render(world.terrain, world);
+        terrainPipeline.render(world.terrain, new Matrix4f());
         
         render(world.player);
         
         for(Entity entity : world.entities)
             render(entity);
+        
+        skyPipeline.render(world.sky, world.camera);
         
         window.swap();
     }
@@ -117,6 +123,7 @@ public class Graphics {
     public void destroy() {
         
         //modelPipeline.destroy();
+        skyPipeline.destroy();
         skeletonPipeline.destroy();
         terrainPipeline.destroy();
         

@@ -8,11 +8,20 @@ import jagwarez.game.Pipeline;
 import jagwarez.game.Player;
 import jagwarez.game.Shader;
 import jagwarez.game.Terrain;
+import jagwarez.game.World;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_REPEAT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
@@ -26,12 +35,12 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  */
 public class TerrainPipeline extends Pipeline<Terrain> {
     
-    private final Terrain terrain;
+    private final World world;
     private final Player player;
     
-    public TerrainPipeline(Terrain terrain, Player player) {
-        this.terrain = terrain;
-        this.player = player;
+    public TerrainPipeline(World world) {
+        this.world = world;
+        this.player = world.player;
     }
     
     @Override
@@ -66,9 +75,15 @@ public class TerrainPipeline extends Pipeline<Terrain> {
         program.bindAttribute(0, "position");
         program.bindFragment(0, "color");
         
-        for(int row = 0; row < terrain.rows; row++)
-            for(int col = 0; col < terrain.columns; col++)
-                load(terrain.grid[row][col].heightmap);
+        Map<Integer,Integer> parameters = new HashMap<>();
+                    parameters.put(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                    parameters.put(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                    parameters.put(GL_TEXTURE_WRAP_S, GL_REPEAT);
+                    parameters.put(GL_TEXTURE_WRAP_T, GL_REPEAT);
+        
+        for(int row = 0; row < world.terrain.rows; row++)
+            for(int col = 0; col < world.terrain.columns; col++)
+                texture(world.terrain.grid[row][col].heightmap, parameters);
         
         buffer.bind();
         
@@ -81,7 +96,7 @@ public class TerrainPipeline extends Pipeline<Terrain> {
     }
 
     @Override
-    public void render(Terrain terrain, Matrix4f camera) throws Exception {
+    public void render(Terrain terrain, Matrix4f transform) throws Exception {
         
         int row = (int)Math.floor(player.position.x/((Terrain.Patch.WIDTH)*terrain.scale));
         int col = (int)Math.floor((player.position.z+10f)/((Terrain.Patch.WIDTH)*terrain.scale));
@@ -108,13 +123,13 @@ public class TerrainPipeline extends Pipeline<Terrain> {
                 
                 Terrain.Patch patch = terrain.grid[patchX][patchY];
                 
-                Matrix4f transform = new Matrix4f();
+                transform.identity();
                 transform.translate(patch.x, 0f, patch.y);
                 transform.scale(terrain.scale);
                 
-                program.bindUniform("camera").setMatrix4fv(camera);
+                program.bindUniform("camera").setMatrix4fv(world);
                 program.bindUniform("transform").setMatrix4fv(transform);
-                program.bindUniform("sky_color").set3f(0.1f, 0.1f, .5f);
+                program.bindUniform("sky_color").set3f(0.1f, 0.1f, .1f);
                 program.bindUniform("patch_color").set3f((float)patchX/terrain.rows, (float)patchY/terrain.columns, 0f);
 
                 if(patch.heightmap != null) {

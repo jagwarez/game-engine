@@ -9,18 +9,12 @@ import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.imageio.ImageIO;
 import org.joml.Matrix4f;
-import org.lwjgl.BufferUtils;
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL11.GL_REPEAT;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDeleteTextures;
@@ -39,6 +33,9 @@ public abstract class Pipeline<A> {
     protected final Map<Integer,Texture> textures;
     protected boolean enabled;
     
+    public abstract Pipeline<A> load() throws Exception;
+    public abstract void render(A asset, Matrix4f transform) throws Exception;
+    
     protected Pipeline() {
         Game.log("Creating pipeline");
         this.program = new Program();
@@ -46,9 +43,6 @@ public abstract class Pipeline<A> {
         this.textures = new HashMap<>();
         this.enabled = false;
     }
-    
-    public abstract Pipeline<A> load() throws Exception;
-    public abstract void render(A asset, Matrix4f transform) throws Exception;
     
     protected void enable() {
         if(!enabled) {
@@ -61,34 +55,21 @@ public abstract class Pipeline<A> {
         }
     }
     
-    protected void load(Texture texture) throws Exception {
+    protected void texture(Texture texture, Map<Integer,Integer> parameters) throws Exception {
         
         if(texture == null)
             return;
         
-        BufferedImage image = ImageIO.read(texture.file);
-        ByteBuffer textureBuffer = BufferUtils.createByteBuffer(image.getWidth() * image.getHeight() * 4);
-        for(int y = 0; y < image.getHeight(); y++) {
-            for(int x = 0; x < image.getWidth(); x++) {
-                int pixel = image.getRGB(x, y);
-                
-                textureBuffer.put((byte) ((pixel >> 16) & 0xFF));     // Red component
-                textureBuffer.put((byte) ((pixel >> 8) & 0xFF));      // Green component
-                textureBuffer.put((byte) (pixel & 0xFF));             // Blue component
-                textureBuffer.put((byte) (0xFF));
-            }
-        }
-        
         texture.id = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture.id);
         
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        BufferedImage image = ImageIO.read(texture.file);
+        ByteBuffer imageBuffer = Texture.buffer(image);
         
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, image.getWidth(), image.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
         
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, image.getWidth(), image.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer)textureBuffer.flip());
+        for(Entry<Integer,Integer> param : parameters.entrySet())
+            glTexParameteri(GL_TEXTURE_2D, param.getKey(), param.getValue());
         
         glBindTexture(GL_TEXTURE_2D, 0);
         
