@@ -4,7 +4,6 @@
  */
 package jagwarez.game;
 
-import jagwarez.game.asset.Color;
 import jagwarez.game.asset.Model;
 import jagwarez.game.pipeline.SkeletonPipeline;
 import jagwarez.game.pipeline.SkyPipeline;
@@ -32,8 +31,6 @@ public class Graphics {
     private final Window window;
     private final World world;
     
-    private final Color color = new Color(0.1f,0.1f,.5f,1f);
-    
     private Pipeline skyPipeline;
     private Pipeline terrainPipeline;
     private Pipeline modelPipeline;
@@ -46,17 +43,10 @@ public class Graphics {
         this.world  = game.world;
     }
     
-    public Color color() {
-        return color;
-    }
-    
-    public void color(float r, float g, float b, float a) {
-        color.r = r; color.g = g; color.b = b; color.a = a;
-    }
-    
+
     protected void initialize() throws Exception {
         Game.log("Initializig graphics");
-        glClearColor(color.r, color.g, color.b, color.a);
+        glClearColor(world.sky.color.r, world.sky.color.g, world.sky.color.b, 1f);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         
@@ -81,12 +71,14 @@ public class Graphics {
                 return 1;
             else return 0;
         });
-         
-        world.setPerspective((float) Math.toRadians(70), (float) window.width / window.height, 0.1f, 1000.0f);
+        
+        
+        world.setPerspective((float) Math.toRadians(70), (float) window.width / window.height, 0.1f, 1000f);
         world.mul(world.camera.transform());
         
         glViewport(0, 0, window.width, window.height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
         
         terrainPipeline.render(world.terrain, new Matrix4f());
         
@@ -95,7 +87,11 @@ public class Graphics {
         for(Entity entity : world.entities)
             render(entity);
         
-        skyPipeline.render(world.sky, world.camera);
+        Matrix4f skyxform = new Matrix4f();
+        skyxform.translate(world.camera.position.x, 0f, world.camera.position.z);
+        skyxform.rotateXYZ(world.camera.rotation.x, world.camera.rotation.y, world.camera.rotation.z);
+        
+        skyPipeline.render(world.sky, world.player);
         
         window.swap();
     }

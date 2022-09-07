@@ -35,10 +35,8 @@ import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
 
 /**
  *
@@ -66,6 +64,10 @@ public class SkyPipeline extends Pipeline<Sky> {
         glBindTexture(GL_TEXTURE_2D, sky.id);
         
         for(int i = 0; i < sky.textures.length; i++) {
+            
+            //if(i == Sky.BOTTOM)
+                //continue;
+            
             BufferedImage image = ImageIO.read(sky.textures[i].file);
             ByteBuffer imageBuffer = Texture.buffer(image);
             
@@ -99,15 +101,9 @@ public class SkyPipeline extends Pipeline<Sky> {
         
         enable();
         
-        transform.m30(0f);
-        transform.m31(0f);
-        transform.m32(0f);
-        
         program.bindUniform("transform").setMatrix4fv(transform);
-        
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, sky.id);
-        
+        program.bindUniform("sky_color").set3f(world.sky.color.r, world.sky.color.g, world.sky.color.b);
+           
         glDepthFunc(GL_LEQUAL);
         glBindTexture(GL_TEXTURE_CUBE_MAP, sky.id);
         glDrawArrays(GL_TRIANGLES, 0, 36);
