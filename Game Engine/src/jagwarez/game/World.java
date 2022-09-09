@@ -7,12 +7,15 @@ package jagwarez.game;
 import java.util.ArrayList;
 import java.util.List;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 /**
  *
  * @author jacob
  */
 public class World extends Matrix4f {
+    
+    public static final Vector3f UP = new Vector3f(0f, 1f, 0f);
     
     public Sky sky;
     public Terrain terrain;

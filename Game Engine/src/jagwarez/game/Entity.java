@@ -22,7 +22,12 @@ public class Entity extends Matrix4f {
     public final Vector3f position;
     public final Vector3f rotation;
     public final Vector3f scale;
-    public Model model;
+    
+    public float speed = .2f;
+    public Model model = null;
+    
+    private final Vector3f direction;
+    private boolean oriented = false;
     
     private Animation animation = null;
     private long time = 0L;
@@ -37,14 +42,49 @@ public class Entity extends Matrix4f {
         position = new Vector3f(0f);
         rotation = new Vector3f(0f);
         scale    = new Vector3f(.25f);
+        direction   = new Vector3f(0f, 0f, -1);
+    }
+    
+    public void forward() {
+        position.sub(direction().mul(speed));
+    }
+    
+    public void backward() {
+        position.add(direction().mul(speed));
+    }
+    
+    public void right() {
+        position.add(direction().cross(World.UP).normalize().mul(speed));
+    }
+    
+    public void left() {
+        position.sub(direction().cross(World.UP).normalize().mul(speed));
+    }
+    
+    public Vector3f direction() {
+        if(!oriented) {
+            float rx = (float) Math.toRadians(rotation.x);
+            float ry = (float) Math.toRadians(rotation.y);
+            direction.x = (float) (Math.sin(ry)*Math.cos(rx));
+            direction.y = (float) Math.sin(rx);
+            direction.z = (float) (Math.cos(ry)*Math.cos(rx));
+            direction.normalize();
+            
+            oriented = true;
+        }
+        
+        return direction;
     }
     
     public Entity transform() {
+        
         identity();
         
         translate(position.x, position.y, position.z);
         rotateXYZ((float) Math.toRadians(rotation.x), (float) Math.toRadians(rotation.y), (float) Math.toRadians(rotation.z));
         scale(scale.x, scale.y, scale.z);
+        
+        oriented = false;
         
         return this;
     }

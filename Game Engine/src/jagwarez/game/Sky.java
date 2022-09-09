@@ -20,7 +20,7 @@ public class Sky {
     public static final int BACK = 4;
     public static final int FRONT = 5;  
     
-    public static final float SIZE = Terrain.Patch.WIDTH*3;
+    public static final float SIZE = 500;
     public static final float[] SKYBOX = {         
         -SIZE,  SIZE, -SIZE,
         -SIZE, -SIZE, -SIZE,

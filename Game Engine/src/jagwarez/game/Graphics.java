@@ -87,11 +87,17 @@ public class Graphics {
         for(Entity entity : world.entities)
             render(entity);
         
-        Matrix4f skyxform = new Matrix4f();
+        Matrix4f skyxform = world.player.get(new Matrix4f()).identity();
         skyxform.translate(world.camera.position.x, 0f, world.camera.position.z);
-        skyxform.rotateXYZ(world.camera.rotation.x, world.camera.rotation.y, world.camera.rotation.z);
+        //skyxform.rotateXYZ(world.camera.rotation.x, world.camera.rotation.y, world.camera.rotation.z);
         
-        skyPipeline.render(world.sky, world.player);
+        //System.out.println("cam b4=\n"+skyxform);
+        //skyxform.m30(0);
+        //skyxform.m31(0);
+        //skyxform.m32(0);
+        //System.out.println("cam after=\n"+skyxform);
+        
+        skyPipeline.render(world.sky, world.mul(skyxform, skyxform));
         
         window.swap();
     }
