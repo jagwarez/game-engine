@@ -4,7 +4,6 @@
  */
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Pipeline;
 import jagwarez.game.Shader;
 import jagwarez.game.Sky;
 import jagwarez.game.World;
@@ -13,7 +12,6 @@ import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import javax.imageio.ImageIO;
-import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_LEQUAL;
 import static org.lwjgl.opengl.GL11.GL_LESS;
@@ -42,7 +40,7 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
  *
  * @author jacob
  */
-public class SkyPipeline extends Pipeline<Sky> {
+public class SkyPipeline extends BasicPipeline<Sky> {
     
     public final World world;
     
@@ -51,7 +49,7 @@ public class SkyPipeline extends Pipeline<Sky> {
     }
 
     @Override
-    public Pipeline<Sky> load() throws Exception {
+    public SkyPipeline load() throws Exception {
         
         Sky sky = world.sky;
         
@@ -97,11 +95,15 @@ public class SkyPipeline extends Pipeline<Sky> {
     }
 
     @Override
-    public void render(Sky sky, Matrix4f transform) throws Exception {
+    public void render(Sky sky) throws Exception {
+        
+        sky.identity();
+        sky.translate(world.camera.position.x, 0f, world.camera.position.z);
+        world.mul(sky, sky);
         
         enable();
         
-        program.bindUniform("transform").setMatrix4fv(transform);
+        program.bindUniform("transform").setMatrix4fv(sky);
         program.bindUniform("sky_color").set3f(world.sky.color.r, world.sky.color.g, world.sky.color.b);
            
         glDepthFunc(GL_LEQUAL);

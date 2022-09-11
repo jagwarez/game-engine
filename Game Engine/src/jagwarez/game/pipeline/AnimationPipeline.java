@@ -4,7 +4,7 @@
  */
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Pipeline;
+import jagwarez.game.Entity;
 import jagwarez.game.Shader;
 import jagwarez.game.asset.Bone;
 import jagwarez.game.asset.Color;
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
@@ -38,12 +37,12 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  *
  * @author jacob
  */
-public class SkeletonPipeline extends Pipeline<Model> {
+public class AnimationPipeline extends BasicPipeline<Entity> {
     
     private final List<Model> models;
     private int vertexCount = 0;
     
-    public SkeletonPipeline(List<Model> models) {
+    public AnimationPipeline(List<Model> models) {
         
         this.models = new ArrayList<>();
         
@@ -61,7 +60,7 @@ public class SkeletonPipeline extends Pipeline<Model> {
     }
     
     @Override
-    public SkeletonPipeline load() throws Exception {
+    public AnimationPipeline load() throws Exception {
         
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
         FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
@@ -150,15 +149,16 @@ public class SkeletonPipeline extends Pipeline<Model> {
     }
     
     @Override
-    public void render(Model model, Matrix4f transform) {
+    public void render(Entity entity) {
+        
+        Model model = entity.model;
         
         enable();
         
-        program.bindUniform("transform").setMatrix4fv(transform);
+        program.bindUniform("transform").setMatrix4fv(entity);
         
-        for(int i = 0; i < model.bones.size(); i++) {
+        for(int i = 0; i < model.bones.size(); i++)
             program.bindUniform("bone_transforms["+i+"]").setMatrix4fv(model.bones.get(i).transform);
-        }
         
         for(Mesh mesh : model.meshes.values()) {
             

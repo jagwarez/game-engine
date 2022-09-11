@@ -6,12 +6,13 @@ package jagwarez.game;
 
 import jagwarez.game.asset.Color;
 import jagwarez.game.asset.Texture;
+import org.joml.Matrix4f;
 
 /**
  *
  * @author jacob
  */
-public class Sky {
+public class Sky extends Matrix4f {
     
     public static final int RIGHT = 0;
     public static final int LEFT = 1;

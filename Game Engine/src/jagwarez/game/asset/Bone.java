@@ -28,7 +28,8 @@ public class Bone extends Animated {
         this.children = new ArrayList<>();
         this.inverse = new Matrix4f();
 
-        if(parent != null) parent.children.add(this);
+        if(parent != null)
+            parent.children.add(this);
     }
     
     @Override
@@ -43,6 +44,6 @@ public class Bone extends Animated {
             child.animate();
         
         transform.mul(inverse);
-        //transform.identity();
+
     }
 }

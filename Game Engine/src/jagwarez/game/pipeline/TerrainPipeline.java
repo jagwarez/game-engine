@@ -4,7 +4,6 @@
  */
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Pipeline;
 import jagwarez.game.Player;
 import jagwarez.game.Shader;
 import jagwarez.game.Terrain;
@@ -33,7 +32,7 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  *
  * @author jacob
  */
-public class TerrainPipeline extends Pipeline<Terrain> {
+public class TerrainPipeline extends BasicPipeline<Terrain> {
     
     private final World world;
     private final Player player;
@@ -76,10 +75,10 @@ public class TerrainPipeline extends Pipeline<Terrain> {
         program.bindFragment(0, "color");
         
         Map<Integer,Integer> parameters = new HashMap<>();
-                    parameters.put(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                    parameters.put(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                    parameters.put(GL_TEXTURE_WRAP_S, GL_REPEAT);
-                    parameters.put(GL_TEXTURE_WRAP_T, GL_REPEAT);
+        parameters.put(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        parameters.put(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        parameters.put(GL_TEXTURE_WRAP_S, GL_REPEAT);
+        parameters.put(GL_TEXTURE_WRAP_T, GL_REPEAT);
         
         for(int row = 0; row < world.terrain.rows; row++)
             for(int col = 0; col < world.terrain.columns; col++)
@@ -96,7 +95,9 @@ public class TerrainPipeline extends Pipeline<Terrain> {
     }
 
     @Override
-    public void render(Terrain terrain, Matrix4f transform) throws Exception {
+    public void render(Terrain terrain) throws Exception {
+        
+        Matrix4f transform = new Matrix4f();
         
         int row = (int)Math.floor(player.position.x/((Terrain.Patch.WIDTH)*terrain.scale));
         int col = (int)Math.floor((player.position.z+10f)/((Terrain.Patch.WIDTH)*terrain.scale));

@@ -5,30 +5,29 @@
 package jagwarez.game.pipeline;
 
 import jagwarez.game.Game;
-import jagwarez.game.Pipeline;
 import jagwarez.game.Shader;
 import jagwarez.game.Window;
 import jagwarez.game.World;
 import java.nio.ByteBuffer;
-import org.joml.Matrix4f;
 import static org.lwjgl.opengl.GL30.*;
 
 /**
  *
  * @author jacob
  */
-public class PrerenderPipeline extends Pipeline<World> {
+public class SelectionPipeline extends BasicPipeline<World> {
     
     private final Window window;
     private int fboId = -1;
     private int objTextureId = -1;
     private int depthTextureId = -1;
     
-    public PrerenderPipeline(Game game) {
+    public SelectionPipeline(Game game) {
         this.window = game.window;
     }
     
-    public PrerenderPipeline load() throws Exception {
+    @Override
+    public SelectionPipeline load() throws Exception {
         
         fboId = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fboId);
@@ -63,7 +62,7 @@ public class PrerenderPipeline extends Pipeline<World> {
     }
 
     @Override
-    public void render(World asset, Matrix4f transform) throws Exception {
+    public void render(World asset) throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     

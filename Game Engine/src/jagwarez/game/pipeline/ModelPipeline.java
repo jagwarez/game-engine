@@ -4,7 +4,7 @@
  */
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Pipeline;
+import jagwarez.game.Entity;
 import jagwarez.game.Shader;
 import jagwarez.game.asset.Mesh;
 import jagwarez.game.asset.Model;
@@ -12,14 +12,13 @@ import jagwarez.game.asset.Vertex;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 
 /**
  *
  * @author jacob
  */
-public class ModelPipeline extends Pipeline<Model> {
+public class ModelPipeline extends BasicPipeline<Entity> {
     
     private final List<Model> models;
     private int vertexCount = 0;
@@ -96,11 +95,11 @@ public class ModelPipeline extends Pipeline<Model> {
     }
     
     @Override
-    public void render(Model model, Matrix4f transform) {
+    public void render(Entity entity) {
         
         enable();
         
-        program.bindUniform("transform").setMatrix4fv(transform);
+        program.bindUniform("transform").setMatrix4fv(entity);
         program.bindUniform("diffuse").set4f(.5f, .5f, .5f, 1.0f);
         
         //for(Mesh mesh : model.meshes.values())

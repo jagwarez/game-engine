@@ -54,14 +54,15 @@ public class Entity extends Matrix4f {
     }
     
     public void right() {
-        position.add(direction().cross(World.UP).normalize().mul(speed));
-    }
-    
-    public void left() {
         position.sub(direction().cross(World.UP).normalize().mul(speed));
     }
     
+    public void left() {
+        position.add(direction().cross(World.UP).normalize().mul(speed));
+    }
+    
     public Vector3f direction() {
+        
         if(!oriented) {
             float rx = (float) Math.toRadians(rotation.x);
             float ry = (float) Math.toRadians(rotation.y);
