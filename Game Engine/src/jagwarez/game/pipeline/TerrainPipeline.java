@@ -12,7 +12,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
@@ -97,8 +96,6 @@ public class TerrainPipeline extends BasicPipeline<Terrain> {
     @Override
     public void render(Terrain terrain) throws Exception {
         
-        Matrix4f transform = new Matrix4f();
-        
         int row = (int)Math.floor(player.position.x/((Terrain.Patch.WIDTH)*terrain.scale));
         int col = (int)Math.floor((player.position.z+10f)/((Terrain.Patch.WIDTH)*terrain.scale));
         
@@ -120,16 +117,10 @@ public class TerrainPipeline extends BasicPipeline<Terrain> {
                 if(patchY < 0 || patchY >= terrain.columns)
                     continue;
                 
-                //System.out.println("Drawing patch x="+patchX+", y="+patchY);
-                
                 Terrain.Patch patch = terrain.grid[patchX][patchY];
                 
-                transform.identity();
-                transform.translate(patch.x, 0f, patch.y);
-                transform.scale(terrain.scale);
-                
                 program.bindUniform("camera").setMatrix4fv(world);
-                program.bindUniform("transform").setMatrix4fv(transform);
+                program.bindUniform("transform").setMatrix4fv(patch);
                 program.bindUniform("sky_color").set3f(world.sky.color.r, world.sky.color.g, world.sky.color.b);
                 program.bindUniform("patch_color").set3f(((float)patchX/terrain.rows)+.1f, ((float)patchY/terrain.columns)+.1f, 0f);
 

@@ -70,8 +70,8 @@ public class Graphics {
             else return 0;
         });
         
-        world.setPerspective((float) Math.toRadians(70), (float) window.width / window.height, 0.1f, 1000f);
-        world.mul(world.camera.transform());
+        
+        world.mul(world.camera);
         
         glViewport(0, 0, window.width, window.height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

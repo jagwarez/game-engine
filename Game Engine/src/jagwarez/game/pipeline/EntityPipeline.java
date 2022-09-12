@@ -42,7 +42,7 @@ public class EntityPipeline implements Pipeline<Entity> {
             
         if(model != null) {
 
-            world.mul(entity.transform(), entity);
+            world.mul(entity, entity);
 
             if(entity.model.animated())
                 entity.animate();

@@ -6,18 +6,14 @@ package jagwarez.game;
 
 import jagwarez.game.asset.Animation;
 import jagwarez.game.asset.Model;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 /**
  *
  * @author Dad
  */
-public class Entity extends Matrix4f {
+public class Entity extends Identity {
     
-    private static int ID = 0;
-            
-    public final int id = ++ID;
     public final String name;
     public final Vector3f position;
     public final Vector3f rotation;
@@ -77,7 +73,7 @@ public class Entity extends Matrix4f {
         return direction;
     }
     
-    public Entity transform() {
+    public void update() {
         
         identity();
         
@@ -87,7 +83,6 @@ public class Entity extends Matrix4f {
         
         oriented = false;
         
-        return this;
     }
     
     public void animation(String name) {

@@ -9,6 +9,7 @@ import jagwarez.game.Keyboard.Key;
 import jagwarez.game.Mouse.Button;
 import jagwarez.game.Settings;
 import jagwarez.game.Sky;
+import jagwarez.game.Terrain;
 import jagwarez.game.asset.Model;
 import jagwarez.game.asset.Texture;
 import jagwarez.game.asset.reader.ColladaReader;
@@ -44,14 +45,14 @@ public class TestGame extends Game {
         assets.models.add(model);
         
         world.player.model = model;
-        //world.player.position.x = Terrain.Patch.WIDTH/2;
-        //world.player.position.z = Terrain.Patch.WIDTH/2;
+        world.player.position.x = Terrain.Patch.WIDTH/2;
+        world.player.position.z = Terrain.Patch.WIDTH/2;
         world.player.rotation.y = 180;
         
         System.out.println("width="+world.terrain.width);
         
         world.camera.rotation.y = 180;
-        world.camera.tether(world.player);
+        world.camera.follow(world.player);
     }
     
     @Override
@@ -60,34 +61,43 @@ public class TestGame extends Game {
         if(keyboard.pressed(Key._ESCAPE)) {
             window.close();
         }
+        
+        if(keyboard.pressed(Key._TAB))
+            graphics.wireframe();
 
         float fx = 0f, fy = 0f, fz = 0f;
 
         if(keyboard.pressed(Key._W)) {
             world.player.animation("Armature");
-            fz += .2f;
+            world.player.forward();
         } else {
             world.player.animation(null);
         }
 
         if(keyboard.pressed(Key._S))
-            fz += -.2f;
+            world.player.backward();
 
         if(keyboard.pressed(Key._A))
-            fx += .2f;
+            world.player.left();
 
         if(keyboard.pressed(Key._D))
-            fx += -.2f;
+            world.player.right();
 
         if(keyboard.pressed(Key._SPACE))
             fy += .2f;
         
         if(keyboard.pressed(Key._V))
             fy -= .2f;
+        
+        if(keyboard.pressed(Key._UP))
+            world.camera.tether.distance -= .1f;
+        
+        if(keyboard.pressed(Key._DOWN))
+            world.camera.tether.distance += .1f;
 
         if(mouse.pressed(Button.RIGHT)) {
-            world.camera.rotation.x += mouse.y() >= window.height()/2 ? .2f : -.2f;
-            world.camera.rotation.y += mouse.x() >= window.width()/2 ? .2f : -.2f;
+            //world.player.rotation.x += mouse.y() >= window.height()/2 ? 1f : -1f;
+            world.player.rotation.y += mouse.x() >= window.width()/2 ? -1f : 1f;
         }
         
         world.player.position.x += fx; //mouse.x() >= window.width()/2 ? .3f : -.3f;

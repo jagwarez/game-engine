@@ -17,18 +17,32 @@ public class World extends Matrix4f {
     
     public static final Vector3f UP = new Vector3f(0f, 1f, 0f);
     
-    public Sky sky;
-    public Terrain terrain;
+    public final Window window;
+    public final Sky sky;
+    public final Terrain terrain;
     public final Camera camera;
     public final Player player;
     public final List<Entity> entities;
     
-    public World() {
+    public World(Window window) {
+        this.window = window;
         this.sky = new Sky();
         this.terrain = new Terrain();
         this.camera = new Camera();
         this.player = new Player();
         this.entities = new ArrayList<>();
+    }
+    
+    public void update() {
+        
+        setPerspective((float) Math.toRadians(70), (float) window.width / window.height, 0.1f, 1000f);
+        
+        camera.update();
+        player.update();
+        
+        for(Entity entity : entities)
+            entity.update();
+        
     }
     
     public void destroy() { }

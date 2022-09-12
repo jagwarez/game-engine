@@ -40,7 +40,7 @@ public class Terrain {
         this.length = Patch.SIZE*columns*scale;
     }
     
-    public static class Patch {
+    public static class Patch extends Identity {
         
         public static final int SIZE = 384;
         public static final int WIDTH = SIZE-1;
@@ -60,6 +60,9 @@ public class Terrain {
             this.col = col;
             this.x = row * WIDTH * scale;
             this.y = col * WIDTH * scale;
+            
+            translate(x, 0f, y);
+            scale(scale);
         }
     }
 }

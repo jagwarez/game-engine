@@ -45,8 +45,8 @@ public abstract class Game implements AutoCloseable {
         this.window = new Window(settings);
         this.keyboard = new Keyboard(window);
         this.mouse = new Mouse(window);
+        this.world = new World(window);
         this.assets = new Assets();
-        this.world = new World();
         this.graphics = new Graphics(this);
     }
     
@@ -92,8 +92,7 @@ public abstract class Game implements AutoCloseable {
             
             loop();
             
-            world.player.position.x %= world.terrain.width;
-            world.player.position.z %= world.terrain.length;
+            world.update();
             
             graphics.render();
              

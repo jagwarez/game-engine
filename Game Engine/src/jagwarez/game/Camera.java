@@ -21,7 +21,8 @@ public class Camera extends Entity {
         this.tether = new Tether(target);
     }
     
-    public Entity transform() {
+    public void update() {
+        
         identity();
         
         if(tether != null) {
@@ -34,7 +35,6 @@ public class Camera extends Entity {
         rotateXYZ((float)Math.toRadians(rotation.x), (float)Math.toRadians(rotation.y), (float)Math.toRadians(rotation.z));
         translate(-position.x, -position.y, -position.z);
         
-        return this;
     }
     
     public static class Tether {
