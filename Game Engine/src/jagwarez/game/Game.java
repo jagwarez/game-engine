@@ -59,8 +59,7 @@ public abstract class Game implements AutoCloseable {
         
         GLFWErrorCallback.createPrint(System.err).set(); 
         
-        window.initialize();  
-        graphics.initialize();
+        window.initialize();
         mouse.initialize();
         
         this.initialized = true;
@@ -72,14 +71,18 @@ public abstract class Game implements AutoCloseable {
     }
     
     public void play() throws Exception {
-        
-        if(!loaded) {
-            load();
-            loaded = true; 
-        }
-        
+         
         if(!initialized)
             initialize();
+        
+        if(!loaded) {         
+              
+            load();
+            
+            graphics.load();
+            
+            loaded = true; 
+        }
         
         log("Playing game");
         
@@ -94,7 +97,9 @@ public abstract class Game implements AutoCloseable {
             
             world.update();
             
-            graphics.render();
+            graphics.render(world);
+            
+            window.swap();
              
         } while(window.open());
         

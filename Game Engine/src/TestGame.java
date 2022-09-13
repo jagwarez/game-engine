@@ -90,10 +90,10 @@ public class TestGame extends Game {
             fy -= .2f;
         
         if(keyboard.pressed(Key._UP))
-            world.camera.tether.distance -= .1f;
+            world.camera.tether.distance -= .02f;
         
         if(keyboard.pressed(Key._DOWN))
-            world.camera.tether.distance += .1f;
+            world.camera.tether.distance += .02f;
 
         if(mouse.pressed(Button.RIGHT)) {
             //world.player.rotation.x += mouse.y() >= window.height()/2 ? 1f : -1f;

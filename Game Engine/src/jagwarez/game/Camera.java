@@ -12,6 +12,7 @@ package jagwarez.game;
 public class Camera extends Entity {
     
     public Tether tether = null;
+    public float zoom = 1f;
     
     public Camera() {
         super("camera");
@@ -28,10 +29,11 @@ public class Camera extends Entity {
         if(tether != null) {
             Entity target = tether.target;
             position.x = target.position.x;
-            position.y = target.position.y + 5f;
+            position.y = target.position.y + 1f;
             position.z = target.position.z - tether.distance;
         }
         
+        scale(zoom);
         rotateXYZ((float)Math.toRadians(rotation.x), (float)Math.toRadians(rotation.y), (float)Math.toRadians(rotation.z));
         translate(-position.x, -position.y, -position.z);
         
@@ -40,7 +42,7 @@ public class Camera extends Entity {
     public static class Tether {
         
         public final Entity target;
-        public float distance = 5f;
+        public float distance = 2f;
         
         public Tether(Entity target) {
             this.target = target;

@@ -37,7 +37,7 @@ public class Entity extends Identity {
         this.model = model;
         position = new Vector3f(0f);
         rotation = new Vector3f(0f);
-        scale    = new Vector3f(.25f);
+        scale    = new Vector3f(.1f);
         direction   = new Vector3f(0f, 0f, -1);
     }
     

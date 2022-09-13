@@ -24,27 +24,26 @@ import static org.lwjgl.opengl.GL11.glViewport;
  *
  * @author jacob
  */
-public class Graphics {
+public class Graphics implements Pipeline<World> {
     
     private final Game game;
     private final Window window;
     private final World world;
     
-    private Pipeline skyPipeline;
-    private Pipeline terrainPipeline;
-    private Pipeline entityPipeline;
+    private SkyPipeline skyPipeline;
+    private TerrainPipeline terrainPipeline;
+    private EntityPipeline entityPipeline;
     
     private boolean wireframe = false;
     
     public Graphics(Game game) {
-        Game.log("Creating graphics");
         this.game   = game;
         this.window = game.window;
         this.world  = game.world;
     }
     
-    protected void initialize() throws Exception {
-        Game.log("Initializig graphics");
+    public Graphics load() throws Exception {
+
         glClearColor(world.sky.color.r, world.sky.color.g, world.sky.color.b, 1f);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
@@ -55,23 +54,11 @@ public class Graphics {
         skyPipeline = new SkyPipeline(world).load();
         terrainPipeline = new TerrainPipeline(world).load();
         entityPipeline = new EntityPipeline(world, game.assets.models).load();
-
+        
+        return this;
     }
     
-    protected void render() throws Exception {
-         
-        world.entities.sort((Entity a, Entity b) -> {
-            if(a.model != null && b.model != null) 
-                return Integer.compare(b.model.bones.size(), a.model.bones.size());
-            else if(a.model != null)
-                return -1;
-            else if(b.model != null)
-                return 1;
-            else return 0;
-        });
-        
-        
-        world.mul(world.camera);
+    public void render(World world) throws Exception {
         
         glViewport(0, 0, window.width, window.height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -84,8 +71,7 @@ public class Graphics {
             entityPipeline.render(entity);
         
         skyPipeline.render(world.sky);
-        
-        window.swap();
+
     }
     
     public void wireframe() {

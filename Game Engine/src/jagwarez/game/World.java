@@ -42,6 +42,8 @@ public class World extends Matrix4f {
         
         for(Entity entity : entities)
             entity.update();
+
+        mul(camera);
         
     }
     
