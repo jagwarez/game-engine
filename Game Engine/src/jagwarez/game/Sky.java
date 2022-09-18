@@ -20,7 +20,7 @@ public class Sky extends Identity {
     public static final int BACK = 4;
     public static final int FRONT = 5;  
     
-    public static final float SIZE = 500;
+    public static final float SIZE = Terrain.Patch.WIDTH;
     public static final float[] SKYBOX = {         
         -SIZE,  SIZE, -SIZE,
         -SIZE, -SIZE, -SIZE,

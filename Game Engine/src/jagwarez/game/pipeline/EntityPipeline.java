@@ -76,9 +76,9 @@ public class EntityPipeline extends RenderPipeline {
             }
         }
 
-        program.bindShader(new Shader("jagware/game/pipeline/program/model/vs.glsl", Shader.Type.VERTEX));
+        program.bindShader(new Shader("jagware/game/pipeline/program/entity/vs.glsl", Shader.Type.VERTEX));
         //program.bindShader(new Shader("jagware/game/pipeline/program/model/gs.glsl", Shader.Type.GEOMETRY));
-        program.bindShader(new Shader("jagware/game/pipeline/program/model/fs.glsl", Shader.Type.FRAGMENT));
+        program.bindShader(new Shader("jagware/game/pipeline/program/entity/fs.glsl", Shader.Type.FRAGMENT));
         program.bindAttribute(0, "position");
         program.bindAttribute(1, "normal");
         program.bindAttribute(2, "texcoord");

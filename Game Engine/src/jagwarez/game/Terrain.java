@@ -42,7 +42,7 @@ public class Terrain {
     public Patch patch(float x, float y) {
         int row = (int)Math.floor(x/Patch.WIDTH);
         int col = (int)Math.floor(y/Patch.WIDTH);
-        return x < width && y < length ? grid[row][col] : null;
+        return x >= 0 && x < width && y >= 0 && y < length ? grid[row][col] : null;
     }
     
     public List<Patch> region(float x, float y) {

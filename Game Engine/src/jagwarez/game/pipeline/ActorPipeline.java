@@ -132,8 +132,8 @@ public class ActorPipeline extends RenderPipeline {
             }
         }
 
-        program.bindShader(new Shader("jagwarez/game/pipeline/program/animation/vs.glsl", Shader.Type.VERTEX));
-        program.bindShader(new Shader("jagwarez/game/pipeline/program/animation/fs.glsl", Shader.Type.FRAGMENT));
+        program.bindShader(new Shader("jagwarez/game/pipeline/program/actor/vs.glsl", Shader.Type.VERTEX));
+        program.bindShader(new Shader("jagwarez/game/pipeline/program/actor/fs.glsl", Shader.Type.FRAGMENT));
         program.bindAttribute(0, "position");
         program.bindAttribute(1, "normal");
         program.bindAttribute(2, "texcoord");

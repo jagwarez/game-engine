@@ -105,7 +105,7 @@ public class TerrainPipeline extends RenderPipeline {
             program.bindUniform("camera").setMatrix4fv(world);
             program.bindUniform("transform").setMatrix4fv(patch);
             program.bindUniform("sky_color").set3f(world.sky.color.r, world.sky.color.g, world.sky.color.b);
-            program.bindUniform("patch_color").set3f(((float)patch.x/terrain.rows), ((float)patch.y/terrain.columns), 0f);
+            program.bindUniform("patch_color").set3f(((float)patch.row/terrain.rows), ((float)patch.column/terrain.columns), 0f);
 
             if(patch.heightmap != null) {
 

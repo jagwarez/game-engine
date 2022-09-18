@@ -10,7 +10,7 @@ import jagwarez.game.asset.Animation;
  *
  * @author jacob
  */
-public class Actor extends Entity{
+public class Actor extends Entity {
     
     public float speed = .2f;
     
@@ -37,7 +37,6 @@ public class Actor extends Entity{
         position.add(direction().cross(World.UP).normalize().mul(speed));
     }
     
- 
     public void animation(String name) {
         if(animation == null || !animation.name.equals(name)) {
             animation = model.animations.get(name);

@@ -18,11 +18,12 @@ public abstract class Game implements AutoCloseable {
     public final Keyboard keyboard;
     public final Mouse mouse;
     public final Graphics graphics;
+    public final Physics physics;
     public final Assets assets;
     public final World world;
     public static long time = System.nanoTime();
     
-    private boolean initialized = false;
+    private boolean init = false;
     private boolean loaded = false;
     
     public abstract void load() throws Exception;
@@ -48,9 +49,10 @@ public abstract class Game implements AutoCloseable {
         this.world = new World(window);
         this.assets = new Assets();
         this.graphics = new Graphics(this);
+        this.physics = new Physics(this);
     }
     
-    private void initialize() throws Exception {
+    private void init() throws Exception {
         
         log("Initializing game");
         
@@ -62,8 +64,9 @@ public abstract class Game implements AutoCloseable {
         window.init();
         mouse.init();
         graphics.init();
+        physics.init();
         
-        this.initialized = true;
+        this.init = true;
 
     }
     
@@ -73,14 +76,15 @@ public abstract class Game implements AutoCloseable {
     
     public void play() throws Exception {
          
-        if(!initialized)
-            initialize();
+        if(!init)
+            init();
         
         if(!loaded) {         
               
             load();
             
             graphics.load();
+            physics.load();
             
             loaded = true; 
         }
@@ -97,6 +101,8 @@ public abstract class Game implements AutoCloseable {
             loop();
             
             world.update();
+            
+            physics.render();
             
             graphics.render();
             
@@ -115,10 +121,11 @@ public abstract class Game implements AutoCloseable {
     public void close() {
         
         world.destroy();
+        physics.destroy();
         graphics.destroy();
         window.destroy();
         
-        initialized = loaded = false;
+        init = loaded = false;
         
         log("Game closed");
     }

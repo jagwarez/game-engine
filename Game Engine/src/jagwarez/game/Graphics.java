@@ -48,12 +48,14 @@ public class Graphics implements Pipeline {
         actors = new ActorPipeline(game);
     }
     
+    @Override
     public void init() throws Exception {
         sky.init();
         terrain.init();
         actors.init();
     }
     
+    @Override
     public void load() throws Exception {
 
         glClearColor(world.sky.color.r, world.sky.color.g, world.sky.color.b, 1f);
@@ -89,6 +91,7 @@ public class Graphics implements Pipeline {
         glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
     }
     
+    @Override
     public void destroy() {
         
         sky.destroy();

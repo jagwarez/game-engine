@@ -28,7 +28,7 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
  *
  * @author jacob
  */
-public abstract class RenderPipeline<A> implements Pipeline {
+public abstract class RenderPipeline implements Pipeline {
     
     public final Program program;
     public final Buffer buffer;
