@@ -8,10 +8,11 @@ package jagwarez.game;
  *
  * @author jacob
  */
-public interface Pipeline<A> {
+public interface Pipeline {
     
-    public Pipeline load() throws Exception;
-    public void render(A asset) throws Exception;
-    public void destroy();
+    public void init() throws Exception;
+    public void load() throws Exception;
+    public void render() throws Exception;
+    public void destroy() throws Exception;
 
 }

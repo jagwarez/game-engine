@@ -4,6 +4,7 @@
  */
 package jagwarez.game.pipeline;
 
+import jagwarez.game.Game;
 import jagwarez.game.Shader;
 import jagwarez.game.Sky;
 import jagwarez.game.World;
@@ -40,18 +41,18 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
  *
  * @author jacob
  */
-public class SkyPipeline extends BasicPipeline<Sky> {
+public class SkyPipeline extends RenderPipeline {
     
-    public final World world;
+    private final World world;
+    private final Sky sky;
     
-    public SkyPipeline(World world) {
-        this.world = world;
+    public SkyPipeline(Game game) {
+        this.world = game.world;
+        this.sky = world.sky;
     }
 
     @Override
-    public SkyPipeline load() throws Exception {
-        
-        Sky sky = world.sky;
+    public void load() throws Exception {
         
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(Sky.SKYBOX.length);
 
@@ -90,16 +91,10 @@ public class SkyPipeline extends BasicPipeline<Sky> {
         buffer.attribute((FloatBuffer) vertexBuffer.flip(), 3);
         
         buffer.unbind();
-        
-        return this;
     }
 
     @Override
-    public void render(Sky sky) throws Exception {
-        
-        sky.identity();
-        sky.translate(world.camera.position.x, 0f, world.camera.position.z);
-        world.mul(sky, sky);
+    public void render() throws Exception {
         
         enable();
         
@@ -111,8 +106,7 @@ public class SkyPipeline extends BasicPipeline<Sky> {
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glDepthFunc(GL_LESS);
         
-        disable();
-               
+        disable();           
     }
 
 }

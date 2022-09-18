@@ -28,18 +28,24 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
  *
  * @author jacob
  */
-public abstract class BasicPipeline<A> implements Pipeline<A> {
+public abstract class RenderPipeline<A> implements Pipeline {
     
-    protected final Program program;
-    protected final Buffer buffer;
+    public final Program program;
+    public final Buffer buffer;
     protected final Map<Integer,Texture> textures;
     protected boolean enabled;
     
-    public BasicPipeline() {
+    public RenderPipeline() {
         this.program = new Program();
         this.buffer = new Buffer();
         this.textures = new HashMap<>();
         this.enabled = false;
+    }
+    
+    @Override
+    public void init() throws Exception {
+        program.create();
+        buffer.create();
     }
     
     @Override

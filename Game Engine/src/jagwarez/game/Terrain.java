@@ -17,7 +17,6 @@ public class Terrain {
     
     public final List<Texture> surfaces;
     public final Patch[][] grid;
-    public final float scale = 1f;
     public float width, length;
     public int rows, columns;
     
@@ -32,12 +31,43 @@ public class Terrain {
         
         for(int x = 0; x <  rows; x++)
             for(int y = 0; y < columns; y++)
-                grid[x][y] = new Patch(x, y, scale);
+                grid[x][y] = new Patch(x, y);
         
         this.rows = rows;
         this.columns = columns;
-        this.width = Patch.SIZE*rows*scale;
-        this.length = Patch.SIZE*columns*scale;
+        this.width = Patch.SIZE*rows;
+        this.length = Patch.SIZE*columns;
+    }
+    
+    public Patch patch(float x, float y) {
+        int row = (int)Math.floor(x/Patch.WIDTH);
+        int col = (int)Math.floor(y/Patch.WIDTH);
+        return x < width && y < length ? grid[row][col] : null;
+    }
+    
+    public List<Patch> region(float x, float y) {
+        List<Patch> region = new ArrayList<>();
+        Patch center = patch(x, y);
+        
+        for(int row = -1; row < 2; row++) {
+            
+            int patchX = center.row + row;
+            
+            if(patchX < 0 || patchX >= rows)
+                continue;
+            
+            for(int col = -1; col < 2; col++) {
+                
+                int patchY = center.column + col;
+                
+                if(patchY < 0 || patchY >= columns)
+                    continue;
+                
+                region.add(grid[patchX][patchY]);
+            }
+        }
+        
+        return region;
     }
     
     public static class Patch extends Identity {
@@ -48,21 +78,24 @@ public class Terrain {
         public static final int VERTEX_COUNT = (SIZE)*(SIZE)*3;
         
         public final int row;
-        public final int col;
+        public final int column;
         public final float x;
         public final float y;
 
         public Texture heightmap = null;
         //public final Texture surfaceMap;
         
-        public Patch(int row, int col, float scale) {
+        
+        public final List<Entity> entities;
+        
+        public Patch(int row, int col) {
             this.row = row;
-            this.col = col;
-            this.x = row * WIDTH * scale;
-            this.y = col * WIDTH * scale;
+            this.column = col;
+            this.x = row * WIDTH;
+            this.y = col * WIDTH;
+            this.entities = new ArrayList<>();
             
             translate(x, 0f, y);
-            scale(scale);
         }
     }
 }

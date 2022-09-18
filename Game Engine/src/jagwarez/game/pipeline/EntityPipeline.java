@@ -4,61 +4,107 @@
  */
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Entity;
-import jagwarez.game.Pipeline;
-import jagwarez.game.World;
+import jagwarez.game.Game;
+import jagwarez.game.Shader;
+import jagwarez.game.asset.Mesh;
 import jagwarez.game.asset.Model;
+import jagwarez.game.asset.Vertex;
+import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.List;
+import org.lwjgl.BufferUtils;
 
 /**
  *
  * @author jacob
  */
-public class EntityPipeline implements Pipeline<Entity> {
+public class EntityPipeline extends RenderPipeline {
     
-    private final World world;
-    private final ModelPipeline modelPipeline;
-    private final AnimationPipeline animationPipeline;
-
-    public EntityPipeline(World world, List<Model> models) {
-        this.world = world;
-        this.modelPipeline = new ModelPipeline(models);
-        this.animationPipeline = new AnimationPipeline(models);
+    private final List<Model> models;
+    
+    public EntityPipeline(Game game) {
+        models = game.assets.models;
     }
     
     @Override
-    public EntityPipeline load() throws Exception {
+    public void load() throws Exception {
         
-        //modelPipeline.load();
-        animationPipeline.load();
+        List<Model> entities = new ArrayList<>();
+        int vertexCount = 0;
         
-        return this;
-    }
-
-    @Override
-    public void render(Entity entity) throws Exception {
-        
-        Model model = entity.model;
+        for(Model model : models) {
             
-        if(model != null) {
-
-            world.mul(entity, entity);
-
-            if(entity.model.animated())
-                entity.animate();
-
-            if(model.skeletal()) {
-                animationPipeline.render(entity);
-            } //else
-                //modelPipeline.render(model, entity);
+            if(model.animated())
+                continue;
+            
+            entities.add(model);
+            
+            for(Mesh mesh : model.meshes.values())
+                for(Mesh.Group group : mesh.groups)
+                    vertexCount += group.vertices.size();
         }
-    }
+        
+        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
+        FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
+        FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(vertexCount*2);
+        int groupOffset = 0;
+        
+        for(Model model : entities) {
 
-    @Override
-    public void destroy() {
-        modelPipeline.destroy();
-        animationPipeline.destroy();
+            for(Mesh mesh : model.meshes.values()) {
+
+                for(Mesh.Group group : mesh.groups) {
+                    
+                    group.offset = groupOffset;
+
+                    for(Vertex vertex : group.vertices) {
+
+                        vertexBuffer.put(vertex.position.x);
+                        vertexBuffer.put(vertex.position.y);
+                        vertexBuffer.put(vertex.position.z);
+
+                        normalsBuffer.put(vertex.normal.x);
+                        normalsBuffer.put(vertex.normal.y);
+                        normalsBuffer.put(vertex.normal.z);
+
+                        texcoordBuffer.put(vertex.texcoord.x);
+                        texcoordBuffer.put(vertex.texcoord.y);
+                    }
+
+                    groupOffset += group.vertices.size();
+                }
+            }
+        }
+
+        program.bindShader(new Shader("jagware/game/pipeline/program/model/vs.glsl", Shader.Type.VERTEX));
+        //program.bindShader(new Shader("jagware/game/pipeline/program/model/gs.glsl", Shader.Type.GEOMETRY));
+        program.bindShader(new Shader("jagware/game/pipeline/program/model/fs.glsl", Shader.Type.FRAGMENT));
+        program.bindAttribute(0, "position");
+        program.bindAttribute(1, "normal");
+        program.bindAttribute(2, "texcoord");
+        program.bindFragment(0, "color");
+
+        buffer.bind();
+        
+        buffer.attribute((FloatBuffer) vertexBuffer.flip(), 3);
+        buffer.attribute((FloatBuffer) normalsBuffer.flip(), 3);
+        buffer.attribute((FloatBuffer) texcoordBuffer.flip(), 2);
+        
+        buffer.unbind();
+        
     }
     
-    
+    @Override
+    public void render() {
+        
+        enable();
+        
+        program.bindUniform("transform").setMatrix4fv(null);
+        program.bindUniform("diffuse").set4f(.5f, .5f, .5f, 1.0f);
+        
+        //for(Mesh mesh : model.meshes.values())
+            //glDrawElements(GL_TRIANGLES, mesh.triangles.size()*3, GL_UNSIGNED_INT, 0);
+            
+        disable();
+    }
 }

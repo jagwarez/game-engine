@@ -4,7 +4,7 @@
  */
 package jagwarez.game;
 
-import jagwarez.game.pipeline.EntityPipeline;
+import jagwarez.game.pipeline.ActorPipeline;
 import jagwarez.game.pipeline.SkyPipeline;
 import jagwarez.game.pipeline.TerrainPipeline;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -24,15 +24,16 @@ import static org.lwjgl.opengl.GL11.glViewport;
  *
  * @author jacob
  */
-public class Graphics implements Pipeline<World> {
+public class Graphics implements Pipeline {
+    
+    public final SkyPipeline sky;
+    public final TerrainPipeline terrain;
+    //public final EntityPipeline entities;
+    public final ActorPipeline actors;
     
     private final Game game;
     private final Window window;
     private final World world;
-    
-    private SkyPipeline skyPipeline;
-    private TerrainPipeline terrainPipeline;
-    private EntityPipeline entityPipeline;
     
     private boolean wireframe = false;
     
@@ -40,9 +41,20 @@ public class Graphics implements Pipeline<World> {
         this.game   = game;
         this.window = game.window;
         this.world  = game.world;
+        
+        sky = new SkyPipeline(game);
+        terrain = new TerrainPipeline(game);
+        //entities = new EntityPipeline(game);
+        actors = new ActorPipeline(game);
     }
     
-    public Graphics load() throws Exception {
+    public void init() throws Exception {
+        sky.init();
+        terrain.init();
+        actors.init();
+    }
+    
+    public void load() throws Exception {
 
         glClearColor(world.sky.color.r, world.sky.color.g, world.sky.color.b, 1f);
         glEnable(GL_DEPTH_TEST);
@@ -51,26 +63,24 @@ public class Graphics implements Pipeline<World> {
         if(false)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         
-        skyPipeline = new SkyPipeline(world).load();
-        terrainPipeline = new TerrainPipeline(world).load();
-        entityPipeline = new EntityPipeline(world, game.assets.models).load();
+        sky.load();
+        terrain.load();
+        //entities.load();
+        actors.load();
         
-        return this;
     }
     
-    public void render(World world) throws Exception {
+    @Override
+    public void render() throws Exception {
         
         glViewport(0, 0, window.width, window.height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        terrainPipeline.render(world.terrain);
+        terrain.render();
         
-        entityPipeline.render(world.player);
+        actors.render();
         
-        for(Entity entity : world.entities)
-            entityPipeline.render(entity);
-        
-        skyPipeline.render(world.sky);
+        sky.render();
 
     }
     
@@ -81,10 +91,14 @@ public class Graphics implements Pipeline<World> {
     
     public void destroy() {
         
-        skyPipeline.destroy();
-        terrainPipeline.destroy();
-        entityPipeline.destroy();
+        sky.destroy();
+        terrain.destroy();
+        actors.destroy();
         
         Game.log("Graphics destroyed");
+    }
+    
+    public static class Pipelines {
+        
     }
 }

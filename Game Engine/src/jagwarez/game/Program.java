@@ -10,20 +10,20 @@ import java.util.HashMap;
 import java.util.Map;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
-import static org.lwjgl.opengl.GL20.glDetachShader;
-import static org.lwjgl.opengl.GL20.glUniform1f;
-import static org.lwjgl.opengl.GL20.glUniform1i;
-import static org.lwjgl.opengl.GL20.glUniform3f;
-import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
 import static org.lwjgl.opengl.GL20.glAttachShader;
 import static org.lwjgl.opengl.GL20.glBindAttribLocation;
 import static org.lwjgl.opengl.GL20.glCreateProgram;
+import static org.lwjgl.opengl.GL20.glDetachShader;
 import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glLinkProgram;
+import static org.lwjgl.opengl.GL20.glUniform1f;
+import static org.lwjgl.opengl.GL20.glUniform1i;
 import static org.lwjgl.opengl.GL20.glUniform2f;
+import static org.lwjgl.opengl.GL20.glUniform3f;
+import static org.lwjgl.opengl.GL20.glUniform4f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
@@ -33,14 +33,16 @@ import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
  * @author Jake
  */
 public class Program {
-    public final int id;
+   
     public final Map<Integer,Shader> shaders = new HashMap<>();
     public final Map<String,Uniform> uniforms = new HashMap<>();
+    
+    private int id;
     private boolean linked = false;
     
-    public Program() {
+    public void create() {
         Game.log("Creating program");
-        this.id = glCreateProgram(); 
+        id = glCreateProgram(); 
     }
     
     public void enable() {

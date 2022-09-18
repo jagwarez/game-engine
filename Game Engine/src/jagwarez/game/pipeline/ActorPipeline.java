@@ -4,7 +4,8 @@
  */
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Entity;
+import jagwarez.game.Actor;
+import jagwarez.game.Game;
 import jagwarez.game.Shader;
 import jagwarez.game.asset.Bone;
 import jagwarez.game.asset.Color;
@@ -37,30 +38,35 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  *
  * @author jacob
  */
-public class AnimationPipeline extends BasicPipeline<Entity> {
+public class ActorPipeline extends RenderPipeline {
     
+    private final Actor player;
+    private final List<Actor> actors;
     private final List<Model> models;
-    private int vertexCount = 0;
     
-    public AnimationPipeline(List<Model> models) {
+    public ActorPipeline(Game game) {   
+        this.player = game.world.player;
+        this.actors = game.world.actors;
+        this.models = game.assets.models;   
+    }
+    
+    @Override
+    public void load() throws Exception {
         
-        this.models = new ArrayList<>();
+        List<Model> animations = new ArrayList<>();
+        int vertexCount = 0;
         
         for(Model model : models) {
             
             if(!model.animated())
                 continue;
             
-            this.models.add(model);
+            animations.add(model);
             
             for(Mesh mesh : model.meshes.values())
                 for(Mesh.Group group : mesh.groups)
                     vertexCount += group.vertices.size();
         }
-    }
-    
-    @Override
-    public AnimationPipeline load() throws Exception {
         
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
         FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
@@ -69,7 +75,7 @@ public class AnimationPipeline extends BasicPipeline<Entity> {
         FloatBuffer weightBuffer = BufferUtils.createFloatBuffer(vertexCount*4);
         int groupOffset = 0;
         
-        for(Model model : models) {
+        for(Model model : animations) {
             
             for(Mesh mesh : model.meshes.values()) {
                 
@@ -144,18 +150,25 @@ public class AnimationPipeline extends BasicPipeline<Entity> {
         buffer.attribute((FloatBuffer) weightBuffer.flip(), 4);
         
         buffer.unbind();
-        
-        return this;
     }
     
     @Override
-    public void render(Entity entity) {
-        
-        Model model = entity.model;
-        
+    public void render() {
         enable();
         
-        program.bindUniform("transform").setMatrix4fv(entity);
+        render(player);
+        
+        for(Actor actor : actors)
+            render(actor);
+        
+        disable();
+    }
+    
+    private void render(Actor actor) {
+        
+        Model model = actor.model;
+        
+        program.bindUniform("transform").setMatrix4fv(actor);
         
         for(int i = 0; i < model.bones.size(); i++)
             program.bindUniform("bone_transforms["+i+"]").setMatrix4fv(model.bones.get(i).transform);
@@ -188,6 +201,5 @@ public class AnimationPipeline extends BasicPipeline<Entity> {
             }
         }
         
-        disable();
     }
 }

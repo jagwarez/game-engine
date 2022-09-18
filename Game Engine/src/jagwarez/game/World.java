@@ -22,7 +22,7 @@ public class World extends Matrix4f {
     public final Terrain terrain;
     public final Camera camera;
     public final Player player;
-    public final List<Entity> entities;
+    public final List<Actor> actors;
     
     public World(Window window) {
         this.window = window;
@@ -30,21 +30,26 @@ public class World extends Matrix4f {
         this.terrain = new Terrain();
         this.camera = new Camera();
         this.player = new Player();
-        this.entities = new ArrayList<>();
+        this.actors = new ArrayList<>();
     }
     
     public void update() {
         
         setPerspective((float) Math.toRadians(70), (float) window.width / window.height, 0.1f, 1000f);
-        
-        camera.update();
-        player.update();
-        
-        for(Entity entity : entities)
-            entity.update();
 
-        mul(camera);
+        mul(camera.update());
         
+        sky.identity();
+        sky.translate(camera.position.x, 0f, camera.position.z);
+        mul(sky, sky);
+        
+        mul(player.update(), player);
+        player.animate();
+        
+        for(Actor actor : actors) {
+            mul(actor.update(), actor);
+            actor.animate();
+        }
     }
     
     public void destroy() { }

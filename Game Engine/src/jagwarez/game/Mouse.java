@@ -22,7 +22,7 @@ public class Mouse {
         this.window = window;
     }
     
-    protected void initialize() {
+    protected void init() {
          glfwSetCursorPosCallback(window.id, (win, nx, ny) -> {
             this.x = (int)nx; this.y = (int)ny;
         });

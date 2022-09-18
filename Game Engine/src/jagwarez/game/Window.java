@@ -33,7 +33,7 @@ public class Window {
         this.visible = settings.visible();
     }
     
-    public void initialize() {
+    public void init() {
         
         Game.log("Initializing window");
         

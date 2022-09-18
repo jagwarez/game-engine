@@ -8,7 +8,7 @@ package jagwarez.game;
  *
  * @author jacob
  */
-public class Player extends Entity {
+public class Player extends Actor {
     
     public Player() {
         super("player");

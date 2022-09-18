@@ -4,6 +4,7 @@
  */
 package jagwarez.game.pipeline;
 
+import jagwarez.game.Game;
 import jagwarez.game.Player;
 import jagwarez.game.Shader;
 import jagwarez.game.Terrain;
@@ -31,18 +32,20 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  *
  * @author jacob
  */
-public class TerrainPipeline extends BasicPipeline<Terrain> {
+public class TerrainPipeline extends RenderPipeline {
     
     private final World world;
     private final Player player;
+    private final Terrain terrain;
     
-    public TerrainPipeline(World world) {
-        this.world = world;
+    public TerrainPipeline(Game game) {
+        this.world = game.world;
         this.player = world.player;
+        this.terrain = world.terrain;
     }
     
     @Override
-    public TerrainPipeline load() throws Exception {
+    public void load() throws Exception {
         
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(Terrain.Patch.VERTEX_COUNT);
         IntBuffer indexBuffer = BufferUtils.createIntBuffer(Terrain.Patch.INDEX_COUNT);
@@ -89,55 +92,34 @@ public class TerrainPipeline extends BasicPipeline<Terrain> {
         buffer.attribute((FloatBuffer)vertexBuffer.flip(), 2);
         
         buffer.unbind();
-        
-        return this;
+
     }
 
     @Override
-    public void render(Terrain terrain) throws Exception {
-        
-        int row = (int)Math.floor(player.position.x/((Terrain.Patch.WIDTH)*terrain.scale));
-        int col = (int)Math.floor((player.position.z+10f)/((Terrain.Patch.WIDTH)*terrain.scale));
-        
-        //System.out.println("row="+row+", col="+col+", x="+player.position.x+", z="+player.position.z);
+    public void render() throws Exception {
         
         enable();
+        
+        for(Terrain.Patch patch : terrain.region(player.position.x, player.position.z)) {
+          
+            program.bindUniform("camera").setMatrix4fv(world);
+            program.bindUniform("transform").setMatrix4fv(patch);
+            program.bindUniform("sky_color").set3f(world.sky.color.r, world.sky.color.g, world.sky.color.b);
+            program.bindUniform("patch_color").set3f(((float)patch.x/terrain.rows), ((float)patch.y/terrain.columns), 0f);
 
-        for(int x = -1; x < 2; x++) {
-            
-            int patchX = row + x;
-            
-            if(patchX < 0 || patchX >= terrain.rows)
-                continue;
-            
-            for(int y = -1; y < 2; y++) {
-                
-                int patchY = col + y;
-                
-                if(patchY < 0 || patchY >= terrain.columns)
-                    continue;
-                
-                Terrain.Patch patch = terrain.grid[patchX][patchY];
-                
-                program.bindUniform("camera").setMatrix4fv(world);
-                program.bindUniform("transform").setMatrix4fv(patch);
-                program.bindUniform("sky_color").set3f(world.sky.color.r, world.sky.color.g, world.sky.color.b);
-                program.bindUniform("patch_color").set3f(((float)patchX/terrain.rows)+.1f, ((float)patchY/terrain.columns)+.1f, 0f);
+            if(patch.heightmap != null) {
 
-                if(patch.heightmap != null) {
-                    
-                    glActiveTexture(GL_TEXTURE0 + 0);
-                    glBindTexture(GL_TEXTURE_2D, patch.heightmap.id);
-                    
-                    program.bindUniform("use_hmap").setBool(true);
-                    program.bindUniform("hmap").set1i(0);
-                    
-                } else {
-                    program.bindUniform("use_hmap").setBool(false);
-                }
-                
-                glDrawElements(GL_TRIANGLES, Terrain.Patch.INDEX_COUNT, GL_UNSIGNED_INT, 0);
+                glActiveTexture(GL_TEXTURE0 + 0);
+                glBindTexture(GL_TEXTURE_2D, patch.heightmap.id);
+
+                program.bindUniform("use_hmap").setBool(true);
+                program.bindUniform("hmap").set1i(0);
+
+            } else {
+                program.bindUniform("use_hmap").setBool(false);
             }
+
+            glDrawElements(GL_TRIANGLES, Terrain.Patch.INDEX_COUNT, GL_UNSIGNED_INT, 0);
         }
 
         disable();

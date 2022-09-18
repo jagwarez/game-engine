@@ -29,7 +29,7 @@ public class SkyboxSplitter {
     }
     
     public static void main(String[] args) throws Exception {
-        File skyboxDir = new File("C:\\Development\\skyboxes\\skybox1\\");
+        File skyboxDir = new File("C:\\Development\\Java\\Projects\\game-engine\\Game Engine\\games\\hello\\assets\\textures\\skybox3");
         BufferedImage image = ImageIO.read(new File(skyboxDir, "skybox.png"));
         int tileWidth = image.getWidth()/4;
         int tileHeight = image.getHeight()/3;

@@ -31,12 +31,13 @@ public class TestGame extends Game {
         
         File assetsDir = new File("games/hello/assets");
         
-        world.sky.textures[Sky.RIGHT] = new Texture(new File(assetsDir, "textures/skybox/right.png"));
-        world.sky.textures[Sky.LEFT] = new Texture(new File(assetsDir, "textures/skybox/left.png"));
-        world.sky.textures[Sky.TOP] = new Texture(new File(assetsDir, "textures/skybox/top.png"));
-        world.sky.textures[Sky.BOTTOM] = new Texture(new File(assetsDir, "textures/skybox/bottom.png"));
-        world.sky.textures[Sky.FRONT] = new Texture(new File(assetsDir, "textures/skybox/front.png"));
-        world.sky.textures[Sky.BACK] = new Texture(new File(assetsDir, "textures/skybox/back.png"));
+        String skybox = "skybox2";
+        world.sky.textures[Sky.RIGHT] = new Texture(new File(assetsDir, "textures/"+skybox+"/right.png"));
+        world.sky.textures[Sky.LEFT] = new Texture(new File(assetsDir, "textures/"+skybox+"/left.png"));
+        world.sky.textures[Sky.TOP] = new Texture(new File(assetsDir, "textures/"+skybox+"/top.png"));
+        world.sky.textures[Sky.BOTTOM] = new Texture(new File(assetsDir, "textures/"+skybox+"/bottom.png"));
+        world.sky.textures[Sky.FRONT] = new Texture(new File(assetsDir, "textures/"+skybox+"/front.png"));
+        world.sky.textures[Sky.BACK] = new Texture(new File(assetsDir, "textures/"+skybox+"/back.png"));
         
         world.terrain.grid[0][0].heightmap = new Texture(new File(assetsDir, "terrain/heightmap1.png"));
         world.terrain.grid[0][1].heightmap = new Texture(new File(assetsDir, "terrain/heightmap.png"));

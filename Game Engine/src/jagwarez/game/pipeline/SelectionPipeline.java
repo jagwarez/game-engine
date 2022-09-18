@@ -4,10 +4,9 @@
  */
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Game;
+import jagwarez.game.Program;
 import jagwarez.game.Shader;
 import jagwarez.game.Window;
-import jagwarez.game.World;
 import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -15,19 +14,22 @@ import static org.lwjgl.opengl.GL30.*;
  *
  * @author jacob
  */
-public class SelectionPipeline extends BasicPipeline<World> {
+public class SelectionPipeline extends PrerenderPipeline {
     
     private final Window window;
+    protected final Program program;
+    
     private int fboId = -1;
     private int objTextureId = -1;
     private int depthTextureId = -1;
     
-    public SelectionPipeline(Game game) {
-        this.window = game.window;
+    public SelectionPipeline(Window window) {
+        this.window = window;
+        this.program = new Program();
     }
     
     @Override
-    public SelectionPipeline load() throws Exception {
+    public void load() throws Exception {
         
         fboId = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fboId);
@@ -53,16 +55,19 @@ public class SelectionPipeline extends BasicPipeline<World> {
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         
-        program.bindShader(new Shader("jagwarez/game/pipeline/program/prerender/vs.glsl", Shader.Type.VERTEX));
-        program.bindShader(new Shader("jagwarez/game/pipeline/program/prerender/fs.glsl", Shader.Type.FRAGMENT));
+        program.bindShader(new Shader("jagwarez/game/pipeline/program/select/vs.glsl", Shader.Type.VERTEX));
+        program.bindShader(new Shader("jagwarez/game/pipeline/program/select/fs.glsl", Shader.Type.FRAGMENT));
         program.bindAttribute(0, "position");
         program.bindFragment(0, "color");
-        
-        return this;
     }
 
     @Override
-    public void render(World asset) throws Exception {
+    public void render() throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void destroy() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
