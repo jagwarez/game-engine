@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package jagwarez.game;
 
 import jagwarez.game.asset.Color;
@@ -17,8 +13,8 @@ public class Sky extends Identity {
     public static final int LEFT = 1;
     public static final int TOP = 2;
     public static final int BOTTOM = 3;
-    public static final int BACK = 4;
-    public static final int FRONT = 5;  
+    public static final int FRONT = 4;
+    public static final int BACK = 5;  
     
     public static final float SIZE = Terrain.Patch.WIDTH;
     public static final float[] SKYBOX = {         

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package jagwarez.game;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -13,9 +9,15 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Keyboard {
     
     private final Window window;
-    
+
     public Keyboard(Window window) { 
         this.window = window;
+    }
+    
+    protected void init() {
+        glfwSetKeyCallback(window.id, (win, key, code, action, mods) -> {
+            
+        });
     }
     
     public boolean pressed(Key key) {
@@ -152,4 +154,5 @@ public class Keyboard {
         protected int code;
         private Key(int code) { this.code = code; }
     }
+    
 }

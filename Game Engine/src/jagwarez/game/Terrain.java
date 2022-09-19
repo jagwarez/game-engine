@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package jagwarez.game;
 
 import jagwarez.game.asset.Texture;
@@ -11,7 +6,7 @@ import java.util.List;
 
 /**
  *
- * @author Jake
+ * @author jacob
  */
 public class Terrain {
     
@@ -21,7 +16,7 @@ public class Terrain {
     public int rows, columns;
     
     public Terrain() {
-        this(9, 9);
+        this(12, 12);
     }
     
     public Terrain(int rows, int columns) {

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package jagwarez.game;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -13,7 +8,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
  *
- * @author Jake
+ * @author jacob
  */
 public class Window {
     

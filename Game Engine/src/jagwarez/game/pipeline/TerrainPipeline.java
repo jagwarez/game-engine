@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package jagwarez.game.pipeline;
 
 import jagwarez.game.Game;
@@ -49,24 +45,24 @@ public class TerrainPipeline extends RenderPipeline {
         
         FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(Terrain.Patch.VERTEX_COUNT);
         IntBuffer indexBuffer = BufferUtils.createIntBuffer(Terrain.Patch.INDEX_COUNT);
-        int vertexRowCount = (Terrain.Patch.SIZE);
+        int vertexCount = (Terrain.Patch.SIZE);
         
-        for(int x = 0; x < vertexRowCount; x++) {
-            for(int z = 0; z < vertexRowCount; z++) {
+        for(int x = 0; x < vertexCount; x++) {
+            for(int z = 0; z < vertexCount; z++) {
                 
-                vertexBuffer.put(z);
                 vertexBuffer.put(x);
+                vertexBuffer.put(z);
                             
                 if(x > 0 && z > 0) {
-
-                    indexBuffer.put((z-1) * vertexRowCount + (x-1));
-                    indexBuffer.put(z * vertexRowCount + (x-1));
-                    indexBuffer.put(z * vertexRowCount + x);
                     
-                    indexBuffer.put(z * vertexRowCount + x);
-                    indexBuffer.put((z-1) * vertexRowCount + x);
-                    indexBuffer.put((z-1) * vertexRowCount + (x-1));
-
+                    indexBuffer.put(x * vertexCount + z);
+                    indexBuffer.put(x * vertexCount + (z-1));
+                    indexBuffer.put((x-1) * vertexCount + (z-1));
+                    
+                    indexBuffer.put((x-1) * vertexCount + (z-1));
+                    indexBuffer.put((x-1) * vertexCount + z);
+                    indexBuffer.put(x * vertexCount + z);
+                    
                 }
             }
         }

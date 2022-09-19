@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import jagwarez.game.Game;
 import jagwarez.game.Keyboard.Key;
 import jagwarez.game.Mouse.Button;
@@ -17,7 +11,7 @@ import java.io.File;
 
 /**
  *
- * @author Jake
+ * @author jacob
  */
 public class TestGame extends Game {
     
@@ -39,8 +33,9 @@ public class TestGame extends Game {
         world.sky.textures[Sky.FRONT] = new Texture(new File(assetsDir, "textures/"+skybox+"/front.png"));
         world.sky.textures[Sky.BACK] = new Texture(new File(assetsDir, "textures/"+skybox+"/back.png"));
         
-        world.terrain.grid[0][0].heightmap = new Texture(new File(assetsDir, "terrain/heightmap1.png"));
-        world.terrain.grid[0][1].heightmap = new Texture(new File(assetsDir, "terrain/heightmap.png"));
+        for(int row = 0; row < 4; row++)
+            for(int col = 0; col < 4; col++)
+                world.terrain.grid[row][col].heightmap = new Texture(new File(assetsDir, "terrain/"+(row)+"-"+(col)+".png"));
         
         Model model = new ColladaReader(new File(assetsDir, "models/thinmatrix/model.dae")).read();
         assets.models.add(model);
@@ -98,7 +93,7 @@ public class TestGame extends Game {
 
         if(mouse.pressed(Button.RIGHT)) {
             //world.player.rotation.x += mouse.y() >= window.height()/2 ? 1f : -1f;
-            world.player.rotation.y += mouse.x() >= window.width()/2 ? -1f : 1f;
+            world.camera.rotation.y += mouse.x() >= window.width()/2 ? .5f : -.5f;
         }
         
         world.player.position.x += fx; //mouse.x() >= window.width()/2 ? .3f : -.3f;

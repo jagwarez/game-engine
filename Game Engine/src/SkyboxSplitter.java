@@ -1,14 +1,9 @@
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 /**
  *
  * @author jacob
@@ -17,20 +12,17 @@ public class SkyboxSplitter {
     
     public static final Map<Integer,String> tiles = new HashMap<>();
     
-    static {
-        
+    static {   
         tiles.put(1, "top");
         tiles.put(4, "right");
         tiles.put(5, "back");
         tiles.put(6, "left");
         tiles.put(7, "front");
-        tiles.put(9, "bottom");
-        
+        tiles.put(9, "bottom");  
     }
     
     public static void main(String[] args) throws Exception {
-        File skyboxDir = new File("C:\\Development\\Java\\Projects\\game-engine\\Game Engine\\games\\hello\\assets\\textures\\skybox3");
-        BufferedImage image = ImageIO.read(new File(skyboxDir, "skybox.png"));
+        BufferedImage image = ImageIO.read(new File(args[0]));
         int tileWidth = image.getWidth()/4;
         int tileHeight = image.getHeight()/3;
         
@@ -40,7 +32,7 @@ public class SkyboxSplitter {
                 
                 if(tiles.containsKey(tileIndex)) {
                     BufferedImage tile = image.getSubimage(tileX*tileWidth, tileY*tileHeight, tileWidth, tileHeight);
-                    ImageIO.write(tile, "png", new File(skyboxDir, tiles.get(tileIndex)+".png"));
+                    ImageIO.write(tile, "png", new File(tiles.get(tileIndex)+".png"));
                 }
             }
         }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package jagwarez.game;
 
 import org.lwjgl.glfw.*;
@@ -10,7 +5,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 /**
  *
- * @author Jake
+ * @author jacob
  */
 public abstract class Game implements AutoCloseable {
     
@@ -63,6 +58,7 @@ public abstract class Game implements AutoCloseable {
         
         window.init();
         mouse.init();
+        keyboard.init();
         graphics.init();
         physics.init();
         
