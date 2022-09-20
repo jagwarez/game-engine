@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL11.GL_REPEAT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
@@ -21,6 +20,7 @@ import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
@@ -52,7 +52,8 @@ public class TerrainPipeline extends RenderPipeline {
                 
                 vertexBuffer.put(x);
                 vertexBuffer.put(z);
-                            
+                //System.out.println("x="+x+":"+(1f-(float)((float)x/(float)Terrain.Patch.WIDTH)));
+                //System.out.println("z="+z+":"+(1f-(float)((float)z/(float)Terrain.Patch.WIDTH)));
                 if(x > 0 && z > 0) {
                     
                     indexBuffer.put(x * vertexCount + z);
@@ -75,8 +76,8 @@ public class TerrainPipeline extends RenderPipeline {
         Map<Integer,Integer> parameters = new HashMap<>();
         parameters.put(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         parameters.put(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        parameters.put(GL_TEXTURE_WRAP_S, GL_REPEAT);
-        parameters.put(GL_TEXTURE_WRAP_T, GL_REPEAT);
+        parameters.put(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        parameters.put(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         
         for(int row = 0; row < world.terrain.rows; row++)
             for(int col = 0; col < world.terrain.columns; col++)
