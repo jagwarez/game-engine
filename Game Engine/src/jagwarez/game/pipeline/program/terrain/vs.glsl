@@ -16,7 +16,7 @@ uniform sampler2D hmap;
 void main(void) {
     
     float height = use_hmap == true ? texture(hmap, 1-(position.xy/383)).r : 0;
-    vec4 world_pos = transform * vec4(position.x, height*50, position.y, 1.0);
+    vec4 world_pos = transform * vec4(position.x, height*80, position.y, 1.0);
    
     camera_vec = (inverse(camera)*vec4(0,0,0,1)).xyz - world_pos.xyz;
 

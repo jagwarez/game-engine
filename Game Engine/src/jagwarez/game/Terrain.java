@@ -65,6 +65,35 @@ public class Terrain {
         return region;
     }
     
+    public List<Patch> region_new(float x, float y) {
+        List<Patch> region = new ArrayList<>();
+        Patch center = patch(x, y);
+        
+        int startX = (x%Patch.WIDTH/Patch.WIDTH) % 1f > .5f ? center.row : center.row-1;
+        int startY = (y%Patch.WIDTH/Patch.WIDTH) % 1f > .5f ? center.column : center.column-1;
+        System.out.println("x="+x+":"+startX);
+        for(int row = 0; row < 2; row++) {
+            
+            int patchX = startX + row;
+            
+            if(patchX < 0 || patchX >= rows)
+                continue;
+            
+            for(int col = 0; col < 2; col++) {
+                
+                int patchY = startY + col;
+                
+                if(patchY < 0 || patchY >= columns)
+                    continue;
+                
+                System.out.println("adding "+patchX+":"+patchY);
+                region.add(grid[patchX][patchY]);
+            }
+        }
+        
+        return region;
+    }
+    
     public static class Patch extends Identity {
         
         public static final int SIZE = 384;
