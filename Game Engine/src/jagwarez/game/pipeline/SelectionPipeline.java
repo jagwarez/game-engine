@@ -1,8 +1,9 @@
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Program;
-import jagwarez.game.Shader;
-import jagwarez.game.Window;
+import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Program;
+import jagwarez.game.engine.Shader;
+import jagwarez.game.engine.Window;
 import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -10,18 +11,23 @@ import static org.lwjgl.opengl.GL30.*;
  *
  * @author jacob
  */
-public class SelectionPipeline extends PrerenderPipeline {
+public class SelectionPipeline extends RenderPipeline {
     
-    private final Window window;
+    
     protected final Program program;
+    private Window window;
     
     private int fboId = -1;
     private int objTextureId = -1;
     private int depthTextureId = -1;
     
-    public SelectionPipeline(Window window) {
-        this.window = window;
+    public SelectionPipeline() {
         this.program = new Program();
+    }
+    
+    @Override
+    public void init(Game game) throws Exception {
+        window = game.window;
     }
     
     @Override

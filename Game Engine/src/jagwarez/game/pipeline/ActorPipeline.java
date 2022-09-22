@@ -1,15 +1,16 @@
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Actor;
-import jagwarez.game.Game;
-import jagwarez.game.Shader;
-import jagwarez.game.asset.Bone;
-import jagwarez.game.asset.Color;
-import jagwarez.game.asset.Effect;
-import jagwarez.game.asset.Mesh;
-import jagwarez.game.asset.Model;
-import jagwarez.game.asset.Texture;
-import jagwarez.game.asset.Vertex;
+import jagwarez.game.engine.Actor;
+import jagwarez.game.engine.Assets;
+import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Shader;
+import jagwarez.game.asset.model.Bone;
+import jagwarez.game.asset.model.Color;
+import jagwarez.game.asset.model.Effect;
+import jagwarez.game.asset.model.Mesh;
+import jagwarez.game.asset.model.Model;
+import jagwarez.game.asset.model.Texture;
+import jagwarez.game.asset.model.Vertex;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -36,42 +37,48 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  */
 public class ActorPipeline extends RenderPipeline {
     
-    private final Actor player;
-    private final List<Actor> actors;
-    private final List<Model> models;
+    private Assets assets;
+    private Actor player;
+    private List<Actor> actors;
+    private int vertices;
     
-    public ActorPipeline(Game game) {   
-        this.player = game.world.player;
-        this.actors = game.world.actors;
-        this.models = game.assets.models;   
+    @Override
+    public void init(Game game) throws Exception {
+        
+        super.init(game);
+        
+        assets = game.assets;
+        player = game.world.player;
+        actors = game.world.actors;
+    
     }
     
     @Override
     public void load() throws Exception {
         
-        List<Model> animations = new ArrayList<>();
-        int vertexCount = 0;
+        List<Model> models = new ArrayList<>();
+        int vertices = 0;
         
-        for(Model model : models) {
+        for(Model model : assets.models) {
             
             if(!model.animated())
                 continue;
             
-            animations.add(model);
+            models.add(model);
             
             for(Mesh mesh : model.meshes.values())
                 for(Mesh.Group group : mesh.groups)
-                    vertexCount += group.vertices.size();
+                    vertices += group.vertices.size();
         }
-        
-        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
-        FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
-        FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(vertexCount*2);
-        IntBuffer boneBuffer = BufferUtils.createIntBuffer(vertexCount*4);
-        FloatBuffer weightBuffer = BufferUtils.createFloatBuffer(vertexCount*4);
+   
+        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertices*3);
+        FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(vertices*3);
+        FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(vertices*2);
+        IntBuffer boneBuffer = BufferUtils.createIntBuffer(vertices*4);
+        FloatBuffer weightBuffer = BufferUtils.createFloatBuffer(vertices*4);
         int groupOffset = 0;
         
-        for(Model model : animations) {
+        for(Model model : models) {
             
             for(Mesh mesh : model.meshes.values()) {
                 

@@ -1,10 +1,11 @@
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Game;
-import jagwarez.game.Shader;
-import jagwarez.game.asset.Mesh;
-import jagwarez.game.asset.Model;
-import jagwarez.game.asset.Vertex;
+import jagwarez.game.engine.Assets;
+import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Shader;
+import jagwarez.game.asset.model.Mesh;
+import jagwarez.game.asset.model.Model;
+import jagwarez.game.asset.model.Vertex;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,36 +17,40 @@ import org.lwjgl.BufferUtils;
  */
 public class EntityPipeline extends RenderPipeline {
     
-    private final List<Model> models;
+    private Assets assets;
     
-    public EntityPipeline(Game game) {
-        models = game.assets.models;
+    @Override
+    public void init(Game game) throws Exception {
+        
+        super.init(game);
+
+        assets = game.assets;
     }
     
     @Override
     public void load() throws Exception {
         
-        List<Model> entities = new ArrayList<>();
-        int vertexCount = 0;
+        List<Model> models = new ArrayList<>();
+        int vertices = 0;
         
-        for(Model model : models) {
+        for(Model model : assets.models) {
             
             if(model.animated())
                 continue;
             
-            entities.add(model);
+            models.add(model);
             
             for(Mesh mesh : model.meshes.values())
                 for(Mesh.Group group : mesh.groups)
-                    vertexCount += group.vertices.size();
+                    vertices += group.vertices.size();
         }
         
-        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
-        FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(vertexCount*3);
-        FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(vertexCount*2);
+        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertices*3);
+        FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(vertices*3);
+        FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(vertices*2);
         int groupOffset = 0;
         
-        for(Model model : entities) {
+        for(Model model : models) {
 
             for(Mesh mesh : model.meshes.values()) {
 

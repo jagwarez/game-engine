@@ -1,10 +1,10 @@
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Game;
-import jagwarez.game.Shader;
-import jagwarez.game.Sky;
-import jagwarez.game.World;
-import jagwarez.game.asset.Texture;
+import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Shader;
+import jagwarez.game.engine.Sky;
+import jagwarez.game.engine.World;
+import jagwarez.game.asset.model.Texture;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -39,12 +39,16 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
  */
 public class SkyPipeline extends RenderPipeline {
     
-    private final World world;
-    private final Sky sky;
+    private World world;
+    private Sky sky;
     
-    public SkyPipeline(Game game) {
-        this.world = game.world;
-        this.sky = world.sky;
+    @Override
+    public void init(Game game) throws Exception {
+        
+        super.init(game);
+        
+        world = game.world;
+        sky = world.sky;
     }
 
     @Override

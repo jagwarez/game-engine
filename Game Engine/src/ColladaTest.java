@@ -1,12 +1,12 @@
-import jagwarez.game.asset.Animation;
-import jagwarez.game.asset.Bone;
-import jagwarez.game.asset.Channel;
-import jagwarez.game.asset.Effect;
-import jagwarez.game.asset.Keyframe;
-import jagwarez.game.asset.Mesh;
-import jagwarez.game.asset.Model;
-import jagwarez.game.asset.Vertex;
-import jagwarez.game.asset.reader.ColladaReader;
+import jagwarez.game.asset.model.Animation;
+import jagwarez.game.asset.model.Bone;
+import jagwarez.game.asset.model.Channel;
+import jagwarez.game.asset.model.Effect;
+import jagwarez.game.asset.model.Keyframe;
+import jagwarez.game.asset.model.Mesh;
+import jagwarez.game.asset.model.Model;
+import jagwarez.game.asset.model.Vertex;
+import jagwarez.game.asset.model.reader.ColladaReader;
 import java.io.File;
 import java.util.List;
 

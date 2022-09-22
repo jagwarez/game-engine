@@ -1,10 +1,10 @@
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Game;
-import jagwarez.game.Player;
-import jagwarez.game.Shader;
-import jagwarez.game.Terrain;
-import jagwarez.game.World;
+import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Player;
+import jagwarez.game.engine.Shader;
+import jagwarez.game.engine.Terrain;
+import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
@@ -31,14 +31,18 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  */
 public class TerrainPipeline extends RenderPipeline {
     
-    private final World world;
-    private final Player player;
-    private final Terrain terrain;
+    private World world;
+    private Player player;
+    private Terrain terrain;
     
-    public TerrainPipeline(Game game) {
-        this.world = game.world;
-        this.player = world.player;
-        this.terrain = world.terrain;
+    @Override
+    public void init(Game game) throws Exception {
+        
+        super.init(game);
+        
+        world = game.world;
+        player = world.player;
+        terrain = world.terrain;
     }
     
     @Override

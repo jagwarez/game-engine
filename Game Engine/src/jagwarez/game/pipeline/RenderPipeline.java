@@ -1,9 +1,9 @@
 package jagwarez.game.pipeline;
 
-import jagwarez.game.Buffer;
-import jagwarez.game.Pipeline;
-import jagwarez.game.Program;
-import jagwarez.game.asset.Texture;
+import jagwarez.game.engine.Buffer;
+import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Program;
+import jagwarez.game.asset.model.Texture;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -24,7 +24,7 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
  *
  * @author jacob
  */
-public abstract class RenderPipeline implements Pipeline {
+public abstract class RenderPipeline implements SharedPipeline {
     
     public final Program program;
     public final Buffer buffer;
@@ -32,14 +32,17 @@ public abstract class RenderPipeline implements Pipeline {
     protected boolean enabled;
     
     public RenderPipeline() {
-        this.program = new Program();
-        this.buffer = new Buffer();
         this.textures = new HashMap<>();
         this.enabled = false;
+        this.program = new Program();
+        this.buffer = new Buffer();
+ 
+        programs.put(getClass(), program);
+        buffers.put(getClass(), buffer);
     }
     
     @Override
-    public void init() throws Exception {
+    public void init(Game game) throws Exception {
         program.create();
         buffer.create();
     }

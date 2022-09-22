@@ -1,12 +1,13 @@
-import jagwarez.game.Game;
-import jagwarez.game.Keyboard.Key;
-import jagwarez.game.Mouse.Button;
-import jagwarez.game.Settings;
-import jagwarez.game.Sky;
-import jagwarez.game.Terrain;
-import jagwarez.game.asset.Model;
-import jagwarez.game.asset.Texture;
-import jagwarez.game.asset.reader.ColladaReader;
+import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Keyboard.Key;
+import jagwarez.game.engine.Mouse.Button;
+import jagwarez.game.engine.Settings;
+import jagwarez.game.engine.Sky;
+import jagwarez.game.engine.Terrain;
+import jagwarez.game.asset.model.Model;
+import jagwarez.game.asset.model.Texture;
+import jagwarez.game.asset.model.reader.ColladaReader;
+import jagwarez.game.pipeline.GraphicsPipeline;
 import java.io.File;
 
 /**
@@ -21,7 +22,10 @@ public class TestGame extends Game {
     
     @Override
     public void load() throws Exception {
+        
         System.out.println("Loading game... ");
+        
+        pipelines.add(new GraphicsPipeline());
         
         File assetsDir = new File("games/hello/assets");
         
