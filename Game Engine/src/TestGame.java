@@ -90,7 +90,7 @@ public class TestGame extends Game {
 
         if(mouse.pressed(Button.RIGHT)) {
             //world.player.rotation.x += mouse.y() >= window.height()/2 ? 1f : -1f;
-            world.camera.rotation.y += mouse.x() >= window.width()/2 ? .5f : -.5f;
+            world.player.rotation.y += mouse.x() >= window.width()/2 ? -.5f : .5f;
         }
         
         world.player.position.x += fx; //mouse.x() >= window.width()/2 ? .3f : -.3f;
