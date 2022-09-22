@@ -15,6 +15,10 @@ public class Camera extends Entity {
     
     public void follow(Entity target) {
         this.tether = new Tether(target);
+        //position.x = target.position.x;
+        //position.y = target.position.y + .5f;
+        //position.z = target.position.z - tether.distance;
+
     }
     
     @Override
@@ -22,16 +26,9 @@ public class Camera extends Entity {
         
         identity();
         
-        if(tether != null) {
-            Entity target = tether.target;
-            position.x = target.position.x;
-            position.y = target.position.y + .1f;
-            position.z = target.position.z - tether.distance;
-        }
-        
         scale(zoom);
-        rotateXYZ((float)Math.toRadians(rotation.x), (float)Math.toRadians(rotation.y), (float)Math.toRadians(rotation.z));
-        translate(-position.x, -position.y, -position.z);
+        rotateXYZ((float)Math.toRadians(rotation.x), (float)Math.toRadians(rotation.y+180), (float)Math.toRadians(rotation.z));
+        translate(0, -(tether.target.position.y+.1f), tether.distance);
         
         return this;
     }

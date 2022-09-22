@@ -16,7 +16,7 @@ public class Entity extends Identity {
     public final Vector3f direction;
     
     public Model model = null;
-    private boolean updated = false;
+    protected boolean updated = false;
 
     public Entity(String name) {
         this(name, null);

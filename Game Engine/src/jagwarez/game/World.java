@@ -36,8 +36,14 @@ public class World extends Matrix4f {
         mul(camera.update());
         
         sky.identity();
-        sky.translate(camera.position.x, 0f, camera.position.z);
+        sky.m31(-20f);
         mul(sky, sky);
+        
+        float x = 1f-(player.position.x % 1f);
+        float z = 1f-(player.position.z % 1f);
+        
+        terrain.identity();
+        terrain.translate(((float)-Terrain.OFFSET)+x, 0f, ((float)-Terrain.OFFSET)+z);
         
         mul(player.update(), player);
         player.animate();

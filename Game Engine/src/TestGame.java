@@ -33,21 +33,18 @@ public class TestGame extends Game {
         world.sky.textures[Sky.FRONT] = new Texture(new File(assetsDir, "textures/"+skybox+"/front.png"));
         world.sky.textures[Sky.BACK] = new Texture(new File(assetsDir, "textures/"+skybox+"/back.png"));
         
-        for(int row = 0; row < 4; row++)
-            for(int col = 0; col < 4; col++)
-                world.terrain.grid[row][col].heightmap = new Texture(new File(assetsDir, "terrain/"+(row)+"-"+(col)+".png"));
+        world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain.png"));
         
         Model model = new ColladaReader(new File(assetsDir, "models/thinmatrix/model.dae")).read();
         assets.models.add(model);
         
         world.player.model = model;
-        world.player.position.x = Terrain.Patch.WIDTH/2;
-        world.player.position.z = Terrain.Patch.WIDTH/2;
-        world.player.rotation.y = 180;
+        world.player.position.x = Terrain.WIDTH/2;
+        world.player.position.z = Terrain.WIDTH/2;
+        world.player.position.y = 100f;
+        //world.player.rotation.y = 180;
         
-        System.out.println("width="+world.terrain.width);
-        
-        world.camera.rotation.y = 180;
+        //world.camera.rotation.y = 180;
         world.camera.follow(world.player);
     }
     
@@ -99,7 +96,9 @@ public class TestGame extends Game {
         world.player.position.x += fx; //mouse.x() >= window.width()/2 ? .3f : -.3f;
         world.player.position.y += fy;
         world.player.position.z += fz;
-       
+        
+        //System.out.println("Player: x="+world.player.position.x+", z="+world.player.position.z);
+            
     }
     
     public static void main(String[] args) throws Exception {

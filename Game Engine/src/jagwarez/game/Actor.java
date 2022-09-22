@@ -18,19 +18,19 @@ public class Actor extends Entity {
     }
     
     public void forward() {
-        position.sub(direction().mul(speed));
-    }
-    
-    public void backward() {
         position.add(direction().mul(speed));
     }
     
+    public void backward() {
+        position.sub(direction().mul(speed));
+    }
+    
     public void right() {
-        position.sub(direction().cross(World.UP).normalize().mul(speed));
+        position.add(direction().cross(World.UP).normalize().mul(speed));
     }
     
     public void left() {
-        position.add(direction().cross(World.UP).normalize().mul(speed));
+        position.sub(direction().cross(World.UP).normalize().mul(speed));
     }
     
     public void animation(String name) {

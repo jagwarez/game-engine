@@ -8,6 +8,6 @@ uniform mat4 transform;
 
 void main()
 {
-    texcoord = position/384;
+    texcoord = position/511;
     gl_Position = transform * vec4(position, 1.0);
 }

@@ -28,6 +28,10 @@ public class Keyboard {
         return glfwGetKey(window.id, key.code) == GLFW_RELEASE;
     }
     
+    public boolean down(Key key) {
+        return glfwGetKey(window.id, key.code) == GLFW_REPEAT;
+    }
+    
     public enum Key {
         _SPACE(GLFW_KEY_SPACE),
         _APOSTROPHE(GLFW_KEY_APOSTROPHE),

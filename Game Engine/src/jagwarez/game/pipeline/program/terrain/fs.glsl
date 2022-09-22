@@ -2,6 +2,7 @@
 
 in vec3 camera_vec;
 in float visibility;
+in float height;
 
 out vec4 color;
 
