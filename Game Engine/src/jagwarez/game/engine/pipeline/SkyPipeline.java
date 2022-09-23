@@ -1,10 +1,10 @@
-package jagwarez.game.pipeline;
+package jagwarez.game.engine.pipeline;
 
+import jagwarez.game.asset.model.Texture;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Shader;
 import jagwarez.game.engine.Sky;
 import jagwarez.game.engine.World;
-import jagwarez.game.asset.model.Texture;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -81,8 +81,8 @@ public class SkyPipeline extends RenderPipeline {
         
         glBindTexture(GL_TEXTURE_2D, 0);
         
-        program.bindShader(new Shader("jagwarez/game/pipeline/program/skybox/vs.glsl", Shader.Type.VERTEX));
-        program.bindShader(new Shader("jagwarez/game/pipeline/program/skybox/fs.glsl", Shader.Type.FRAGMENT));
+        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/skybox/vs.glsl", Shader.Type.VERTEX));
+        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/skybox/fs.glsl", Shader.Type.FRAGMENT));
         program.bindAttribute(0, "position");
         program.bindFragment(0, "color");
 
@@ -96,8 +96,9 @@ public class SkyPipeline extends RenderPipeline {
     @Override
     public void render() throws Exception {
         
-        enable();
-        
+        program.enable();
+        buffer.bind();
+
         program.bindUniform("transform").setMatrix4fv(sky);
         program.bindUniform("sky_color").set3f(world.sky.color.r, world.sky.color.g, world.sky.color.b);
            
@@ -106,7 +107,8 @@ public class SkyPipeline extends RenderPipeline {
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glDepthFunc(GL_LESS);
         
-        disable();           
+        buffer.unbind();
+        program.disable();           
     }
 
 }

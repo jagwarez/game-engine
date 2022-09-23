@@ -1,9 +1,5 @@
-package jagwarez.game.pipeline;
+package jagwarez.game.engine.pipeline;
 
-import jagwarez.game.engine.Actor;
-import jagwarez.game.engine.Assets;
-import jagwarez.game.engine.Game;
-import jagwarez.game.engine.Shader;
 import jagwarez.game.asset.model.Bone;
 import jagwarez.game.asset.model.Color;
 import jagwarez.game.asset.model.Effect;
@@ -11,6 +7,10 @@ import jagwarez.game.asset.model.Mesh;
 import jagwarez.game.asset.model.Model;
 import jagwarez.game.asset.model.Texture;
 import jagwarez.game.asset.model.Vertex;
+import jagwarez.game.engine.Actor;
+import jagwarez.game.engine.Assets;
+import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Shader;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -135,8 +135,8 @@ public class ActorPipeline extends RenderPipeline {
             }
         }
 
-        program.bindShader(new Shader("jagwarez/game/pipeline/program/actor/vs.glsl", Shader.Type.VERTEX));
-        program.bindShader(new Shader("jagwarez/game/pipeline/program/actor/fs.glsl", Shader.Type.FRAGMENT));
+        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/actor/vs.glsl", Shader.Type.VERTEX));
+        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/actor/fs.glsl", Shader.Type.FRAGMENT));
         program.bindAttribute(0, "position");
         program.bindAttribute(1, "normal");
         program.bindAttribute(2, "texcoord");
@@ -157,14 +157,17 @@ public class ActorPipeline extends RenderPipeline {
     
     @Override
     public void render() {
-        enable();
+        
+        program.enable();
+        buffer.bind();
         
         render(player);
         
         for(Actor actor : actors)
             render(actor);
         
-        disable();
+        buffer.unbind();
+        program.disable();
     }
     
     private void render(Actor actor) {

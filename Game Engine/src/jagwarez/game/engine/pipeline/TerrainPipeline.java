@@ -1,4 +1,4 @@
-package jagwarez.game.pipeline;
+package jagwarez.game.engine.pipeline;
 
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Player;
@@ -71,8 +71,8 @@ public class TerrainPipeline extends RenderPipeline {
             }
         }
 
-        program.bindShader(new Shader("jagwarez/game/pipeline/program/terrain/vs.glsl", Shader.Type.VERTEX));
-        program.bindShader(new Shader("jagwarez/game/pipeline/program/terrain/fs.glsl", Shader.Type.FRAGMENT));
+        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/terrain/vs.glsl", Shader.Type.VERTEX));
+        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/terrain/fs.glsl", Shader.Type.FRAGMENT));
         program.bindAttribute(0, "position");
         program.bindFragment(0, "color");
         
@@ -96,7 +96,8 @@ public class TerrainPipeline extends RenderPipeline {
     @Override
     public void render() throws Exception {
         
-        enable();
+        program.enable();
+        buffer.bind();
         
         program.bindUniform("camera").setMatrix4fv(world);
         program.bindUniform("transform").setMatrix4fv(terrain);
@@ -122,7 +123,8 @@ public class TerrainPipeline extends RenderPipeline {
 
         glDrawElements(GL_TRIANGLES, Terrain.INDEX_COUNT, GL_UNSIGNED_INT, 0);
         
-        disable();      
+        buffer.unbind();
+        program.disable();     
     }
     
 }

@@ -7,7 +7,7 @@ import jagwarez.game.engine.Terrain;
 import jagwarez.game.asset.model.Model;
 import jagwarez.game.asset.model.Texture;
 import jagwarez.game.asset.model.reader.ColladaReader;
-import jagwarez.game.pipeline.GraphicsPipeline;
+import jagwarez.game.engine.pipeline.GraphicsPipeline;
 import java.io.File;
 
 /**

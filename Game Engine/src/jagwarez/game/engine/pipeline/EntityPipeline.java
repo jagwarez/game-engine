@@ -1,11 +1,11 @@
-package jagwarez.game.pipeline;
+package jagwarez.game.engine.pipeline;
 
-import jagwarez.game.engine.Assets;
-import jagwarez.game.engine.Game;
-import jagwarez.game.engine.Shader;
 import jagwarez.game.asset.model.Mesh;
 import jagwarez.game.asset.model.Model;
 import jagwarez.game.asset.model.Vertex;
+import jagwarez.game.engine.Assets;
+import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Shader;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,9 +77,8 @@ public class EntityPipeline extends RenderPipeline {
             }
         }
 
-        program.bindShader(new Shader("jagware/game/pipeline/program/entity/vs.glsl", Shader.Type.VERTEX));
-        //program.bindShader(new Shader("jagware/game/pipeline/program/model/gs.glsl", Shader.Type.GEOMETRY));
-        program.bindShader(new Shader("jagware/game/pipeline/program/entity/fs.glsl", Shader.Type.FRAGMENT));
+        program.bindShader(new Shader("jagware/game/engine/pipeline/program/entity/vs.glsl", Shader.Type.VERTEX));
+        program.bindShader(new Shader("jagware/game/engine/pipeline/program/entity/fs.glsl", Shader.Type.FRAGMENT));
         program.bindAttribute(0, "position");
         program.bindAttribute(1, "normal");
         program.bindAttribute(2, "texcoord");
@@ -98,7 +97,8 @@ public class EntityPipeline extends RenderPipeline {
     @Override
     public void render() {
         
-        enable();
+        program.enable();
+        buffer.bind();
         
         program.bindUniform("transform").setMatrix4fv(null);
         program.bindUniform("diffuse").set4f(.5f, .5f, .5f, 1.0f);
@@ -106,6 +106,7 @@ public class EntityPipeline extends RenderPipeline {
         //for(Mesh mesh : model.meshes.values())
             //glDrawElements(GL_TRIANGLES, mesh.triangles.size()*3, GL_UNSIGNED_INT, 0);
             
-        disable();
+        buffer.unbind();
+        program.disable();
     }
 }

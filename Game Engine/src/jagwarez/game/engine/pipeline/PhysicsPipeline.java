@@ -1,8 +1,9 @@
-package jagwarez.game.pipeline;
+package jagwarez.game.engine.pipeline;
 
 import jagwarez.game.engine.Buffer;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Program;
+import jagwarez.game.engine.Shader;
 import jagwarez.game.engine.Terrain;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
@@ -35,18 +36,20 @@ public class PhysicsPipeline implements SharedPipeline {
 
     @Override
     public void load() throws Exception {
-        //program.bindShader(new Shader("jagwarez/game/pipeline/program/physics/vs.glsl", Shader.Type.VERTEX));
-        //program.bindShader(new Shader("jagwarez/game/pipeline/program/physics/fs.glsl", Shader.Type.FRAGMENT));
-        //program.bindAttribute(0, "position");
-        //program.bindFragment(0, "color");
+        program.bindShader(new Shader("jagwarez/game/pipeline/program/physics/vs.glsl", Shader.Type.VERTEX));
+        program.bindShader(new Shader("jagwarez/game/pipeline/program/physics/fs.glsl", Shader.Type.FRAGMENT));
+        program.bindAttribute(0, "position");
+        program.bindFragment(0, "color");
     }
 
     @Override
     public void render() throws Exception {
-        //enable();
+        
         if(true) return;
-        //program.bindUniform("patch_color").set3f(((float)patch.row/terrain.rows), ((float)patch.column/terrain.columns), 0f);
-
+        
+        program.enable();
+        buffer.bind();
+        
         if(terrain.heightmap != null) {
             
             //Vector2f offset = new Vector2f((float)Math.floor(player.position.x)-Terrain.OFFSET, (float)Math.floor(player.position.z)-Terrain.OFFSET);
@@ -65,7 +68,8 @@ public class PhysicsPipeline implements SharedPipeline {
 
         glDrawElements(GL_TRIANGLES, Terrain.INDEX_COUNT, GL_UNSIGNED_INT, 0);
         
-        //disable();
+        buffer.unbind();
+        program.disable();
     }
 
     @Override

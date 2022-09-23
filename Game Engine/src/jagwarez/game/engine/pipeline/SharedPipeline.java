@@ -1,4 +1,4 @@
-package jagwarez.game.pipeline;
+package jagwarez.game.engine.pipeline;
 
 import jagwarez.game.engine.Buffer;
 import jagwarez.game.engine.Pipeline;
