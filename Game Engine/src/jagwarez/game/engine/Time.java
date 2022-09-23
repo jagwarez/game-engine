@@ -6,18 +6,18 @@ package jagwarez.game.engine;
  */
 public class Time {
     
-    private float current = 0f;
-    private float previous = 0f;
-    private float elapsed = 0f;
+    private static long current = System.currentTimeMillis();
+    private static long previous = 0l;
+    private static long elapsed = 0l;
     
-    protected void tick() {
+    public static void update() {
         previous = current;
-        current = System.currentTimeMillis()/1000f;
+        current = System.currentTimeMillis();
         elapsed = current-previous;
     }
     
-    public float current() { return current; }
-    public float previous() { return previous; }
-    public float elapsed() { return elapsed; }
+    public static long current() { return current; }
+    public static long previous() { return previous; }
+    public static long elapsed() { return elapsed; }
     
 }

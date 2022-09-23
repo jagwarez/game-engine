@@ -20,18 +20,15 @@ public class Window {
     private boolean visible;
     
     protected Window(Settings settings) {
-        Game.log("Creating window");
-        this.title = settings.title();
-        this.width = settings.width();
-        this.height = settings.height();
-        this.resize = settings.resize();
-        this.visible = settings.visible();
+        title = settings.title();
+        width = settings.width();
+        height = settings.height();
+        resize = settings.resize();
+        visible = settings.visible();
     }
     
     public void init() {
-        
-        Game.log("Initializing window");
-        
+
          // the window will be resizable
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -93,7 +90,6 @@ public class Window {
     }
     
     public void close() {
-        Game.log("Closing window");
         glfwSetWindowShouldClose(id, true);
     }
     
@@ -104,6 +100,5 @@ public class Window {
         glfwTerminate();
         glfwSetErrorCallback(null).free();
         
-        Game.log("Window destroyed");
     }
 }

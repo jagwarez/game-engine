@@ -79,8 +79,7 @@ public class GraphicsPipeline implements Pipeline {
         
         for(Pipeline pipeline : pipelines)
             pipeline.destroy();
-        
-        Game.log("Graphics destroyed");
+
     }
 
 }

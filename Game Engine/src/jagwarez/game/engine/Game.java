@@ -18,41 +18,30 @@ public abstract class Game implements AutoCloseable {
     public final List<Pipeline> pipelines;
     public final Assets assets;
     public final World world;
-    public static long time = System.nanoTime();
     
     private boolean init = false;
     private boolean loaded = false;
     
     public abstract void load() throws Exception;
-    public abstract void loop() throws Exception;
-    
-    public static void log(String log) {
-        System.out.println(log);
-    }
-    
-    public static long time() {
-        return System.currentTimeMillis();
-    }
+    public abstract void update() throws Exception;
     
     public Game() {
         this(new Settings());
     }
     
     public Game(Settings settings) {
-        log("Creating game");
-        this.window = new Window(settings);
-        this.keyboard = new Keyboard(window);
-        this.mouse = new Mouse(window);
-        this.world = new World(window);
-        this.assets = new Assets();
-        this.graphics = new Graphics();
-        this.pipelines = new ArrayList<>();
+        window = new Window(settings);
+        keyboard = new Keyboard(window);
+        mouse = new Mouse(window);
+        world = new World(window);
+        assets = new Assets();
+        graphics = new Graphics();
+        pipelines = new ArrayList<>();
     }
     
     private void init() throws Exception {
         
         if(!init) {
-            log("Initializing game");
 
             if (!glfwInit())
                 throw new IllegalStateException("Unable to initialize GLFW");
@@ -63,7 +52,7 @@ public abstract class Game implements AutoCloseable {
             mouse.init();
             keyboard.init();
 
-            this.init = true;
+            init = true;
         }
     }
     
@@ -87,16 +76,15 @@ public abstract class Game implements AutoCloseable {
             loaded = true; 
         }
         
-        log("Playing game");
-        
         window.show();
         
         do {
+            
             glfwPollEvents();
             
-            time = System.nanoTime();
+            Time.update();
             
-            loop();
+            update();
             
             world.update();
             
@@ -110,7 +98,6 @@ public abstract class Game implements AutoCloseable {
     }
     
     public void stop() {
-        log("Stopping game");
         window.close();
     }
     
@@ -125,7 +112,6 @@ public abstract class Game implements AutoCloseable {
         
         init = loaded = false;
         
-        log("Game closed");
     }
 
 }

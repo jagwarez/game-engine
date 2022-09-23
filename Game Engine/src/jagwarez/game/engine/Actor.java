@@ -15,7 +15,7 @@ public class Actor extends Entity {
     private final Vector3i movement;
     private final Vector3f direction;
     private Animation animation = null;
-    private long time = 0L;
+    private long marker = 0L;
     
     public Actor(String name) {
         super(name);
@@ -67,13 +67,13 @@ public class Actor extends Entity {
     public void animation(String name) {
         if(animation == null || !animation.name.equals(name)) {
             animation = model.animations.get(name);
-            time = Game.time();
+            marker = Time.current();
         }
     }
     
     public void animate() {
         if(model != null && animation != null)
-            model.animate(animation, ((float)(Game.time()-time)/1000f));
+            model.animate(animation, ((float)(Time.current()-marker)/1000f));
     }
     
 }

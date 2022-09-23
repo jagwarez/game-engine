@@ -35,8 +35,7 @@ public class Program {
     private int id;
     private boolean linked = false;
     
-    public void create() {
-        Game.log("Creating program");
+    public void init() {
         id = glCreateProgram(); 
     }
     

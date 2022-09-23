@@ -10,8 +10,8 @@ import jagwarez.game.engine.Program;
  */
 public abstract class RenderPipeline extends TexturePipeline implements SharedPipeline {
     
-    public final Program program;
-    public final Buffer buffer;
+    protected final Program program;
+    protected final Buffer buffer;
     
     public RenderPipeline() {
         
@@ -24,8 +24,8 @@ public abstract class RenderPipeline extends TexturePipeline implements SharedPi
     
     @Override
     public void init(Game game) throws Exception {
-        program.create();
-        buffer.create();
+        program.init();
+        buffer.init();
     }
     
     @Override
