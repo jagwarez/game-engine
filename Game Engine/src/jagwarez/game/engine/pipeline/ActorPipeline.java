@@ -35,7 +35,7 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  *
  * @author jacob
  */
-public class ActorPipeline extends RenderPipeline {
+class ActorPipeline extends RenderPipeline {
     
     private Assets assets;
     private Actor player;

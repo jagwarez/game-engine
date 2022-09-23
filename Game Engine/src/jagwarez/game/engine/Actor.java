@@ -72,8 +72,8 @@ public class Actor extends Entity {
     }
     
     public void animate() {
-        if(model != null && animation != null)
-            model.animate(animation, ((float)(Time.current()-marker)/1000f));
+        if(animation != null)
+            animation.play(((float)(Time.current()-marker)/1000f));
     }
     
 }

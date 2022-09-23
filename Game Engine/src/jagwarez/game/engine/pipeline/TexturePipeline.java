@@ -22,7 +22,7 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
  *
  * @author jacob
  */
-public abstract class TexturePipeline implements Pipeline  {
+abstract class TexturePipeline implements Pipeline  {
     
     private final Map<Integer,Texture> textures;
     

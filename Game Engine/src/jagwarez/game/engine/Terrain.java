@@ -16,9 +16,5 @@ public class Terrain extends Identity {
     
     public Texture heightmap = null;
     public Texture blendmap = null;
-    
-    public Terrain() {
         
-    }
-    
 }

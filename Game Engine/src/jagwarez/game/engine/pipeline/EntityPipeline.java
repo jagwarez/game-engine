@@ -15,7 +15,7 @@ import org.lwjgl.BufferUtils;
  *
  * @author jacob
  */
-public class EntityPipeline extends RenderPipeline {
+class EntityPipeline extends RenderPipeline {
     
     private Assets assets;
     

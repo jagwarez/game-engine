@@ -8,7 +8,7 @@ import jagwarez.game.engine.Program;
  *
  * @author jacob
  */
-public abstract class RenderPipeline extends TexturePipeline implements SharedPipeline {
+abstract class RenderPipeline extends TexturePipeline implements SharedPipeline {
     
     protected final Program program;
     protected final Buffer buffer;

@@ -37,7 +37,7 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
  *
  * @author jacob
  */
-public class SkyPipeline extends RenderPipeline {
+class SkyPipeline extends RenderPipeline {
     
     private World world;
     private Sky sky;

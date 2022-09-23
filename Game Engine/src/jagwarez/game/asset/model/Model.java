@@ -23,12 +23,6 @@ public class Model {
         this.animations = new HashMap<>();
     }
     
-    public void animate(Animation animation, float time) {
-       animation.play(time);
-       if(!bones.isEmpty())
-            bones.get(0).animate();
-    }
-    
     public boolean animated() {
         return !animations.isEmpty();
     }

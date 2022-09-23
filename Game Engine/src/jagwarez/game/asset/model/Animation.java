@@ -21,7 +21,11 @@ public class Animation {
     }
     
     public void play(float time) {
+        
         for(Channel channel : channels.values())
             channel.play(time);
+        
+        if(model.skeletal())
+            model.bones.get(0).animate();
     }
 }
