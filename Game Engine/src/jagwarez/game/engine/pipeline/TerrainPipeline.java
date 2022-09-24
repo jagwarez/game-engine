@@ -7,21 +7,13 @@ import jagwarez.game.engine.Terrain;
 import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.HashMap;
-import java.util.Map;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
@@ -76,14 +68,6 @@ public class TerrainPipeline extends RenderPipeline {
         program.bindAttribute(0, "position");
         program.bindFragment(0, "color");
         
-        Map<Integer,Integer> parameters = new HashMap<>();
-        parameters.put(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        parameters.put(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        parameters.put(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        parameters.put(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        
-        texture(terrain.heightmap, parameters);
-        
         buffer.bind();
         
         buffer.elements((IntBuffer) indexBuffer.flip());
@@ -94,7 +78,7 @@ public class TerrainPipeline extends RenderPipeline {
     }
 
     @Override
-    public void render() throws Exception {
+    public void execute() throws Exception {
         
         program.enable();
         buffer.bind();
@@ -112,7 +96,7 @@ public class TerrainPipeline extends RenderPipeline {
             glActiveTexture(GL_TEXTURE0 + 0);
             glBindTexture(GL_TEXTURE_2D, terrain.heightmap.id);
 
-            program.bindUniform("twidth").set1f(4096);
+            program.bindUniform("twidth").set1f(terrain.heightmap.width);
             program.bindUniform("offset").set2f(offset.x, offset.y);
             program.bindUniform("use_hmap").setBool(true);
             program.bindUniform("hmap").set1i(0);
@@ -122,6 +106,8 @@ public class TerrainPipeline extends RenderPipeline {
         }
 
         glDrawElements(GL_TRIANGLES, Terrain.INDEX_COUNT, GL_UNSIGNED_INT, 0);
+        
+        glBindTexture(GL_TEXTURE_2D, 0);
         
         buffer.unbind();
         program.disable();     

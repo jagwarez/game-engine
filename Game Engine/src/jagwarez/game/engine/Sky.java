@@ -63,6 +63,7 @@ public class Sky extends Identity {
     
     public int id = -1;
     public final Color color = new Color(.2f, .2f, .3f, 1f);
+    public final Texture cubemap = new Texture();
     public final Texture[] textures = new Texture[6];
     
 }

@@ -95,7 +95,7 @@ class EntityPipeline extends RenderPipeline {
     }
     
     @Override
-    public void render() {
+    public void execute() {
         
         program.enable();
         buffer.bind();

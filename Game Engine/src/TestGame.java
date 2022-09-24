@@ -7,7 +7,7 @@ import jagwarez.game.engine.Mouse.Button;
 import jagwarez.game.engine.Settings;
 import jagwarez.game.engine.Sky;
 import jagwarez.game.engine.Terrain;
-import jagwarez.game.engine.pipeline.GraphicsPipeline;
+import jagwarez.game.engine.pipeline.GamePipeline;
 import java.io.File;
 
 /**
@@ -17,13 +17,11 @@ import java.io.File;
 public class TestGame extends Game {
     
     public TestGame() {
-        super(new Settings().title("Test Game").size(1600, 1200));
+        super(new GamePipeline(), new Settings().title("Test Game").size(1600, 1200));
     }
     
     @Override
     public void load() throws Exception {
-        
-        pipelines.add(new GraphicsPipeline());
         
         File assetsDir = new File("games/hello/assets");
         

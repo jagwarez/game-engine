@@ -14,7 +14,6 @@ import jagwarez.game.engine.Shader;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.lwjgl.BufferUtils;
@@ -119,16 +118,17 @@ class ActorPipeline extends RenderPipeline {
                         }
                     }
                     
-                    Map<Integer,Integer> parameters = new HashMap<>();
-                    parameters.put(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                    parameters.put(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                    parameters.put(GL_TEXTURE_WRAP_S, GL_REPEAT);
-                    parameters.put(GL_TEXTURE_WRAP_T, GL_REPEAT);
-
                     for(Effect effect : group.material.effects.values())
-                        if(effect.type == Effect.Type.TEXTURE)
-                            texture((Texture)effect, parameters);
-
+                        if(effect.type == Effect.Type.TEXTURE) {
+                            Texture texture = (Texture)effect;
+                            Map<Integer,Integer> parameters = texture.parameters;
+                            parameters.put(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                            parameters.put(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                            parameters.put(GL_TEXTURE_WRAP_S, GL_REPEAT);
+                            parameters.put(GL_TEXTURE_WRAP_T, GL_REPEAT);
+                            
+                            texture(texture);
+                        }
 
                     groupOffset += group.vertices.size();
                 }
@@ -156,7 +156,7 @@ class ActorPipeline extends RenderPipeline {
     }
     
     @Override
-    public void render() {
+    public void execute() {
         
         program.enable();
         buffer.bind();
@@ -203,7 +203,8 @@ class ActorPipeline extends RenderPipeline {
                     program.bindUniform("diffuseColor").set4f(0f, 0f, 0f, 1);
 
                 glDrawArrays(GL_TRIANGLES, group.offset, group.vertices.size());
-                //glDrawElements(GL_TRIANGLES, mesh.triangles.size()*3, GL_UNSIGNED_INT, 0);
+                
+                glBindTexture(GL_TEXTURE_2D, 0);
             }
         }
         

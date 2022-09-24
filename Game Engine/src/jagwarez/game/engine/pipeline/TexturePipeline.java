@@ -2,12 +2,10 @@ package jagwarez.game.engine.pipeline;
 
 import jagwarez.game.asset.model.Texture;
 import jagwarez.game.engine.Pipeline;
-import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.imageio.ImageIO;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -36,23 +34,24 @@ abstract class TexturePipeline implements Pipeline  {
             glDeleteTextures(texture.id);
     }
     
-    protected void texture(Texture texture, Map<Integer,Integer> parameters) throws Exception {
+    protected void texture(Texture texture) throws Exception {
         
         if(texture == null)
             return;
         
-        texture.id = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture.id);
-        
-        BufferedImage image = ImageIO.read(texture.file);
-        ByteBuffer imageBuffer = Texture.buffer(image);
-        
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, image.getWidth(), image.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
-        
-        for(Entry<Integer,Integer> param : parameters.entrySet())
-            glTexParameteri(GL_TEXTURE_2D, param.getKey(), param.getValue());
-        
-        glBindTexture(GL_TEXTURE_2D, 0);
+        if(texture.id == -1) {
+            texture.id = glGenTextures();
+            glBindTexture(GL_TEXTURE_2D, texture.id);
+
+            ByteBuffer imageBuffer = texture.buffer();
+
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texture.width, texture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
+
+            for(Entry<Integer,Integer> param : texture.parameters.entrySet())
+                glTexParameteri(GL_TEXTURE_2D, param.getKey(), param.getValue());
+
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
         
         textures.put(texture.id, texture);
     }

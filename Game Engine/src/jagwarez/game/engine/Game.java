@@ -1,7 +1,5 @@
 package jagwarez.game.engine;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -15,7 +13,7 @@ public abstract class Game implements AutoCloseable {
     public final Keyboard keyboard;
     public final Mouse mouse;
     public final Graphics graphics;
-    public final List<Pipeline> pipelines;
+    public final Pipeline pipeline;
     public final Assets assets;
     public final World world;
     
@@ -25,18 +23,18 @@ public abstract class Game implements AutoCloseable {
     public abstract void load() throws Exception;
     public abstract void update() throws Exception;
     
-    public Game() {
-        this(new Settings());
+    public Game(Pipeline pipeline) {
+        this(pipeline, new Settings());
     }
     
-    public Game(Settings settings) {
+    public Game(Pipeline pipeline, Settings settings) {
+        this.pipeline = pipeline;
         window = new Window(settings);
         keyboard = new Keyboard(window);
         mouse = new Mouse(window);
         world = new World(window);
         assets = new Assets();
         graphics = new Graphics();
-        pipelines = new ArrayList<>();
     }
     
     private void init() throws Exception {
@@ -68,10 +66,8 @@ public abstract class Game implements AutoCloseable {
               
             load();
             
-            for(Pipeline pipeline : pipelines) {
-                pipeline.init(this);
-                pipeline.load();
-            }
+            pipeline.init(this);
+            pipeline.load();
             
             loaded = true; 
         }
@@ -88,8 +84,7 @@ public abstract class Game implements AutoCloseable {
             
             world.update();
             
-            for(Pipeline pipeline : pipelines)
-                pipeline.render();
+            pipeline.execute();
             
             window.swap();
              
@@ -104,9 +99,7 @@ public abstract class Game implements AutoCloseable {
     @Override
     public void close() throws Exception {
         
-        for(Pipeline pipeline : pipelines)
-                pipeline.destroy();
-        
+        pipeline.destroy();
         world.destroy();
         window.destroy();
         
