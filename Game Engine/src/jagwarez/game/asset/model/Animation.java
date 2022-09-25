@@ -12,7 +12,7 @@ public class Animation {
     public final String name;
     public final Model model;
     public final Map<String,Channel> channels;
-    private float duration = 0f;
+    private float speed = .001f;
     
     public Animation(String name, Model model) {
         this.name = name;

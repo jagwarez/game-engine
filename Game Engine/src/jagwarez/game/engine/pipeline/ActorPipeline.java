@@ -156,7 +156,7 @@ class ActorPipeline extends RenderPipeline {
     }
     
     @Override
-    public void execute() {
+    public void process() {
         
         program.enable();
         buffer.bind();

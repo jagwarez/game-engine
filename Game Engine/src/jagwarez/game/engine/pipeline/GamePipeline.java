@@ -14,7 +14,7 @@ public class GamePipeline implements Pipeline {
     private final List<Pipeline> pipelines = new ArrayList<>();
     
     public GamePipeline() {
-        pipelines.add(new PhysicsPipeline());
+        //pipelines.add(new PhysicsPipeline());
         pipelines.add(new GraphicsPipeline());
     }
     
@@ -31,9 +31,9 @@ public class GamePipeline implements Pipeline {
     }
 
     @Override
-    public void execute() throws Exception {
+    public void process() throws Exception {
         for(Pipeline pipeline : pipelines)
-            pipeline.execute();
+            pipeline.process();
     }
 
     @Override

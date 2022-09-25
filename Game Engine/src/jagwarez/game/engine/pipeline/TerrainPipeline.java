@@ -7,13 +7,20 @@ import jagwarez.game.engine.Terrain;
 import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Map;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
@@ -74,11 +81,18 @@ public class TerrainPipeline extends RenderPipeline {
         buffer.attribute((FloatBuffer)vertexBuffer.flip(), 2);
         
         buffer.unbind();
-
+        
+        Map<Integer,Integer> parameters = terrain.heightmap.parameters;
+        parameters.put(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        parameters.put(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        parameters.put(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        parameters.put(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        
+        texture(terrain.heightmap);
     }
 
     @Override
-    public void execute() throws Exception {
+    public void process() throws Exception {
         
         program.enable();
         buffer.bind();
@@ -86,7 +100,7 @@ public class TerrainPipeline extends RenderPipeline {
         program.bindUniform("camera").setMatrix4fv(world);
         program.bindUniform("transform").setMatrix4fv(terrain);
         program.bindUniform("sky_color").set3f(world.sky.color.r, world.sky.color.g, world.sky.color.b);
-        program.bindUniform("patch_color").set3f(.0f, .3f, 0f);
+        program.bindUniform("patch_color").set3f(.6f, .5f, .1f);
         //program.bindUniform("patch_color").set3f(((float)patch.row/terrain.rows), ((float)patch.column/terrain.columns), 0f);
 
         if(terrain.heightmap != null) {

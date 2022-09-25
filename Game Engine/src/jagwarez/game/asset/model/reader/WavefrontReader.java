@@ -1,14 +1,19 @@
 package jagwarez.game.asset.model.reader;
 
 import jagwarez.game.asset.AssetReader;
+import jagwarez.game.asset.model.Effect;
+import jagwarez.game.asset.model.Material;
 import jagwarez.game.asset.model.Mesh;
 import jagwarez.game.asset.model.Model;
+import jagwarez.game.asset.model.Texture;
 import jagwarez.game.asset.model.Vertex;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -19,9 +24,11 @@ import org.joml.Vector4f;
 public class WavefrontReader implements AssetReader<Model> {
     
     private File objFile;
+    private Map<String,Material> materials;
     
     public WavefrontReader(File file) {
-        this.objFile = file;
+        objFile = file;
+        materials = new HashMap<>();
     }
     
     @Override
@@ -45,10 +52,36 @@ public class WavefrontReader implements AssetReader<Model> {
 
                 if(fields.length > 1) {
                     
-                    if(fields[0].equalsIgnoreCase("o")) {
+                    if(fields[0].equals("mtllib")) {
+                        
+                        readMaterials(new File(objFile.getParentFile(), fields[1]));
+                    
+                    } else if(fields[0].equalsIgnoreCase("usemtl")) {
+                        
+                        if(mesh == null) {
+                            mesh = new Mesh(model.name);
+                            model.meshes.put(mesh.name, mesh);
+                        }
+                        
+                        if(group == null) {
+                            group = new Mesh.Group(mesh.groups.size());
+                            mesh.groups.add(group);
+                        }
+                 
+                        System.out.println("getting "+fields[1]);
+                        Material material = materials.get(fields[1]);                    
+                        if(material != null)
+                            group.material.effects.putAll(material.effects);
+                    
+                    } else if(fields[0].equalsIgnoreCase("o")) {
                         
                         mesh = new Mesh(fields[1]);
                         model.meshes.put(mesh.name, mesh);
+                        
+                    } else if(fields[0].equalsIgnoreCase("g")) {
+                        
+                        group = new Mesh.Group(mesh.groups.size());
+                        mesh.groups.add(group);
                         
                     } else if(fields[0].equalsIgnoreCase("v")) {
                         Vertex vertex = new Vertex(vertices.size());
@@ -150,5 +183,45 @@ public class WavefrontReader implements AssetReader<Model> {
         }
         
         return model;
+    }
+    
+    public void readMaterials(File mtl) throws IOException {
+        
+        Material material = null;
+        BufferedReader reader = null;
+        
+        try {
+            
+            reader = new BufferedReader(new FileReader(mtl));
+            
+            for(String line = reader.readLine(); line != null; line = reader.readLine()) {   
+                
+                String fields[] = line.split("\\s+");
+                
+                switch(fields[0]) {
+                    case "newmtl":
+                        System.out.println("adding "+fields[1]);
+                        material = new Material();
+                        materials.put(fields[1], material);
+                        
+                        break;
+                        
+                    case "map_Kd":
+                        
+                        if(material != null) {
+                            Texture texture = new Texture(new File(mtl.getParentFile(), fields[1]));
+                            material.effects.put(Effect.Parameter.DIFFUSE, texture);
+                        }
+                        
+                        break;
+                }
+            }
+        } finally {
+            if(reader != null) {
+                try { reader.close(); }
+                catch(Exception ex) { ex.printStackTrace(System.err); }
+            }
+        }
+        
     }
 }

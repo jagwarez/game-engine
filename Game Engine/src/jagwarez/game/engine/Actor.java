@@ -15,7 +15,7 @@ public class Actor extends Entity {
     private final Vector3i movement;
     private final Vector3f direction;
     private Animation animation = null;
-    private long marker = 0L;
+    private long marker = 0l;
     
     public Actor(String name) {
         super(name);
@@ -73,7 +73,7 @@ public class Actor extends Entity {
     
     public void animate() {
         if(animation != null)
-            animation.play(((float)(Time.current()-marker)/1000f));
+            animation.play(Time.current()-marker);
     }
     
 }

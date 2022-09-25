@@ -1,3 +1,4 @@
+import jagwarez.game.asset.AssetReader;
 import jagwarez.game.asset.model.Animation;
 import jagwarez.game.asset.model.Bone;
 import jagwarez.game.asset.model.Channel;
@@ -6,7 +7,7 @@ import jagwarez.game.asset.model.Keyframe;
 import jagwarez.game.asset.model.Mesh;
 import jagwarez.game.asset.model.Model;
 import jagwarez.game.asset.model.Vertex;
-import jagwarez.game.asset.model.reader.ColladaReader;
+import jagwarez.game.asset.model.reader.WavefrontReader;
 import java.io.File;
 import java.util.List;
 
@@ -14,12 +15,12 @@ import java.util.List;
  *
  * @author jacob
  */
-public class ColladaTest {
+public class ModelReaderTest {
     
     public static void main(String[] args) throws Exception {
         
         
-        ColladaReader modelReader = new ColladaReader(new File("games/hello/assets/models/dragon/dragon.dae"));
+        AssetReader<Model> modelReader = new WavefrontReader(new File("games/hello/assets/textures/skybox4/skydome.obj"));
         Model model = modelReader.read();
         
         System.out.println("model="+model.name);

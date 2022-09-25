@@ -31,13 +31,11 @@ public class World extends Matrix4f {
     
     public void update() {
         
-        setPerspective((float) Math.toRadians(70), (float) window.width / window.height, 0.1f, Terrain.SIZE);
+        setPerspective((float) Math.toRadians(70), (float) window.width / window.height, 0.1f, 1000f);
 
         mul(camera.update());
         
-        sky.identity();
-        sky.m31(-15f);
-        mul(sky, sky);
+        mul(sky.update(), sky);
         
         mul(player.update(), player);
         player.animate();

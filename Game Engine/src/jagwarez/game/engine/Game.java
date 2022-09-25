@@ -1,5 +1,6 @@
 package jagwarez.game.engine;
 
+import jagwarez.game.engine.pipeline.GamePipeline;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -23,18 +24,18 @@ public abstract class Game implements AutoCloseable {
     public abstract void load() throws Exception;
     public abstract void update() throws Exception;
     
-    public Game(Pipeline pipeline) {
-        this(pipeline, new Settings());
+    public Game() {
+        this(new Settings());
     }
     
-    public Game(Pipeline pipeline, Settings settings) {
-        this.pipeline = pipeline;
+    public Game(Settings settings) {   
         window = new Window(settings);
         keyboard = new Keyboard(window);
         mouse = new Mouse(window);
         world = new World(window);
         assets = new Assets();
         graphics = new Graphics();
+        pipeline = new GamePipeline();
     }
     
     private void init() throws Exception {
@@ -84,7 +85,7 @@ public abstract class Game implements AutoCloseable {
             
             world.update();
             
-            pipeline.execute();
+            pipeline.process();
             
             window.swap();
              

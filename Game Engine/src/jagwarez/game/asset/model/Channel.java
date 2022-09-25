@@ -24,6 +24,7 @@ public class Channel {
     
     public void play(float time) {
         
+        time *= .001;
         time %= keyframes.get(keyframes.size()-1).time;
         
         Keyframe nextFrame = null;

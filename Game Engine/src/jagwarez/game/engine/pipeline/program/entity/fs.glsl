@@ -4,10 +4,14 @@
  */
 #version 150
 
+in vec2 pass_texcoord;
+
 out vec4 color;
 
-uniform vec4 diffuse;
+uniform bool useDiffuseMap = false;
+uniform vec4 diffuseColor;
+uniform sampler2D diffuseMap;
 
 void main(void) {
-  color = diffuse;
+    color = useDiffuseMap ? texture(diffuseMap, pass_texcoord) : diffuseColor;
 }

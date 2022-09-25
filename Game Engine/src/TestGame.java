@@ -1,13 +1,12 @@
 import jagwarez.game.asset.model.Model;
 import jagwarez.game.asset.model.Texture;
 import jagwarez.game.asset.model.reader.ColladaReader;
+import jagwarez.game.asset.model.reader.WavefrontReader;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Keyboard.Key;
 import jagwarez.game.engine.Mouse.Button;
 import jagwarez.game.engine.Settings;
-import jagwarez.game.engine.Sky;
 import jagwarez.game.engine.Terrain;
-import jagwarez.game.engine.pipeline.GamePipeline;
 import java.io.File;
 
 /**
@@ -17,7 +16,7 @@ import java.io.File;
 public class TestGame extends Game {
     
     public TestGame() {
-        super(new GamePipeline(), new Settings().title("Test Game").size(1600, 1200));
+        super(new Settings().title("Test Game").size(1600, 1200));
     }
     
     @Override
@@ -26,12 +25,10 @@ public class TestGame extends Game {
         File assetsDir = new File("games/hello/assets");
         
         String skybox = "skybox2";
-        world.sky.textures[Sky.RIGHT] = new Texture(new File(assetsDir, "textures/"+skybox+"/right.png"));
-        world.sky.textures[Sky.LEFT] = new Texture(new File(assetsDir, "textures/"+skybox+"/left.png"));
-        world.sky.textures[Sky.TOP] = new Texture(new File(assetsDir, "textures/"+skybox+"/top.png"));
-        world.sky.textures[Sky.BOTTOM] = new Texture(new File(assetsDir, "textures/"+skybox+"/bottom.png"));
-        world.sky.textures[Sky.FRONT] = new Texture(new File(assetsDir, "textures/"+skybox+"/front.png"));
-        world.sky.textures[Sky.BACK] = new Texture(new File(assetsDir, "textures/"+skybox+"/back.png"));
+        world.sky.model = new WavefrontReader(new File(assetsDir, "models/skydome/skydome.obj")).read();
+        
+        assets.models.add(world.sky.model);
+        world.sky.scale.set(500f);
         
         world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain.png"));
         
@@ -39,9 +36,9 @@ public class TestGame extends Game {
         assets.models.add(model);
         
         world.player.model = model;
-        world.player.position.x = Terrain.WIDTH/2;
-        world.player.position.z = Terrain.WIDTH/2;
-        world.player.position.y = 100f;
+        world.player.position.x = Terrain.OFFSET;
+        world.player.position.z = Terrain.OFFSET;
+        world.player.position.y = 60;
         //world.player.rotation.y = 180;
         
         //world.camera.rotation.y = 180;
@@ -71,10 +68,10 @@ public class TestGame extends Game {
             world.player.backward();
 
         if(keyboard.pressed(Key._A))
-            world.player.left();
+            world.player.rotation.y += 1f;
 
         if(keyboard.pressed(Key._D))
-            world.player.right();
+            world.player.rotation.y -= 1f;
 
         if(keyboard.pressed(Key._SPACE))
             fy += .2f;
@@ -89,8 +86,8 @@ public class TestGame extends Game {
             world.camera.tether.distance += .02f;
 
         if(mouse.pressed(Button.RIGHT)) {
-            //world.player.rotation.x += mouse.y() >= window.height()/2 ? 1f : -1f;
-            world.player.rotation.y += mouse.x() >= window.width()/2 ? -.5f : .5f;
+            world.camera.rotation.x += mouse.y() >= window.height()/2 ? .5f : -.5f;
+            world.camera.rotation.y += mouse.x() >= window.width()/2 ? .5f : -.5f;
         }
         
         world.player.position.x += fx; //mouse.x() >= window.width()/2 ? .3f : -.3f;

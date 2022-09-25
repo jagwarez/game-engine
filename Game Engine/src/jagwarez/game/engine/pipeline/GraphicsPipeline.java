@@ -33,9 +33,10 @@ public class GraphicsPipeline implements Pipeline {
         
         pipelines = new ArrayList<>();
         
+        pipelines.add(new EntityPipeline());
         pipelines.add(new ActorPipeline());
         pipelines.add(new TerrainPipeline());
-        pipelines.add(new SkyPipeline());
+        //pipelines.add(new SkyPipeline());
     }
     
     @Override
@@ -64,13 +65,13 @@ public class GraphicsPipeline implements Pipeline {
     }
     
     @Override
-    public void execute() throws Exception {
+    public void process() throws Exception {
         
         glViewport(0, 0, window.width, window.height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         for(Pipeline pipeline : pipelines)
-            pipeline.execute();
+            pipeline.process();
 
     }
     
