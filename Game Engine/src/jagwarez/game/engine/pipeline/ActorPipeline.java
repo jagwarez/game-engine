@@ -25,8 +25,9 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
@@ -39,7 +40,6 @@ class ActorPipeline extends RenderPipeline {
     private Assets assets;
     private Actor player;
     private List<Actor> actors;
-    private int vertices;
     
     @Override
     public void init(Game game) throws Exception {
@@ -56,7 +56,8 @@ class ActorPipeline extends RenderPipeline {
     public void load() throws Exception {
         
         List<Model> models = new ArrayList<>();
-        int vertices = 0;
+        int indexSize = 0;
+        int vertexSize = 0;
         
         for(Model model : assets.models) {
             
@@ -66,16 +67,19 @@ class ActorPipeline extends RenderPipeline {
             models.add(model);
             
             for(Mesh mesh : model.meshes.values())
-                for(Mesh.Group group : mesh.groups)
-                    vertices += group.vertices.size();
+                for(Mesh.Group group : mesh.groups) {
+                    indexSize += group.indices.size();
+                    vertexSize += group.vertices.size();
+                }
         }
    
-        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertices*3);
-        FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(vertices*3);
-        FloatBuffer texcoordBuffer = BufferUtils.createFloatBuffer(vertices*2);
-        IntBuffer boneBuffer = BufferUtils.createIntBuffer(vertices*4);
-        FloatBuffer weightBuffer = BufferUtils.createFloatBuffer(vertices*4);
-        int groupOffset = 0;
+        IntBuffer indices = BufferUtils.createIntBuffer(indexSize);
+        FloatBuffer vertices = BufferUtils.createFloatBuffer(vertexSize*3);
+        FloatBuffer normals = BufferUtils.createFloatBuffer(vertexSize*3);
+        FloatBuffer coords = BufferUtils.createFloatBuffer(vertexSize*2);
+        IntBuffer bones = BufferUtils.createIntBuffer(vertexSize*4);
+        FloatBuffer weights = BufferUtils.createFloatBuffer(vertexSize*4);
+        int offset = 0;
         
         for(Model model : models) {
             
@@ -83,20 +87,23 @@ class ActorPipeline extends RenderPipeline {
                 
                 for(Mesh.Group group : mesh.groups) {
                     
-                    group.offset = groupOffset;
+                    group.offset = offset;
+                    
+                    for(int index : group.indices)
+                        indices.put(index);
 
                     for(Vertex vertex : group.vertices) {
 
-                        vertexBuffer.put(vertex.position.x);
-                        vertexBuffer.put(vertex.position.y);
-                        vertexBuffer.put(vertex.position.z);
+                        vertices.put(vertex.position.x);
+                        vertices.put(vertex.position.y);
+                        vertices.put(vertex.position.z);
 
-                        normalsBuffer.put(vertex.normal.x);
-                        normalsBuffer.put(vertex.normal.y);
-                        normalsBuffer.put(vertex.normal.z);
+                        normals.put(vertex.normal.x);
+                        normals.put(vertex.normal.y);
+                        normals.put(vertex.normal.z);
 
-                        texcoordBuffer.put(vertex.texcoord.x);
-                        texcoordBuffer.put(vertex.texcoord.y);
+                        coords.put(vertex.texcoord.x);
+                        coords.put(vertex.texcoord.y);
 
                         ArrayList<Map.Entry<Bone,Float>> topWeights = new ArrayList<>(vertex.weights.entrySet());
                         topWeights.sort((Map.Entry<Bone,Float> a, Map.Entry<Bone,Float> b) -> b.getValue().compareTo(a.getValue()));
@@ -109,11 +116,11 @@ class ActorPipeline extends RenderPipeline {
                             Map.Entry<Bone,Float> boneWeight = i < topWeights.size() ? topWeights.get(i) : null;
                             if(boneWeight != null) {
                                 //System.out.println("vertex="+vertex.index+",bone"+i+"-"+boneWeight.getKey().name+": "+Math.min(boneWeight.getValue()/totalWeight, 1));
-                                boneBuffer.put(boneWeight.getKey().index);
-                                weightBuffer.put(Math.min(boneWeight.getValue()/totalWeight, 1));
+                                bones.put(boneWeight.getKey().index);
+                                weights.put(Math.min(boneWeight.getValue()/totalWeight, 1));
                             } else {
-                                boneBuffer.put(-1);
-                                weightBuffer.put(0f);
+                                bones.put(-1);
+                                weights.put(0f);
                             }
                         }
                     }
@@ -130,7 +137,7 @@ class ActorPipeline extends RenderPipeline {
                             texture(texture);
                         }
 
-                    groupOffset += group.vertices.size();
+                    offset += group.indices.size();
                 }
             }
         }
@@ -146,11 +153,12 @@ class ActorPipeline extends RenderPipeline {
 
         buffer.bind();
         
-        buffer.attribute((FloatBuffer) vertexBuffer.flip(), 3);
-        buffer.attribute((FloatBuffer) normalsBuffer.flip(), 3);
-        buffer.attribute((FloatBuffer) texcoordBuffer.flip(), 2);
-        buffer.attribute((IntBuffer) boneBuffer.flip(), 4);
-        buffer.attribute((FloatBuffer) weightBuffer.flip(), 4);
+        buffer.elements((IntBuffer) indices.flip());
+        buffer.attribute((FloatBuffer) vertices.flip(), 3);
+        buffer.attribute((FloatBuffer) normals.flip(), 3);
+        buffer.attribute((FloatBuffer) coords.flip(), 2);
+        buffer.attribute((IntBuffer) bones.flip(), 4);
+        buffer.attribute((FloatBuffer) weights.flip(), 4);
         
         buffer.unbind();
     }
@@ -202,7 +210,7 @@ class ActorPipeline extends RenderPipeline {
                 } else
                     program.bindUniform("diffuseColor").set4f(0f, 0f, 0f, 1);
 
-                glDrawArrays(GL_TRIANGLES, group.offset, group.vertices.size());
+                glDrawElements(GL_TRIANGLES, group.indices.size(), GL_UNSIGNED_INT, group.offset);
                 
                 glBindTexture(GL_TEXTURE_2D, 0);
             }

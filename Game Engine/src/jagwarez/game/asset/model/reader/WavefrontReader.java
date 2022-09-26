@@ -46,6 +46,7 @@ public class WavefrontReader implements AssetReader<Model> {
             ArrayList<Vertex> vertices = new ArrayList<>();
             ArrayList<Vector4f> normals = new ArrayList<>();
             ArrayList<Vector2f> uvcoords = new ArrayList<>();
+            HashMap<String,Vertex> originals = new HashMap<>();
 
             for(String line = reader.readLine(); line != null; line = reader.readLine()) {              
                 String[] fields = line.split("\\s+");
@@ -68,7 +69,6 @@ public class WavefrontReader implements AssetReader<Model> {
                             mesh.groups.add(group);
                         }
                  
-                        System.out.println("getting "+fields[1]);
                         Material material = materials.get(fields[1]);                    
                         if(material != null)
                             group.material.effects.putAll(material.effects);
@@ -133,7 +133,18 @@ public class WavefrontReader implements AssetReader<Model> {
                                 if(field.length > 2)
                                     vertex.normal.set(normals.get(Integer.parseInt(field[2])-1));
 
-                                group.vertices.add(vertex);
+                                Vertex original = originals.get(vertex.toString());
+                                if(original == null) {
+                                    
+                                    original = new Vertex(group.vertices.size(), vertex);
+                                    
+                                    group.vertices.add(original);
+                                    
+                                    originals.put(original.toString(), original);
+                                    
+                                }
+                                
+                                group.indices.add(original.index);
                             }
 
                         } else if(fields.length == 5) { // quad
@@ -200,7 +211,7 @@ public class WavefrontReader implements AssetReader<Model> {
                 
                 switch(fields[0]) {
                     case "newmtl":
-                        System.out.println("adding "+fields[1]);
+
                         material = new Material();
                         materials.put(fields[1], material);
                         

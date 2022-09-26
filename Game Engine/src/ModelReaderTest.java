@@ -7,7 +7,7 @@ import jagwarez.game.asset.model.Keyframe;
 import jagwarez.game.asset.model.Mesh;
 import jagwarez.game.asset.model.Model;
 import jagwarez.game.asset.model.Vertex;
-import jagwarez.game.asset.model.reader.WavefrontReader;
+import jagwarez.game.asset.model.reader.ColladaReader;
 import java.io.File;
 import java.util.List;
 
@@ -19,8 +19,8 @@ public class ModelReaderTest {
     
     public static void main(String[] args) throws Exception {
         
-        
-        AssetReader<Model> modelReader = new WavefrontReader(new File("games/hello/assets/textures/skybox4/skydome.obj"));
+        AssetReader<Model> modelReader = new ColladaReader(new File("games/hello/assets/models/thinmatrix/model.dae"));
+        //AssetReader<Model> modelReader = new WavefrontReader(new File("games/hello/assets/models/skydome/skydome.obj"));
         Model model = modelReader.read();
         
         System.out.println("model="+model.name);
@@ -28,14 +28,14 @@ public class ModelReaderTest {
         for(String meshId : model.meshes.keySet()) {
             Mesh mesh = model.meshes.get(meshId);
             System.out.println("mesh="+meshId);  
-             
             
             for(Mesh.Group group : mesh.groups) {
                 
-                System.out.println("group-"+group.index+":vertices="+group.vertices.size()); 
+                System.out.println("group-"+group.index+":vertices="+group.vertices.size()+":indices="+group.indices.size());
+                System.out.println("size="+(group.vertices.size()*3*Float.BYTES)+(group.indices.size()*Integer.BYTES)); 
                 
                 for(Vertex vertex : group.vertices) {               
-                    //System.out.println("\tposition="+vertex.position);
+                    //System.out.println("\tvertex="+vertex);
 
                     //for(Entry<Bone,Float> weight : vertex.weights.entrySet())
                         //System.out.println("\t\tweight: bone="+weight.getKey().name+", weight="+weight.getValue());

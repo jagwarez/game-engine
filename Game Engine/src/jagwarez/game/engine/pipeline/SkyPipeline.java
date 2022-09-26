@@ -9,6 +9,7 @@ import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Shader;
 import jagwarez.game.engine.Sky;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.Map;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_BACK;
@@ -40,20 +41,27 @@ class SkyPipeline extends ModelPipeline {
     public void load() throws Exception {
         
         Model model = sky.model;
-        int size = 0;
+        int indexSize = 0;
+        int vertexSize = 0;
         
         if(model != null) {            
             for(Mesh mesh : model.meshes.values())
-                for(Mesh.Group group : mesh.groups)
-                    size += group.vertices.size();
+                for(Mesh.Group group : mesh.groups) {
+                    indexSize += group.indices.size();
+                    vertexSize += group.vertices.size();
+                }
         }
         
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(size*3);
-        FloatBuffer coords = BufferUtils.createFloatBuffer(size*2);
+        IntBuffer indices = BufferUtils.createIntBuffer(indexSize);
+        FloatBuffer vertices = BufferUtils.createFloatBuffer(vertexSize*3);
+        FloatBuffer coords = BufferUtils.createFloatBuffer(vertexSize*2);
    
         for(Mesh mesh : model.meshes.values()) {
 
             for(Mesh.Group group : mesh.groups) {
+                
+                for(int index : group.indices)
+                    indices.put(index);
 
                 for(Vertex vertex : group.vertices) {
 
@@ -87,6 +95,7 @@ class SkyPipeline extends ModelPipeline {
 
         buffer.bind();
         
+        buffer.elements((IntBuffer) indices.flip());
         buffer.attribute((FloatBuffer) vertices.flip(), 3);
         buffer.attribute((FloatBuffer) coords.flip(), 2);
         

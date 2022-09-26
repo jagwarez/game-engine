@@ -12,6 +12,7 @@ import jagwarez.game.engine.Shader;
 import jagwarez.game.engine.Sky;
 import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,8 @@ class EntityPipeline extends ModelPipeline {
     public void load() throws Exception {
         
         List<Model> models = new ArrayList<>();
-        int size = 0;
+        int indexSize = 0;
+        int vertexSize = 0;
         
         for(Model model : assets.models) {
             
@@ -58,13 +60,16 @@ class EntityPipeline extends ModelPipeline {
             models.add(model);
             
             for(Mesh mesh : model.meshes.values())
-                for(Mesh.Group group : mesh.groups)
-                    size += group.vertices.size();
+                for(Mesh.Group group : mesh.groups) {
+                    indexSize += group.indices.size();
+                    vertexSize += group.vertices.size();
+                }
         }
         
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(size*3);
-        FloatBuffer normals = BufferUtils.createFloatBuffer(size*3);
-        FloatBuffer coords = BufferUtils.createFloatBuffer(size*2);
+        IntBuffer indices = BufferUtils.createIntBuffer(indexSize);
+        FloatBuffer vertices = BufferUtils.createFloatBuffer(vertexSize*3);
+        FloatBuffer normals = BufferUtils.createFloatBuffer(vertexSize*3);
+        FloatBuffer coords = BufferUtils.createFloatBuffer(vertexSize*2);
         int offset = 0;
         
         for(Model model : models) {
@@ -74,6 +79,9 @@ class EntityPipeline extends ModelPipeline {
                 for(Mesh.Group group : mesh.groups) {
                     
                     group.offset = offset;
+                    
+                    for(int index : group.indices)
+                        indices.put(index);
 
                     for(Vertex vertex : group.vertices) {
 
@@ -101,7 +109,7 @@ class EntityPipeline extends ModelPipeline {
                             texture(texture);
                         }
 
-                    offset += group.vertices.size();
+                    offset += group.indices.size();
                 }
             }
         }
@@ -115,6 +123,7 @@ class EntityPipeline extends ModelPipeline {
 
         buffer.bind();
         
+        buffer.elements((IntBuffer) indices.flip());
         buffer.attribute((FloatBuffer) vertices.flip(), 3);
         buffer.attribute((FloatBuffer) normals.flip(), 3);
         buffer.attribute((FloatBuffer) coords.flip(), 2);

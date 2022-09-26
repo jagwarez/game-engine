@@ -380,21 +380,33 @@ public class ColladaReader implements AssetReader<Model> {
                     }
                 }
 
+                HashMap<String,Vertex> originals = new HashMap<>();
                 String[] triangles = trianglesElement.getElementsByTagName("p").item(0).getFirstChild().getNodeValue().split(" ");
                 for(int i = 0; i < triangles.length; i += inputCount) {
                     int positionIndex = Integer.parseInt(triangles[i + positionOffset]);
                     int normalIndex = Integer.parseInt(triangles[i + normalOffset]);
                     int texIndex = Integer.parseInt(triangles[i + texcoordOffset]);
-
+                  
                     Vertex vertex = new Vertex(group.vertices.size());
                     vertex.position.set(positions.get(positionIndex));
                     vertex.normal.set(normals.get(normalIndex));
                     vertex.texcoord.set(texcoords.get(texIndex));
-
+                    
                     if(skin != null)
                         vertex.weights.putAll(skin.get(positionIndex));
+                    
+                    Vertex original = originals.get(vertex.toString());
+                    if(original == null) {
 
-                    group.vertices.add(vertex);
+                        original = vertex;
+
+                        group.vertices.add(original);
+
+                        originals.put(original.toString(), original);
+
+                    }
+
+                    group.indices.add(original.index);
                 }
             }
         }
