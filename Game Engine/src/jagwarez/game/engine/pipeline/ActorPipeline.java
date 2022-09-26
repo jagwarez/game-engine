@@ -1,7 +1,6 @@
 package jagwarez.game.engine.pipeline;
 
 import jagwarez.game.asset.model.Bone;
-import jagwarez.game.asset.model.Color;
 import jagwarez.game.asset.model.Effect;
 import jagwarez.game.asset.model.Mesh;
 import jagwarez.game.asset.model.Model;
@@ -19,23 +18,16 @@ import java.util.Map;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
 
 /**
  *
  * @author jacob
  */
-class ActorPipeline extends RenderPipeline {
+class ActorPipeline extends ModelPipeline {
     
     private Assets assets;
     private Actor player;
@@ -115,7 +107,6 @@ class ActorPipeline extends RenderPipeline {
                         for(int i = 0; i < 4; i++) {
                             Map.Entry<Bone,Float> boneWeight = i < topWeights.size() ? topWeights.get(i) : null;
                             if(boneWeight != null) {
-                                //System.out.println("vertex="+vertex.index+",bone"+i+"-"+boneWeight.getKey().name+": "+Math.min(boneWeight.getValue()/totalWeight, 1));
                                 bones.put(boneWeight.getKey().index);
                                 weights.put(Math.min(boneWeight.getValue()/totalWeight, 1));
                             } else {
@@ -182,39 +173,10 @@ class ActorPipeline extends RenderPipeline {
         
         Model model = actor.model;
         
-        program.bindUniform("transform").setMatrix4fv(actor);
-        
         for(int i = 0; i < model.bones.size(); i++)
             program.bindUniform("bone_transforms["+i+"]").setMatrix4fv(model.bones.get(i).transform);
         
-        for(Mesh mesh : model.meshes.values()) {
-            
-            for(Mesh.Group group : mesh.groups) {
-                
-                Effect diffuse = group.material.effects.get(Effect.Parameter.DIFFUSE);
-                
-                if(diffuse != null) {
-                    if(diffuse.type == Effect.Type.TEXTURE) {
-                        Texture diffuseMap = (Texture) diffuse;
-
-                        glActiveTexture(GL_TEXTURE0 + 0);
-                        glBindTexture(GL_TEXTURE_2D, diffuseMap.id);
-                        
-                        program.bindUniform("useDiffuseMap").setBool(true);
-                        program.bindUniform("diffuseMap").set1i(0);
-                        
-                    } else if(diffuse.type == Effect.Type.COLOR) {                    
-                        Color c = (Color)diffuse;
-                        program.bindUniform("diffuseColor").set4f(c.r, c.g, c.b, c.a);
-                    }
-                } else
-                    program.bindUniform("diffuseColor").set4f(0f, 0f, 0f, 1);
-
-                glDrawElements(GL_TRIANGLES, group.indices.size(), GL_UNSIGNED_INT, group.offset);
-                
-                glBindTexture(GL_TEXTURE_2D, 0);
-            }
-        }
+        render(model, actor);
         
     }
 }
