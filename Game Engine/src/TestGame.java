@@ -24,10 +24,7 @@ public class TestGame extends Game {
         
         File assetsDir = new File("games/hello/assets");
         
-        String skybox = "skybox2";
         world.sky.model = new WavefrontReader(new File(assetsDir, "models/skydome/skydome.obj")).read();
-        
-        assets.models.add(world.sky.model);
         world.sky.scale.set(500f);
         
         world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain.png"));
@@ -36,6 +33,7 @@ public class TestGame extends Game {
         assets.models.add(model);
         
         world.player.model = model;
+        world.player.scale.set(.01f);
         world.player.position.x = Terrain.OFFSET;
         world.player.position.z = Terrain.OFFSET;
         world.player.position.y = 60;

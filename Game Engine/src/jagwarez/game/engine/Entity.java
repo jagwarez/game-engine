@@ -25,7 +25,7 @@ public class Entity extends Identity {
         this.model = model;
         position = new Vector3f();
         rotation = new Vector3f();
-        scale    = new Vector3f(.01f);
+        scale    = new Vector3f(1f);
     }
     
     public Entity update() {

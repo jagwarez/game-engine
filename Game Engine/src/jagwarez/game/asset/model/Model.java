@@ -30,4 +30,5 @@ public class Model {
     public boolean skeletal() {
         return !bones.isEmpty();
     }
+    
 }

@@ -35,6 +35,7 @@ public class GraphicsPipeline implements Pipeline {
         
         pipelines.add(new EntityPipeline());
         pipelines.add(new ActorPipeline());
+        pipelines.add(new SkyPipeline());
         pipelines.add(new TerrainPipeline());
         //pipelines.add(new SkyPipeline());
     }

@@ -12,7 +12,7 @@ public class Sky extends Entity {
     
     public Sky() {
         super("sky");
-        color = new Color(0.15f,0.2f,0.4f,1f);
+        color = new Color(0.01f,0.01f,0.05f,1f);
     }
     
     @Override
@@ -22,7 +22,7 @@ public class Sky extends Entity {
             rotation.y += .005f;
         
         identity();
-        m31(0);
+        m31(-50);
         rotateXYZ((float) Math.toRadians(rotation.x), (float) Math.toRadians(rotation.y+180), (float) Math.toRadians(rotation.z));
         scale(scale.x, scale.y, scale.z);
         

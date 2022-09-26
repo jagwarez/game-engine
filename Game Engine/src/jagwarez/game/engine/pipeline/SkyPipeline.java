@@ -1,92 +1,114 @@
 package jagwarez.game.engine.pipeline;
 
+import jagwarez.game.asset.model.Effect;
+import jagwarez.game.asset.model.Mesh;
+import jagwarez.game.asset.model.Model;
+import jagwarez.game.asset.model.Texture;
+import jagwarez.game.asset.model.Vertex;
 import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Shader;
 import jagwarez.game.engine.Sky;
-import jagwarez.game.engine.World;
-import static org.lwjgl.opengl.GL11.GL_LEQUAL;
-import static org.lwjgl.opengl.GL11.GL_LESS;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glDepthFunc;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
+import java.nio.FloatBuffer;
+import java.util.Map;
+import org.lwjgl.BufferUtils;
+import static org.lwjgl.opengl.GL11.GL_BACK;
+import static org.lwjgl.opengl.GL11.GL_FRONT;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_REPEAT;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
+import static org.lwjgl.opengl.GL11.glCullFace;
 
 /**
  *
  * @author jacob
  */
-class SkyPipeline extends RenderPipeline {
+class SkyPipeline extends ModelPipeline {
     
-    private World world;
     private Sky sky;
     
     @Override
     public void init(Game game) throws Exception {
-        
         super.init(game);
-        
-        world = game.world;
-        sky = world.sky;
+        sky = game.world.sky;   
+        game.assets.models.add(sky.model);
     }
-
+    
     @Override
     public void load() throws Exception {
-  /*      
-        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(Sky.SKYBOX.length);
-
-        for(int i = 0; i < Sky.SKYBOX.length; i++)
-            vertexBuffer.put(Sky.SKYBOX[i]);
         
-        sky.cubemap.id = glGenTextures();
-        glBindTexture(GL_TEXTURE_CUBE_MAP, sky.cubemap.id);
-        texture(sky.cubemap);
+        Model model = sky.model;
+        int size = 0;
         
-        for(int i = 0; i < sky.textures.length; i++) {
-            
-            Texture texture = sky.textures[i];
-            ByteBuffer imageBuffer = texture.buffer();
-            
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA8, texture.width, texture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);       
+        if(model != null) {            
+            for(Mesh mesh : model.meshes.values())
+                for(Mesh.Group group : mesh.groups)
+                    size += group.vertices.size();
         }
-       
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         
-        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-        
-        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/skybox/vs.glsl", Shader.Type.VERTEX));
-        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/skybox/fs.glsl", Shader.Type.FRAGMENT));
+        FloatBuffer vertices = BufferUtils.createFloatBuffer(size*3);
+        FloatBuffer coords = BufferUtils.createFloatBuffer(size*2);
+   
+        for(Mesh mesh : model.meshes.values()) {
+
+            for(Mesh.Group group : mesh.groups) {
+
+                for(Vertex vertex : group.vertices) {
+
+                    vertices.put(vertex.position.x);
+                    vertices.put(vertex.position.y);
+                    vertices.put(vertex.position.z);
+
+                    coords.put(vertex.texcoord.x);
+                    coords.put(vertex.texcoord.y);
+                }
+
+                for(Effect effect : group.material.effects.values())
+                    if(effect.type == Effect.Type.TEXTURE) {
+                        Texture texture = (Texture)effect;
+                        Map<Integer,Integer> parameters = texture.parameters;
+                        parameters.put(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                        parameters.put(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                        parameters.put(GL_TEXTURE_WRAP_S, GL_REPEAT);
+                        parameters.put(GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+                        texture(texture);
+                    }
+            }
+        }
+    
+        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/sky/vs.glsl", Shader.Type.VERTEX));
+        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/sky/fs.glsl", Shader.Type.FRAGMENT));
         program.bindAttribute(0, "position");
+        program.bindAttribute(1, "texcoord");
         program.bindFragment(0, "color");
 
         buffer.bind();
         
-        buffer.attribute((FloatBuffer) vertexBuffer.flip(), 3);
+        buffer.attribute((FloatBuffer) vertices.flip(), 3);
+        buffer.attribute((FloatBuffer) coords.flip(), 2);
         
         buffer.unbind();
- */
     }
-
+    
     @Override
-    public void process() throws Exception {
+    public void process() {
         
         program.enable();
         buffer.bind();
-
-        program.bindUniform("transform").setMatrix4fv(sky);
-        program.bindUniform("sky_color").set3f(world.sky.color.r, world.sky.color.g, world.sky.color.b);
-           
-        glDepthFunc(GL_LEQUAL);
-        //glBindTexture(GL_TEXTURE_CUBE_MAP, sky.cubemap.id);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-        glDepthFunc(GL_LESS);
         
+        glCullFace(GL_FRONT);
+        
+        program.bindUniform("sky_color").set3f(sky.color.r, sky.color.g, sky.color.b);
+        
+        render(sky.model, sky);
+        
+        glCullFace(GL_BACK);
+
         buffer.unbind();
-        program.disable();           
+        program.disable();    
     }
 
 }

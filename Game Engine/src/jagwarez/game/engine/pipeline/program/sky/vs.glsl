@@ -1,13 +1,13 @@
 #version 150
 
 in vec3 position;
-
-out vec3 texcoord;
+in vec2 texcoord;
+out vec2 pass_texcoord;
 
 uniform mat4 transform;
 
 void main()
 {
-    texcoord = position/511;
     gl_Position = transform * vec4(position, 1.0);
+    pass_texcoord = texcoord;
 }
