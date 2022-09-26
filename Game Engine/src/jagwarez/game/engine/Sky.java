@@ -1,6 +1,7 @@
 package jagwarez.game.engine;
 
 import jagwarez.game.asset.model.Color;
+import static org.lwjgl.opengl.GL11.glClearColor;
 
 /**
  *
@@ -18,6 +19,8 @@ public class Sky extends Entity {
     @Override
     public Entity update() {
         
+        glClearColor(color.r, color.g, color.b, 1f);
+    
         if(Time.current() % 1f == 0)
             rotation.y += .005f;
         

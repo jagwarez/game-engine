@@ -36,7 +36,7 @@ public class TestGame extends Game {
         world.player.scale.set(.01f);
         world.player.position.x = Terrain.OFFSET;
         world.player.position.z = Terrain.OFFSET;
-        world.player.position.y = 60;
+        world.player.position.y = 80;
         //world.player.rotation.y = 180;
         
         //world.camera.rotation.y = 180;
