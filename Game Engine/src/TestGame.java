@@ -25,7 +25,6 @@ public class TestGame extends Game {
         File assetsDir = new File("games/hello/assets");
         
         world.sky.model = new WavefrontReader(new File(assetsDir, "models/skydome/skydome.obj")).read();
-        world.sky.scale.set(500f);
         
         world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain.png"));
         

@@ -1,6 +1,7 @@
 #version 150
 
 in vec2 pass_texcoord;
+in float visibility;
 
 out vec4 color;
 
@@ -13,5 +14,5 @@ uniform sampler2D diffuseMap;
 void main()
 {
     color = useDiffuseMap ? texture(diffuseMap, pass_texcoord) : diffuseColor;
-    color = mix(vec4(sky_color, 1), color, pass_texcoord.y < 0 ? 0 : pow(pass_texcoord.y, .5));
+    color = mix(vec4(sky_color, 1), color, visibility);
 }

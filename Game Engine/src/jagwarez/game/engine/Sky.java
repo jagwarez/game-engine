@@ -13,7 +13,8 @@ public class Sky extends Entity {
     
     public Sky() {
         super("sky");
-        color = new Color(0.01f,0.01f,0.05f,1f);
+        color = new Color(0.001f,0.001f,0.005f,1f);
+        scale.set(500f);
     }
     
     @Override
