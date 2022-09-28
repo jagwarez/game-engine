@@ -67,8 +67,8 @@ class ActorPipeline extends ModelPipeline {
    
         IntBuffer indices = BufferUtils.createIntBuffer(indexSize);
         FloatBuffer vertices = BufferUtils.createFloatBuffer(vertexSize*3);
-        FloatBuffer normals = BufferUtils.createFloatBuffer(vertexSize*3);
         FloatBuffer coords = BufferUtils.createFloatBuffer(vertexSize*2);
+        FloatBuffer normals = BufferUtils.createFloatBuffer(vertexSize*3);
         IntBuffer bones = BufferUtils.createIntBuffer(vertexSize*4);
         FloatBuffer weights = BufferUtils.createFloatBuffer(vertexSize*4);
         int offset = 0;
@@ -89,13 +89,13 @@ class ActorPipeline extends ModelPipeline {
                         vertices.put(vertex.position.x);
                         vertices.put(vertex.position.y);
                         vertices.put(vertex.position.z);
+                        
+                        coords.put(vertex.texcoord.x);
+                        coords.put(vertex.texcoord.y);
 
                         normals.put(vertex.normal.x);
                         normals.put(vertex.normal.y);
                         normals.put(vertex.normal.z);
-
-                        coords.put(vertex.texcoord.x);
-                        coords.put(vertex.texcoord.y);
 
                         ArrayList<Map.Entry<Bone,Float>> topWeights = new ArrayList<>(vertex.weights.entrySet());
                         topWeights.sort((Map.Entry<Bone,Float> a, Map.Entry<Bone,Float> b) -> b.getValue().compareTo(a.getValue()));
@@ -136,8 +136,8 @@ class ActorPipeline extends ModelPipeline {
         program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/actor/vs.glsl", Shader.Type.VERTEX));
         program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/actor/fs.glsl", Shader.Type.FRAGMENT));
         program.bindAttribute(0, "position");
-        program.bindAttribute(1, "normal");
-        program.bindAttribute(2, "texcoord");
+        program.bindAttribute(1, "texcoord");
+        program.bindAttribute(2, "normal");
         program.bindAttribute(3, "bones");
         program.bindAttribute(4, "weights");
         program.bindFragment(0, "color");
@@ -146,8 +146,8 @@ class ActorPipeline extends ModelPipeline {
         
         buffer.elements((IntBuffer) indices.flip());
         buffer.attribute((FloatBuffer) vertices.flip(), 3);
-        buffer.attribute((FloatBuffer) normals.flip(), 3);
         buffer.attribute((FloatBuffer) coords.flip(), 2);
+        buffer.attribute((FloatBuffer) normals.flip(), 3);
         buffer.attribute((IntBuffer) bones.flip(), 4);
         buffer.attribute((FloatBuffer) weights.flip(), 4);
         
@@ -155,10 +155,12 @@ class ActorPipeline extends ModelPipeline {
     }
     
     @Override
-    public void process() {
+    public void process() throws Exception {
         
         program.enable();
         buffer.bind();
+        
+        lights();
         
         render(player);
         
@@ -174,7 +176,7 @@ class ActorPipeline extends ModelPipeline {
         Model model = actor.model;
         
         for(int i = 0; i < model.bones.size(); i++)
-            program.bindUniform("bone_transforms["+i+"]").setMatrix4fv(model.bones.get(i).transform);
+            program.bindUniform("bone_transforms["+i+"]").setMatrix4f(model.bones.get(i).transform);
         
         render(model, actor);
         

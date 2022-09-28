@@ -47,9 +47,9 @@ public class TerrainPipeline extends RenderPipeline {
     @Override
     public void load() throws Exception {
         
-        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(Terrain.VERTEX_COUNT);
         IntBuffer indexBuffer = BufferUtils.createIntBuffer(Terrain.INDEX_COUNT);
-        
+        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(Terrain.VERTEX_COUNT);
+             
         for(int x = 0; x < Terrain.SIZE; x++) {
             for(int z = 0; z < Terrain.SIZE; z++) {
                 
@@ -97,11 +97,12 @@ public class TerrainPipeline extends RenderPipeline {
         program.enable();
         buffer.bind();
         
-        program.bindUniform("camera").setMatrix4fv(world);
-        program.bindUniform("transform").setMatrix4fv(terrain);
+        lights();
+        
+        program.bindUniform("camera").setMatrix4f(world);
+        program.bindUniform("transform").setMatrix4f(terrain);
         program.bindUniform("sky_color").set3f(world.sky.color.r, world.sky.color.g, world.sky.color.b);
-        program.bindUniform("patch_color").set3f(.6f, .5f, .1f);
-        //program.bindUniform("patch_color").set3f(((float)patch.row/terrain.rows), ((float)patch.column/terrain.columns), 0f);
+        program.bindUniform("map_color").set3f(.6f, 0f, 0f);
 
         if(terrain.heightmap != null) {
             

@@ -4,13 +4,13 @@ const int MAX_BONES = 150;//max bones allowed in a skeleton
 const int MAX_WEIGHTS = 4;//max number of bones that can affect a vertex
 
 in vec3 position;
-in vec3 normal;
 in vec2 texcoord;
+in vec3 normal;
 in ivec4 bones;
 in vec4 weights;
 
-out vec3 pass_normal;
 out vec2 pass_texcoord;
+out vec3 pass_normal;
 out vec4 pass_weights;
 
 uniform mat4 transform;

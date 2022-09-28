@@ -18,7 +18,7 @@ uniform sampler2D hmap;
 
 void main(void) {
     
-    vec2 st = ((position + offset)/twidth);
+    vec2 st = (position + offset)/twidth;
     
     height = use_hmap == true && st.x >= 0 && st.x <= twidth && st.y >= 0 && st.y <= twidth ? 125*texture(hmap, st).r : 0;
     vec4 world_pos = transform * vec4(position.x, height, position.y, 1.0);

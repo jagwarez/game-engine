@@ -33,7 +33,7 @@ class SkyPipeline extends ModelPipeline {
     @Override
     public void init(Game game) throws Exception {
         super.init(game);
-        sky = game.world.sky;   
+        sky = game.world.sky;     
         game.assets.models.add(sky.model);
     }
     
@@ -103,10 +103,12 @@ class SkyPipeline extends ModelPipeline {
     }
     
     @Override
-    public void process() {
+    public void process() throws Exception {
         
         program.enable();
         buffer.bind();
+        
+        lights();
         
         glCullFace(GL_FRONT);
         

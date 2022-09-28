@@ -3,24 +3,15 @@ package jagwarez.game.engine;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Matrix4x3f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
-import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
-import static org.lwjgl.opengl.GL20.glAttachShader;
-import static org.lwjgl.opengl.GL20.glBindAttribLocation;
-import static org.lwjgl.opengl.GL20.glCreateProgram;
-import static org.lwjgl.opengl.GL20.glDetachShader;
-import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
-import static org.lwjgl.opengl.GL20.glGetProgrami;
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glLinkProgram;
-import static org.lwjgl.opengl.GL20.glUniform1f;
-import static org.lwjgl.opengl.GL20.glUniform1i;
-import static org.lwjgl.opengl.GL20.glUniform2f;
-import static org.lwjgl.opengl.GL20.glUniform3f;
-import static org.lwjgl.opengl.GL20.glUniform4f;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
-import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL21.glUniformMatrix4x3fv;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 
 /**
@@ -100,7 +91,12 @@ public class Program {
         
         public final int id;
         
-        private static final FloatBuffer M4FBUFFER = BufferUtils.createFloatBuffer(16);
+        private static final FloatBuffer V2F = BufferUtils.createFloatBuffer(2);
+        private static final FloatBuffer V3F = BufferUtils.createFloatBuffer(3);
+        private static final FloatBuffer V4F = BufferUtils.createFloatBuffer(4);
+        private static final FloatBuffer M3F = BufferUtils.createFloatBuffer(9);
+        private static final FloatBuffer M4X3F = BufferUtils.createFloatBuffer(12);
+        private static final FloatBuffer M4F = BufferUtils.createFloatBuffer(16);
         
         public Uniform(int id) {
             this.id = id;
@@ -122,20 +118,49 @@ public class Program {
             glUniform2f(id, f1, f2);
         }
         
+        public void setVector2f(Vector2f vector) {
+            glUniform2fv(id, vector.get(V2F));
+        }
+        
         public void set3f(float f1, float f2, float f3) {
             glUniform3f(id, f1, f2, f3);
+        }
+        
+        public void setVector3f(Vector3f vector) {
+            glUniform3fv(id, vector.get(V3F));
         }
         
         public void set4f(float f1, float f2, float f3, float f4) {
             glUniform4f(id, f1, f2, f3, f4);
         }
         
-        public void setMatrix4fv(Matrix4f matrix) {
-            setMatrix4fv(matrix, false);
+        public void setVector4f(Vector4f vector) {
+            glUniform4fv(id, vector.get(V4F));
         }
         
-        public void setMatrix4fv(Matrix4f matrix, boolean transpose) {
-            glUniformMatrix4fv(id, transpose, matrix.get(M4FBUFFER));
+        public void setMatrix3f(Matrix3f matrix) {
+            setMatrix3f(matrix, false);
         }
+        
+        public void setMatrix3f(Matrix3f matrix, boolean transpose) {
+            glUniformMatrix3fv(id, transpose, matrix.get(M3F));
+        }
+        
+        public void setMatrix4f(Matrix4f matrix) {
+            setMatrix4f(matrix, false);
+        }
+        
+        public void setMatrix4f(Matrix4f matrix, boolean transpose) {
+            glUniformMatrix4fv(id, transpose, matrix.get(M4F));
+        }
+        
+        public void setMatrix4x3f(Matrix4x3f matrix) {
+            setMatrix4x3f(matrix, false);
+        }
+        
+        public void setMatrix4x3f(Matrix4x3f matrix, boolean transpose) {
+            glUniformMatrix4x3fv(id, transpose, matrix.get(M4X3F));
+        }
+        
     }
 }

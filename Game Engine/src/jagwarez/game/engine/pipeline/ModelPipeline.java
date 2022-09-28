@@ -22,7 +22,7 @@ public abstract class ModelPipeline extends RenderPipeline {
     
     protected void render(Model model, Matrix4f transform) {
         
-        program.bindUniform("transform").setMatrix4fv(transform);
+        program.bindUniform("transform").setMatrix4f(transform);
         
         for(Mesh mesh : model.meshes.values()) {
 
@@ -45,7 +45,7 @@ public abstract class ModelPipeline extends RenderPipeline {
                         program.bindUniform("diffuseColor").set4f(c.r, c.g, c.b, c.a);
                     }
                 } else
-                    program.bindUniform("diffuseColor").set4f(0f, 0f, .3f, 1);
+                    program.bindUniform("diffuseColor").set4f(0f, 0f, 0f, 1f);
            
                 glDrawElements(GL_TRIANGLES, group.indices.size(), GL_UNSIGNED_INT, group.offset);
                 

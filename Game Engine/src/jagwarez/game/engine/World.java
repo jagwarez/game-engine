@@ -20,6 +20,7 @@ public class World extends Matrix4f {
     public final Player player;
     public final List<Actor> actors;
     public final List<Entity> entities;
+    public final List<Light> lights;
     
     public World(Window window) {
         this.window = window;
@@ -29,6 +30,7 @@ public class World extends Matrix4f {
         this.player = new Player();
         this.actors = new ArrayList<>();
         this.entities = new ArrayList<>();
+        this.lights = new ArrayList<>();
     }
     
     public void update() {

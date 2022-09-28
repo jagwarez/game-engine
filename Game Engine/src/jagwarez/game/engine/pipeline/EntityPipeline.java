@@ -68,8 +68,9 @@ class EntityPipeline extends ModelPipeline {
         
         IntBuffer indices = BufferUtils.createIntBuffer(indexSize);
         FloatBuffer vertices = BufferUtils.createFloatBuffer(vertexSize*3);
-        FloatBuffer normals = BufferUtils.createFloatBuffer(vertexSize*3);
         FloatBuffer coords = BufferUtils.createFloatBuffer(vertexSize*2);
+        FloatBuffer normals = BufferUtils.createFloatBuffer(vertexSize*3);
+        
         int offset = 0;
         
         for(Model model : models) {
@@ -88,13 +89,13 @@ class EntityPipeline extends ModelPipeline {
                         vertices.put(vertex.position.x);
                         vertices.put(vertex.position.y);
                         vertices.put(vertex.position.z);
+                        
+                        coords.put(vertex.texcoord.x);
+                        coords.put(vertex.texcoord.y);
 
                         normals.put(vertex.normal.x);
                         normals.put(vertex.normal.y);
                         normals.put(vertex.normal.z);
-
-                        coords.put(vertex.texcoord.x);
-                        coords.put(vertex.texcoord.y);
                     }
                     
                     for(Effect effect : group.material.effects.values())
@@ -117,25 +118,27 @@ class EntityPipeline extends ModelPipeline {
         program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/entity/vs.glsl", Shader.Type.VERTEX));
         program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/entity/fs.glsl", Shader.Type.FRAGMENT));
         program.bindAttribute(0, "position");
-        program.bindAttribute(1, "normal");
-        program.bindAttribute(2, "texcoord");
+        program.bindAttribute(1, "texcoord");
+        program.bindAttribute(2, "normal");
         program.bindFragment(0, "color");
 
         buffer.bind();
         
         buffer.elements((IntBuffer) indices.flip());
         buffer.attribute((FloatBuffer) vertices.flip(), 3);
-        buffer.attribute((FloatBuffer) normals.flip(), 3);
         buffer.attribute((FloatBuffer) coords.flip(), 2);
+        buffer.attribute((FloatBuffer) normals.flip(), 3);
         
         buffer.unbind();  
         
     }
     
     @Override
-    public void process() {   
+    public void process() throws Exception {   
         program.enable();
         buffer.bind();
+        
+        lights();
         
         for(Entity entity : world.entities)
             render(entity.model, entity);

@@ -4,6 +4,7 @@ import jagwarez.game.asset.model.reader.ColladaReader;
 import jagwarez.game.asset.model.reader.WavefrontReader;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Keyboard.Key;
+import jagwarez.game.engine.Light;
 import jagwarez.game.engine.Mouse.Button;
 import jagwarez.game.engine.Settings;
 import jagwarez.game.engine.Terrain;
@@ -25,6 +26,7 @@ public class TestGame extends Game {
         File assetsDir = new File("games/hello/assets");
         
         world.sky.model = new WavefrontReader(new File(assetsDir, "models/skydome/skydome.obj")).read();
+        world.lights.add(new Light());
         
         world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain.png"));
         

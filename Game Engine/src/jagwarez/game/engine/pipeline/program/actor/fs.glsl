@@ -1,7 +1,7 @@
 #version 150
 
-in vec3 pass_normal;
 in vec2 pass_texcoord;
+in vec3 pass_normal;
 in vec4 pass_weights;
 
 out vec4 color;

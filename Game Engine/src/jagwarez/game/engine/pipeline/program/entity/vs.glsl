@@ -7,8 +7,8 @@
 uniform mat4 transform;
 
 in vec3 position;
-in vec3 normal;
 in vec2 texcoord;
+in vec3 normal;
 
 out vec2 pass_texcoord;
 
