@@ -53,8 +53,8 @@ public class TerrainPipeline extends RenderPipeline {
         for(int x = 0; x < Terrain.SIZE; x++) {
             for(int z = 0; z < Terrain.SIZE; z++) {
                 
-                vertexBuffer.put(x);
-                vertexBuffer.put(z);
+                vertexBuffer.put(x-Terrain.OFFSET);
+                vertexBuffer.put(z-Terrain.OFFSET);
 
                 if(x > 0 && z > 0) {
                     
@@ -97,21 +97,29 @@ public class TerrainPipeline extends RenderPipeline {
         program.enable();
         buffer.bind();
         
-        lights();
+        //lights();
         
-        program.bindUniform("camera").setMatrix4f(world);
-        program.bindUniform("transform").setMatrix4f(terrain);
+        float x = -(player.position.x % 1f);
+        float z = -(player.position.z % 1f);
+
+        terrain.identity();
+        terrain.translate(x, 0f, z);
+        
+        program.bindUniform("view").setMatrix4f(world);
+        program.bindUniform("model").setMatrix4f(terrain);
         program.bindUniform("sky_color").set3f(world.sky.color.r, world.sky.color.g, world.sky.color.b);
         program.bindUniform("map_color").set3f(.6f, 0f, 0f);
 
         if(terrain.heightmap != null) {
             
-            Vector2f offset = new Vector2f((float)Math.floor(player.position.x)-Terrain.OFFSET, (float)Math.floor(player.position.z)-Terrain.OFFSET);
-
+            Vector2f offset = new Vector2f((float)Math.floor(player.position.x), 
+                                           (float)Math.floor(player.position.z));
+            
             glActiveTexture(GL_TEXTURE0 + 0);
             glBindTexture(GL_TEXTURE_2D, terrain.heightmap.id);
 
-            program.bindUniform("twidth").set1f(terrain.heightmap.width);
+            program.bindUniform("hscale").set1f(terrain.SCALE);
+            program.bindUniform("twidth").set1f(terrain.heightmap.width-1);
             program.bindUniform("offset").set2f(offset.x, offset.y);
             program.bindUniform("use_hmap").setBool(true);
             program.bindUniform("hmap").set1i(0);

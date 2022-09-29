@@ -44,12 +44,6 @@ public class World extends Matrix4f {
         mul(player.update(), player);
         player.animate();
         
-        float x = 1f-(player.position.x % 1f);
-        float z = 1f-(player.position.z % 1f);
-        
-        terrain.identity();
-        terrain.translate(((float)-Terrain.OFFSET)+x, 0f, ((float)-Terrain.OFFSET)+z);
-        
         for(Actor actor : actors) {
             mul(actor.update(), actor);
             actor.animate();

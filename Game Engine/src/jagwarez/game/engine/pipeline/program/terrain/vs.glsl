@@ -5,12 +5,12 @@ const float gradient = 3;
 
 in vec2 position;
 
-out vec3 camera_vec;
+out vec3 to_camera;
 out float visibility;
 out float height;
 
-uniform mat4 camera;
-uniform mat4 transform;
+uniform mat4 view;
+uniform mat4 model;
 uniform float twidth;
 uniform vec2 offset;
 uniform bool use_hmap = false;
@@ -18,14 +18,18 @@ uniform sampler2D hmap;
 
 void main(void) {
     
-    vec2 st = (position + offset)/twidth;
-    
-    height = use_hmap == true && st.x >= 0 && st.x <= twidth && st.y >= 0 && st.y <= twidth ? 125*texture(hmap, st).r : 0;
-    vec4 world_pos = transform * vec4(position.x, height, position.y, 1.0);
+    vec2 map_pos = position + offset;
+    if(map_pos.x >= 0 && map_pos.y >= 0 && map_pos.x <= twidth && map_pos.y <= twidth) {
+        vec2 st = map_pos/twidth;
+        height = use_hmap == true ? 125*texture(hmap, st).r : 0;
+    } else
+        height = 0;
+        
+    vec4 world_pos = model * vec4(position.x, height, position.y, 1.0);
    
-    camera_vec = (inverse(camera)*vec4(0,0,0,1)).xyz - world_pos.xyz;
+    to_camera = (inverse(view)*vec4(0,0,0,1)).xyz - world_pos.xyz;
 
-    world_pos = camera * world_pos;
+    world_pos = view * world_pos;
 
     float distance = length(world_pos.xyz);
 
