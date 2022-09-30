@@ -15,8 +15,8 @@ public class Light extends Identity {
     public float intensity = 1f;
     
     public Light() {
-        position = new Vector3f(0,500f,0);
+        position = new Vector3f();
         attenuation = new Vector3f();
-        color = new Color(0,0,1,1);
+        color = new Color(1f,0,0,1f);
     }
 }

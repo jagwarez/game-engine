@@ -8,7 +8,6 @@ import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Map;
-import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -70,10 +69,10 @@ public class TerrainPipeline extends RenderPipeline {
             }
         }
 
-        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/terrain/vs.glsl", Shader.Type.VERTEX));
-        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/terrain/fs.glsl", Shader.Type.FRAGMENT));
-        program.bindAttribute(0, "position");
-        program.bindFragment(0, "color");
+        program.attach(new Shader("jagwarez/game/engine/pipeline/program/terrain/vs.glsl", Shader.Type.VERTEX));
+        program.attach(new Shader("jagwarez/game/engine/pipeline/program/terrain/fs.glsl", Shader.Type.FRAGMENT));
+        program.attribute(0, "position");
+        program.fragment(0, "color");
         
         buffer.bind();
         
@@ -97,36 +96,33 @@ public class TerrainPipeline extends RenderPipeline {
         program.enable();
         buffer.bind();
         
-        //lights();
+        lights();
         
-        float x = -(player.position.x % 1f);
-        float z = -(player.position.z % 1f);
+        float fracX = -(player.position.x % 1f);
+        float fracZ = -(player.position.z % 1f);
+
+        float offsetX = player.position.x < 0 ? (float) Math.ceil(player.position.x) :
+                                                (float) Math.floor(player.position.x);
+        
+        float offsetZ = player.position.z < 0 ? (float) Math.ceil(player.position.z) :
+                                                (float) Math.floor(player.position.z);
 
         terrain.identity();
-        terrain.translate(x, 0f, z);
+        terrain.translate(fracX, 0f, fracZ);
         
-        program.bindUniform("view").setMatrix4f(world);
-        program.bindUniform("model").setMatrix4f(terrain);
-        program.bindUniform("sky_color").set3f(world.sky.color.r, world.sky.color.g, world.sky.color.b);
-        program.bindUniform("map_color").set3f(.6f, 0f, 0f);
-
-        if(terrain.heightmap != null) {
-            
-            Vector2f offset = new Vector2f((float)Math.floor(player.position.x), 
-                                           (float)Math.floor(player.position.z));
-            
-            glActiveTexture(GL_TEXTURE0 + 0);
-            glBindTexture(GL_TEXTURE_2D, terrain.heightmap.id);
-
-            program.bindUniform("hscale").set1f(terrain.SCALE);
-            program.bindUniform("twidth").set1f(terrain.heightmap.width-1);
-            program.bindUniform("offset").set2f(offset.x, offset.y);
-            program.bindUniform("use_hmap").setBool(true);
-            program.bindUniform("hmap").set1i(0);
-
-        } else {
-            program.bindUniform("use_hmap").setBool(false);
-        }
+        program.uniform("offset").float2(offsetX, offsetZ);
+        
+        program.uniform("view").mat4f(world);
+        program.uniform("model").mat4f(terrain);
+        program.uniform("sky_color").float3(world.sky.color.r, world.sky.color.g, world.sky.color.b);
+        program.uniform("map_color").float3(.6f, 0f, 0f);
+        program.uniform("hscale").float1(terrain.SCALE);
+        program.uniform("twidth").float1(terrain.heightmap.width-1);
+        program.uniform("theight").float1(terrain.heightmap.height-1);
+        
+        glActiveTexture(GL_TEXTURE0 + 0);
+        glBindTexture(GL_TEXTURE_2D, terrain.heightmap.id);
+        program.uniform("hmap").int1(0);
 
         glDrawElements(GL_TRIANGLES, Terrain.INDEX_COUNT, GL_UNSIGNED_INT, 0);
         

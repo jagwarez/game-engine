@@ -1,5 +1,8 @@
 package jagwarez.game.asset.model;
 
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
 /**
  *
  * @author jacob
@@ -18,5 +21,13 @@ public class Color extends Effect {
         this.g = g;
         this.b = b;
         this.a = a;
+    }
+    
+    public Vector3f rbg() {
+        return new Vector3f(r,g,b);
+    }
+    
+    public Vector4f rgba() {
+        return new Vector4f(r,g,b,a);
     }
 }

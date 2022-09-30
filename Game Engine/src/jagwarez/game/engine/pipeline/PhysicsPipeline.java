@@ -98,10 +98,10 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         
-        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/physics/vs.glsl", Shader.Type.VERTEX));
-        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/physics/fs.glsl", Shader.Type.FRAGMENT));
-        program.bindAttribute(0, "position");
-        program.bindFragment(0, "color");
+        program.attach(new Shader("jagwarez/game/engine/pipeline/program/physics/vs.glsl", Shader.Type.VERTEX));
+        program.attach(new Shader("jagwarez/game/engine/pipeline/program/physics/fs.glsl", Shader.Type.FRAGMENT));
+        program.attribute(0, "position");
+        program.fragment(0, "color");
         
     }
 
@@ -120,13 +120,13 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
             
             Vector2f offset = new Vector2f(player.position.x-(float)Terrain.OFFSET, (float)player.position.z-(float)Terrain.OFFSET);
 
-            program.bindUniform("twidth").set1f(terrain.heightmap.width);
-            program.bindUniform("offset").set2f(offset.x, offset.y);
-            program.bindUniform("use_hmap").setBool(true);
-            program.bindUniform("hmap").set1i(0);
+            program.uniform("twidth").float1(terrain.heightmap.width);
+            program.uniform("offset").float2(offset.x, offset.y);
+            program.uniform("use_hmap").bool(true);
+            program.uniform("hmap").int1(0);
 
         } else {
-            program.bindUniform("use_hmap").setBool(false);
+            program.uniform("use_hmap").bool(false);
         }
 
         glDrawElements(GL_TRIANGLES, Terrain.INDEX_COUNT, GL_UNSIGNED_INT, 0);

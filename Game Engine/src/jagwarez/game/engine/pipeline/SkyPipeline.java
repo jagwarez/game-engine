@@ -87,11 +87,11 @@ class SkyPipeline extends ModelPipeline {
             }
         }
     
-        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/sky/vs.glsl", Shader.Type.VERTEX));
-        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/sky/fs.glsl", Shader.Type.FRAGMENT));
-        program.bindAttribute(0, "position");
-        program.bindAttribute(1, "texcoord");
-        program.bindFragment(0, "color");
+        program.attach(new Shader("jagwarez/game/engine/pipeline/program/sky/vs.glsl", Shader.Type.VERTEX));
+        program.attach(new Shader("jagwarez/game/engine/pipeline/program/sky/fs.glsl", Shader.Type.FRAGMENT));
+        program.attribute(0, "position");
+        program.attribute(1, "texcoord");
+        program.fragment(0, "color");
 
         buffer.bind();
         
@@ -112,7 +112,7 @@ class SkyPipeline extends ModelPipeline {
         
         glCullFace(GL_FRONT);
         
-        program.bindUniform("sky_color").set3f(sky.color.r, sky.color.g, sky.color.b);
+        program.uniform("sky_color").float3(sky.color.r, sky.color.g, sky.color.b);
         
         render(sky.model, sky);
         

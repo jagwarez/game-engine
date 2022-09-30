@@ -4,6 +4,7 @@ import jagwarez.game.asset.model.reader.ColladaReader;
 import jagwarez.game.asset.model.reader.WavefrontReader;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Keyboard.Key;
+import jagwarez.game.engine.Light;
 import jagwarez.game.engine.Mouse.Button;
 import jagwarez.game.engine.Settings;
 import java.io.File;
@@ -24,7 +25,10 @@ public class TestGame extends Game {
         File assetsDir = new File("games/hello/assets");
         
         world.sky.model = new WavefrontReader(new File(assetsDir, "models/skydome/skydome.obj")).read();
-        //world.lights.add(new Light());
+        world.lights.add(new Light());
+        
+        world.lights.get(0).position.y = 200;
+        //world.lights.get(0).position.z = 300;
         
         world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain.png"));
         
@@ -33,9 +37,9 @@ public class TestGame extends Game {
         
         world.player.model = model;
         world.player.scale.set(.01f);
-        //world.player.position.x = Terrain.OFFSET;
-        //world.player.position.z = Terrain.OFFSET;
-        world.player.position.y = 80;
+        //world.player.position.x = world.terrain.OFFSET;
+        //world.player.position.z = world.terrain.OFFSET;
+        world.player.position.y = 100;
         //world.player.rotation.y = 180;
         
         //world.camera.rotation.y = 180;
@@ -77,10 +81,12 @@ public class TestGame extends Game {
             fy -= .2f;
         
         if(keyboard.pressed(Key._UP))
-            world.camera.tether.distance -= .02f;
+            world.lights.get(0).position.z += 1f;
         
-        if(keyboard.pressed(Key._DOWN))
-            world.camera.tether.distance += .02f;
+        if(keyboard.pressed(Key._DOWN)) {
+            world.lights.get(0).position.z -= 1f;
+            //world.camera.tether.distance += .02f;
+        }
 
         if(mouse.pressed(Button.RIGHT)) {
             world.camera.rotation.x += mouse.y() >= window.height()/2 ? .5f : -.5f;
@@ -90,6 +96,10 @@ public class TestGame extends Game {
         world.player.position.x += fx; //mouse.x() >= window.width()/2 ? .3f : -.3f;
         world.player.position.y += fy;
         world.player.position.z += fz;
+        
+        
+        //world.lights.get(0).position.x %= world.terrain.heightmap.width;
+        //world.lights.get(0).position.z += 1f;
         
         //System.out.println("Player: x="+world.player.position.x+", z="+world.player.position.z);
             

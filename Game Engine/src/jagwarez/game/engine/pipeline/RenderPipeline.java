@@ -3,6 +3,7 @@ package jagwarez.game.engine.pipeline;
 import jagwarez.game.engine.Buffer;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Light;
+import jagwarez.game.engine.Player;
 import jagwarez.game.engine.Program;
 import java.util.List;
 import org.joml.Matrix4x3f;
@@ -17,6 +18,7 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
     protected final Program program;
     protected final Buffer buffer;
     
+    private Player player;
     private List<Light> lights;
       
     public RenderPipeline() {
@@ -34,6 +36,7 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
         program.init();
         buffer.init();
         
+        player = game.world.player;
         lights = game.world.lights;
     }
     
@@ -44,7 +47,7 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
     }
     
     protected void lights() throws Exception {
-        program.bindUniform("light_count").set1i(lights.size());
+        program.uniform("light_count").int1(lights.size());
         for(int i = 0; i < lights.size(); i++) {
             Light light = lights.get(i);
 
@@ -53,7 +56,7 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
             data.setRow(1, new Vector4f(light.color.r, light.color.g, light.color.b, light.color.a));
             data.setRow(2, new Vector4f(light.attenuation, light.intensity));
             
-            program.bindUniform("lights["+i+"]").setMatrix4x3f(data);
+            program.uniform("lights["+i+"]").mat4x3f(data);
         }
     }
     

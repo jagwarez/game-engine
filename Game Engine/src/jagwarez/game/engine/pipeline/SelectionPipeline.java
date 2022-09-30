@@ -57,10 +57,10 @@ public class SelectionPipeline extends RenderPipeline {
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         
-        program.bindShader(new Shader("jagwarez/game/pipeline/program/select/vs.glsl", Shader.Type.VERTEX));
-        program.bindShader(new Shader("jagwarez/game/pipeline/program/select/fs.glsl", Shader.Type.FRAGMENT));
-        program.bindAttribute(0, "position");
-        program.bindFragment(0, "color");
+        program.attach(new Shader("jagwarez/game/pipeline/program/select/vs.glsl", Shader.Type.VERTEX));
+        program.attach(new Shader("jagwarez/game/pipeline/program/select/fs.glsl", Shader.Type.FRAGMENT));
+        program.attribute(0, "position");
+        program.fragment(0, "color");
     }
 
     @Override

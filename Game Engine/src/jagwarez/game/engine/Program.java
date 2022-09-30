@@ -53,29 +53,29 @@ public class Program {
         glUseProgram(0);
     }
     
-    public void bindShader(Shader shader) {
+    public void attach(Shader shader) {
         if(!shaders.containsKey(shader.id)) {
             glAttachShader(this.id, shader.id);
             shaders.put(shader.id, shader);
         }
     }
     
-    public void unbindShader(Shader shader) {
+    public void detach(Shader shader) {
         if(shaders.containsKey(shader.id)) {
             glDetachShader(this.id, shader.id);
             shaders.remove(shader.id);
         }
     }
     
-    public void bindAttribute(int index, String name) {
+    public void attribute(int index, String name) {
         glBindAttribLocation(this.id, index, name);
     }
     
-    public void bindFragment(int index, String name) {
+    public void fragment(int index, String name) {
         glBindFragDataLocation(this.id, index, name);
     }
 
-    public Uniform bindUniform(String name) {
+    public Uniform uniform(String name) {
         
         if(uniforms.containsKey(name))
             return uniforms.get(name);
@@ -102,63 +102,63 @@ public class Program {
             this.id = id;
         }
         
-        public void setBool(boolean b) {
+        public void bool(boolean b) {
             glUniform1i(id, b ? 1 : 0);
         }
         
-        public void set1i(int i) {
+        public void int1(int i) {
             glUniform1i(id, i);
         }
         
-        public void set1f(float f1) {
+        public void float1(float f1) {
             glUniform1f(id, f1);
         }
         
-        public void set2f(float f1, float f2) {
+        public void float2(float f1, float f2) {
             glUniform2f(id, f1, f2);
         }
         
-        public void setVector2f(Vector2f vector) {
+        public void vec2f(Vector2f vector) {
             glUniform2fv(id, vector.get(V2F));
         }
         
-        public void set3f(float f1, float f2, float f3) {
+        public void float3(float f1, float f2, float f3) {
             glUniform3f(id, f1, f2, f3);
         }
         
-        public void setVector3f(Vector3f vector) {
+        public void vec3f(Vector3f vector) {
             glUniform3fv(id, vector.get(V3F));
         }
         
-        public void set4f(float f1, float f2, float f3, float f4) {
+        public void float4(float f1, float f2, float f3, float f4) {
             glUniform4f(id, f1, f2, f3, f4);
         }
         
-        public void setVector4f(Vector4f vector) {
+        public void vec4f(Vector4f vector) {
             glUniform4fv(id, vector.get(V4F));
         }
         
-        public void setMatrix3f(Matrix3f matrix) {
-            setMatrix3f(matrix, false);
+        public void mat3f(Matrix3f matrix) {
+            mat3f(matrix, false);
         }
         
-        public void setMatrix3f(Matrix3f matrix, boolean transpose) {
+        public void mat3f(Matrix3f matrix, boolean transpose) {
             glUniformMatrix3fv(id, transpose, matrix.get(M3F));
         }
         
-        public void setMatrix4f(Matrix4f matrix) {
-            setMatrix4f(matrix, false);
+        public void mat4f(Matrix4f matrix) {
+            mat4f(matrix, false);
         }
         
-        public void setMatrix4f(Matrix4f matrix, boolean transpose) {
+        public void mat4f(Matrix4f matrix, boolean transpose) {
             glUniformMatrix4fv(id, transpose, matrix.get(M4F));
         }
         
-        public void setMatrix4x3f(Matrix4x3f matrix) {
-            setMatrix4x3f(matrix, false);
+        public void mat4x3f(Matrix4x3f matrix) {
+            mat4x3f(matrix, false);
         }
         
-        public void setMatrix4x3f(Matrix4x3f matrix, boolean transpose) {
+        public void mat4x3f(Matrix4x3f matrix, boolean transpose) {
             glUniformMatrix4x3fv(id, transpose, matrix.get(M4X3F));
         }
         

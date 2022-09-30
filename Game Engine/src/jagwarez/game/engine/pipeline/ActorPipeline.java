@@ -85,7 +85,7 @@ class ActorPipeline extends ModelPipeline {
                         indices.put(index);
 
                     for(Vertex vertex : group.vertices) {
-
+                        
                         vertices.put(vertex.position.x);
                         vertices.put(vertex.position.y);
                         vertices.put(vertex.position.z);
@@ -133,14 +133,14 @@ class ActorPipeline extends ModelPipeline {
             }
         }
 
-        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/actor/vs.glsl", Shader.Type.VERTEX));
-        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/actor/fs.glsl", Shader.Type.FRAGMENT));
-        program.bindAttribute(0, "position");
-        program.bindAttribute(1, "texcoord");
-        program.bindAttribute(2, "normal");
-        program.bindAttribute(3, "bones");
-        program.bindAttribute(4, "weights");
-        program.bindFragment(0, "color");
+        program.attach(new Shader("jagwarez/game/engine/pipeline/program/actor/vs.glsl", Shader.Type.VERTEX));
+        program.attach(new Shader("jagwarez/game/engine/pipeline/program/actor/fs.glsl", Shader.Type.FRAGMENT));
+        program.attribute(0, "position");
+        program.attribute(1, "texcoord");
+        program.attribute(2, "normal");
+        program.attribute(3, "bones");
+        program.attribute(4, "weights");
+        program.fragment(0, "color");
 
         buffer.bind();
         
@@ -176,7 +176,7 @@ class ActorPipeline extends ModelPipeline {
         Model model = actor.model;
         
         for(int i = 0; i < model.bones.size(); i++)
-            program.bindUniform("bone_transforms["+i+"]").setMatrix4f(model.bones.get(i).transform);
+            program.uniform("bone_transforms["+i+"]").mat4f(model.bones.get(i).transform);
         
         render(model, actor);
         

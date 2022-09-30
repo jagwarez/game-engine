@@ -115,12 +115,12 @@ class EntityPipeline extends ModelPipeline {
             }
         }
 
-        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/entity/vs.glsl", Shader.Type.VERTEX));
-        program.bindShader(new Shader("jagwarez/game/engine/pipeline/program/entity/fs.glsl", Shader.Type.FRAGMENT));
-        program.bindAttribute(0, "position");
-        program.bindAttribute(1, "texcoord");
-        program.bindAttribute(2, "normal");
-        program.bindFragment(0, "color");
+        program.attach(new Shader("jagwarez/game/engine/pipeline/program/entity/vs.glsl", Shader.Type.VERTEX));
+        program.attach(new Shader("jagwarez/game/engine/pipeline/program/entity/fs.glsl", Shader.Type.FRAGMENT));
+        program.attribute(0, "position");
+        program.attribute(1, "texcoord");
+        program.attribute(2, "normal");
+        program.fragment(0, "color");
 
         buffer.bind();
         
