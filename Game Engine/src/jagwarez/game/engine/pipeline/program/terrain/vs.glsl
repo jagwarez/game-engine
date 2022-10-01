@@ -42,8 +42,19 @@ void main(void) {
 
     for(int i = 0; i < light_count; i++) {
        mat4x3 light = lights[i];
-       to_lights[i] = normalize(vec3(light[0][0], light[1][0], light[2][0]) - world_pos.xyz);
+       to_lights[i] = normalize(vec3(light[0][0],light[1][0],light[2][0]) - world_pos.xyz);
     }
+
+    vec3 off = vec3(1, 0, 1);
+    float hR = map_height(map_pos.xy - off.xy);
+    float hL = map_height(map_pos.xy + off.xy);
+    float hB = map_height(map_pos.xy - off.yz);
+    float hF = map_height(map_pos.xy + off.yz);
+    
+    normal.x = hR - hL;
+    normal.y = hB - hF;
+    normal.z = 1;
+    normal = normalize(normal);
 
     scene_pos = view * scene_pos;
 
@@ -52,15 +63,4 @@ void main(void) {
     visibility = clamp(exp(-pow(distance*FOG_DENSITY, FOG_GRADIENT)), 0, 1);
 
     gl_Position = scene_pos;
-    
-    vec3 off = vec3(1.0, 1.0, 0.0);
-    float hL = map_height(map_pos.xy - off.xz);
-    float hR = map_height(map_pos.xy + off.xz);
-    float hD = map_height(map_pos.xy - off.zy);
-    float hU = map_height(map_pos.xy + off.zy);
-    
-    normal.x = hL - hR;
-    normal.y = hD - hU;
-    normal.z = 1;
-    normal = normalize(normal);
 }

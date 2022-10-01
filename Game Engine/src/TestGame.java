@@ -1,3 +1,5 @@
+
+
 import jagwarez.game.asset.model.Model;
 import jagwarez.game.asset.model.Texture;
 import jagwarez.game.asset.model.reader.ColladaReader;
@@ -5,7 +7,6 @@ import jagwarez.game.asset.model.reader.WavefrontReader;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Keyboard.Key;
 import jagwarez.game.engine.Light;
-import jagwarez.game.engine.Mouse.Button;
 import jagwarez.game.engine.Settings;
 import java.io.File;
 
@@ -39,75 +40,62 @@ public class TestGame extends Game {
         world.player.scale.set(.01f);
         //world.player.position.x = world.terrain.OFFSET;
         //world.player.position.z = world.terrain.OFFSET;
-        world.player.position.y = 100;
+        world.player.position.y = 80;
         //world.player.rotation.y = 180;
         
         //world.camera.rotation.y = 180;
         world.camera.follow(world.player);
+        
+        keyboard.binds.put(Key._ESCAPE, (key) -> {
+            if(key.pressed()) window.close();
+        });
+        
+        keyboard.binds.put(Key._TAB, (key) -> {
+            if(key.pressed()) graphics.wireframe();
+        });
+        
+        keyboard.binds.put(Key._W, (key) -> {
+            switch(key.state) {
+                case PRESSED:
+                    world.player.animation("Armature");
+                case DOWN:
+                    world.player.forward();
+                    break;
+                case RELEASED:
+                    world.player.animation(null);
+            }
+        });
+        
+        keyboard.binds.put(Key._S, (key) -> {
+            if(key.down()) world.player.backward();
+        });
+        
+        keyboard.binds.put(Key._A, (key) -> {
+            if(key.down()) world.player.left();
+        });
+        
+        keyboard.binds.put(Key._D, (key) -> {
+            if(key.down()) world.player.right();
+        });
+        
+        keyboard.binds.put(Key._UP, (key) -> {
+            if(key.down()) world.lights.get(0).position.z += .5f;
+        });
+        
+        keyboard.binds.put(Key._DOWN, (key) -> {
+            if(key.down()) world.lights.get(0).position.z -= .5f;
+        });
     }
     
     @Override
     public void update() {
         
-        if(keyboard.pressed(Key._ESCAPE)) {
-            window.close();
-        }
-        
-        if(keyboard.pressed(Key._TAB))
-            graphics.wireframe();
-
-        float fx = 0f, fy = 0f, fz = 0f;
-
-        if(keyboard.pressed(Key._W)) {
-            world.player.animation("Armature");
-            world.player.forward();
-        } else {
-            world.player.animation(null);
-        }
-
-        if(keyboard.pressed(Key._S))
-            world.player.backward();
-
-        if(keyboard.pressed(Key._A))
-            world.player.rotation.y += 1f;
-
-        if(keyboard.pressed(Key._D))
-            world.player.rotation.y -= 1f;
-
-        if(keyboard.pressed(Key._SPACE))
-            fy += .2f;
-        
-        if(keyboard.pressed(Key._V))
-            fy -= .2f;
-        
-        if(keyboard.pressed(Key._UP))
-            world.lights.get(0).position.z += 1f;
-        
-        if(keyboard.pressed(Key._DOWN)) {
-            world.lights.get(0).position.z -= 1f;
-            //world.camera.tether.distance += .02f;
-        }
-
-        if(mouse.pressed(Button.RIGHT)) {
-            world.camera.rotation.x += mouse.y() >= window.height()/2 ? .5f : -.5f;
-            world.camera.rotation.y += mouse.x() >= window.width()/2 ? .5f : -.5f;
-        }
-        
-        world.player.position.x += fx; //mouse.x() >= window.width()/2 ? .3f : -.3f;
-        world.player.position.y += fy;
-        world.player.position.z += fz;
-        
-        
-        //world.lights.get(0).position.x %= world.terrain.heightmap.width;
-        //world.lights.get(0).position.z += 1f;
-        
-        //System.out.println("Player: x="+world.player.position.x+", z="+world.player.position.z);
-            
+          
     }
     
     public static void main(String[] args) throws Exception {
-        try(Game game = new TestGame()) {
-            game.play();
+        try(TestGame test = new TestGame()) {
+            test.play();
         }
     }
 }

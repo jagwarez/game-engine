@@ -49,7 +49,6 @@ public abstract class Game implements AutoCloseable {
 
             window.init();
             mouse.init();
-            keyboard.init();
 
             init = true;
         }
@@ -80,6 +79,8 @@ public abstract class Game implements AutoCloseable {
             glfwPollEvents();
             
             Time.update();
+            
+            keyboard.update();
             
             update();
             

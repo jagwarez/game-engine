@@ -64,7 +64,16 @@ public class Actor extends Entity {
         movement.x = -1;
     }
     
+    public void up() {
+        movement.y = 1;
+    }
+    
+    public void down() {
+        movement.y = -1;
+    }
+    
     public void animation(String name) {
+        System.out.println("Setting animation="+name);
         if(animation == null || !animation.name.equals(name)) {
             animation = model.animations.get(name);
             marker = Time.current();
