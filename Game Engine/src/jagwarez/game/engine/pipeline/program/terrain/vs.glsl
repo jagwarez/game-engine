@@ -2,7 +2,7 @@
 
 const int MAX_LIGHTS = 10;
 const float FOG_DENSITY = 0.004;
-const float FOG_GRADIENT = 3;
+const float FOG_GRADIENT = 5;
 
 in vec2 position;
 
@@ -11,8 +11,9 @@ out float visibility;
 out vec3 to_camera;
 out vec3 to_lights[MAX_LIGHTS];
 
-uniform mat4 view;
-uniform mat4 model;
+uniform mat4 world;
+uniform mat4 camera;
+uniform mat4 terrain;
 uniform float hscale;
 uniform float twidth;
 uniform float theight;
@@ -23,22 +24,19 @@ uniform int light_count;
 
 float map_height(vec2 pos) {
     if(pos.x >= 0 && pos.y >= 0 && pos.x <= twidth && pos.y <= twidth) {
-        vec2 st = vec2(pos.x/twidth, pos.y/theight);
-        return hscale*texture(hmap, vec2(1-st.x, st.y)).r;
+        vec2 st = 1 - vec2(pos.x/twidth, pos.y/theight);
+        return hscale*texture(hmap, st).r;
     } else
         return 0;
 }
 
 void main(void) {
 
-    vec2 map_pos = position + offset;
-    
-    float height = map_height(map_pos);
+    vec4 world_pos = terrain * vec4(position.x, 0, position.y, 1);
 
-    vec4 world_pos = model * vec4(map_pos.x, height, map_pos.y, 1);
-    vec4 scene_pos = model * vec4(position.x, height, position.y, 1);
-   
-    to_camera = (inverse(view)*vec4(0,0,0,1)).xyz - scene_pos.xyz;
+    world_pos.y = map_height(world_pos.xz);
+
+    to_camera = (inverse(camera)*vec4(0,0,0,1)).xyz - world_pos.xyz;
 
     for(int i = 0; i < light_count; i++) {
        mat4x3 light = lights[i];
@@ -46,21 +44,19 @@ void main(void) {
     }
 
     vec3 off = vec3(1, 0, 1);
-    float hR = map_height(map_pos.xy - off.xy);
-    float hL = map_height(map_pos.xy + off.xy);
-    float hB = map_height(map_pos.xy - off.yz);
-    float hF = map_height(map_pos.xy + off.yz);
+    float hR = map_height(world_pos.xz - off.xy);
+    float hL = map_height(world_pos.xz + off.xy);
+    float hB = map_height(world_pos.xz - off.yz);
+    float hF = map_height(world_pos.xz + off.yz);
     
-    normal.x = hR - hL;
-    normal.y = hB - hF;
+    normal.x = hL - hR;
+    normal.y = hF - hB;
     normal.z = 1;
     normal = normalize(normal);
 
-    scene_pos = view * scene_pos;
-
-    float distance = length(scene_pos.xyz);
+    float distance = length(to_camera.xz);
 
     visibility = clamp(exp(-pow(distance*FOG_DENSITY, FOG_GRADIENT)), 0, 1);
 
-    gl_Position = scene_pos;
+    gl_Position = world * camera * world_pos;
 }

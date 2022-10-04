@@ -1,45 +1,39 @@
 package jagwarez.game.engine;
 
+import org.joml.Vector3f;
+
 /**
  *
  * @author jacob
  */
-public class Camera extends Entity {
+public class Camera extends Actor {
     
-    public Tether tether = null;
+    public Actor target;
     public float zoom = 1f;
     
     public Camera() {
         super("camera");
-    }
-    
-    public void follow(Entity target) {
-        this.tether = new Tether(target);
-        //position.x = target.position.x;
-        //position.y = target.position.y + .5f;
-        //position.z = target.position.z - tether.distance;
-
+        target = this;
     }
     
     @Override
     public Entity update() {
         
+        if(target != null && target.id != this.id) {
+            position.set(target.update().position).add(new Vector3f(0,10f,-15f));
+        } else {
+            move();
+            
+            
+        }
+        
         identity();
         
         scale(zoom);
-        rotateXYZ((float)Math.toRadians(rotation.x), (float)Math.toRadians(rotation.y+180), (float)Math.toRadians(rotation.z));
-        translate(0, -(tether.target.position.y+.1f), tether.distance);
+        rotateXYZ((float)Math.toRadians(-rotation.x), (float)Math.toRadians(-rotation.y+180), (float)Math.toRadians(-rotation.z));
+        translate(-position.x , -position.y, -position.z);
         
         return this;
     }
     
-    public static class Tether {
-        
-        public final Entity target;
-        public float distance = .5f;
-        
-        public Tether(Entity target) {
-            this.target = target;
-        }
-    }
 }

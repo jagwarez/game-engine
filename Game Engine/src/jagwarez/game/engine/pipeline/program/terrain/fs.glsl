@@ -4,13 +4,11 @@ const int MAX_LIGHTS = 10;
 
 in vec3 normal;
 in float visibility;
-in vec3 to_camera;
 in vec3 to_lights[MAX_LIGHTS];
 
 out vec4 color;
 
 uniform vec3 sky_color;
-uniform vec3 map_color;
 uniform mat4x3 lights[MAX_LIGHTS];
 uniform int light_count;
 

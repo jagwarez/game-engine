@@ -11,12 +11,12 @@ public class Player extends Actor {
     }
     
     @Override
-    public Player update() {       
+    public Player update() {
+        
         super.update();
         
-        m30(0);
-        m31(position.y);
-        m32(0);
+        //m30(0);
+        //m32(0);
         
         return this;
     }

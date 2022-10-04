@@ -10,11 +10,13 @@ import jagwarez.game.engine.Actor;
 import jagwarez.game.engine.Assets;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Shader;
+import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
@@ -29,6 +31,7 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
  */
 class ActorPipeline extends ModelPipeline {
     
+    private World world;
     private Assets assets;
     private Actor player;
     private List<Actor> actors;
@@ -38,6 +41,7 @@ class ActorPipeline extends ModelPipeline {
         
         super.init(game);
         
+        world = game.world;
         assets = game.assets;
         player = game.world.player;
         actors = game.world.actors;
@@ -178,7 +182,7 @@ class ActorPipeline extends ModelPipeline {
         for(int i = 0; i < model.bones.size(); i++)
             program.uniform("bone_transforms["+i+"]").mat4f(model.bones.get(i).transform);
         
-        render(model, actor);
+        render(model, world.mul(world.camera, new Matrix4f()).mul(actor.update(), actor));
         
     }
 }

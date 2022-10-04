@@ -8,9 +8,11 @@ import jagwarez.game.asset.model.Vertex;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Shader;
 import jagwarez.game.engine.Sky;
+import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Map;
+import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL11.GL_FRONT;
@@ -20,6 +22,7 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
+import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glCullFace;
 
 /**
@@ -28,11 +31,13 @@ import static org.lwjgl.opengl.GL11.glCullFace;
  */
 class SkyPipeline extends ModelPipeline {
     
+    private World world;
     private Sky sky;
     
     @Override
     public void init(Game game) throws Exception {
         super.init(game);
+        world = game.world;
         sky = game.world.sky;     
         game.assets.models.add(sky.model);
     }
@@ -108,13 +113,19 @@ class SkyPipeline extends ModelPipeline {
         program.enable();
         buffer.bind();
         
+        glClearColor(sky.color.r, sky.color.g, sky.color.b, 1f);
+        
         lights();
         
         glCullFace(GL_FRONT);
-        
+
         program.uniform("sky_color").float3(sky.color.r, sky.color.g, sky.color.b);
         
-        render(sky.model, sky);
+        sky.position.x = world.camera.target.position.x;
+        //sky.position.y = world.camera.target.position.y*.5f;
+        sky.position.z = world.camera.target.position.z;
+        
+        render(sky.model, world.mul(world.camera, new Matrix4f()).mul(sky.update(), sky));
         
         glCullFace(GL_BACK);
 

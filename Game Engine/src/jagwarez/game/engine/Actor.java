@@ -10,42 +10,41 @@ import org.joml.Vector3i;
  */
 public class Actor extends Entity {
     
-    public float speed = .2f;
+    public float speed = .1f;   
+    public final Vector3i movement;
     
-    private final Vector3i movement;
-    private final Vector3f direction;
     private Animation animation = null;
     private long marker = 0l;
     
     public Actor(String name) {
         super(name);
-        movement = new Vector3i(0);
-        direction = new Vector3f();
+        movement = new Vector3i();
     }
     
     @Override
-    public Entity update() {   
+    public Entity update() {
         
-        float rx = (float) Math.toRadians(rotation.x);
-        float ry = (float) Math.toRadians(rotation.y);
-        direction.x = (float) (Math.sin(ry)*Math.cos(rx));
-        direction.y = (float) Math.sin(rx);
-        direction.z = (float) (Math.cos(ry)*Math.cos(rx));
-        direction.normalize();
+        animate();
         
-        if(movement.z == 1)
-            position.add(direction.mul(speed));
-        else if(movement.z == -1)
-            position.sub(direction.mul(speed));
-        
-        if(movement.x == 1)
-            position.add(direction.cross(World.UP).normalize().mul(speed));
-        else if(movement.x == -1)
-            position.sub(direction.cross(World.UP).normalize().mul(speed));
-        
-        movement.set(0);
+        move();
         
         return super.update();
+    }
+    
+    public void move() {
+        Vector3f direction = direction().mul(speed);
+        
+        if(movement.x == 1)
+            position.add(direction.cross(World.UP, new Vector3f()));
+        else if(movement.x == -1)
+            position.sub(direction.cross(World.UP, new Vector3f()));
+
+         if(movement.z == 1)
+            position.add(direction);
+        else if(movement.z == -1)
+            position.sub(direction);
+         
+        movement.set(0);
     }
     
     public void forward() {
@@ -83,6 +82,18 @@ public class Actor extends Entity {
     public void animate() {
         if(animation != null)
             animation.play(Time.current()-marker);
+    }
+    
+    protected Vector3f direction() {
+        float rx = (float) Math.toRadians(rotation.x);
+        float ry = (float) Math.toRadians(rotation.y);
+           
+        Vector3f direction = new Vector3f();
+        direction.x = (float) (Math.sin(ry)*Math.cos(rx));
+        direction.y = (float) Math.sin(rx);
+        direction.z = (float) (Math.cos(ry)*Math.cos(rx));
+        
+        return direction.normalize();
     }
     
 }

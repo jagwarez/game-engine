@@ -1,8 +1,10 @@
 package jagwarez.game.engine.pipeline;
 
+import jagwarez.game.engine.Actor;
+import jagwarez.game.engine.Camera;
 import jagwarez.game.engine.Game;
-import jagwarez.game.engine.Player;
 import jagwarez.game.engine.Shader;
+import jagwarez.game.engine.Sky;
 import jagwarez.game.engine.Terrain;
 import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
@@ -30,7 +32,8 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 public class TerrainPipeline extends RenderPipeline {
     
     private World world;
-    private Player player;
+    private Sky sky;
+    private Camera camera;
     private Terrain terrain;
     
     @Override
@@ -39,7 +42,8 @@ public class TerrainPipeline extends RenderPipeline {
         super.init(game);
         
         world = game.world;
-        player = world.player;
+        sky = world.sky;
+        camera = world.camera;
         terrain = world.terrain;
     }
     
@@ -98,24 +102,15 @@ public class TerrainPipeline extends RenderPipeline {
         
         lights();
         
-        float fracX = -(player.position.x % 1f);
-        float fracZ = -(player.position.z % 1f);
-
-        float offsetX = player.position.x < 0 ? (float) Math.ceil(player.position.x) :
-                                                (float) Math.floor(player.position.x);
+        Actor target = camera.target != null ? camera.target : camera;
         
-        float offsetZ = player.position.z < 0 ? (float) Math.ceil(player.position.z) :
-                                                (float) Math.floor(player.position.z);
-
         terrain.identity();
-        terrain.translate(fracX, 0f, fracZ);
+        terrain.translate(quantize(target.position.x), 0f, quantize(target.position.z));
         
-        program.uniform("offset").float2(offsetX, offsetZ);
-        
-        program.uniform("view").mat4f(world);
-        program.uniform("model").mat4f(terrain);
-        program.uniform("sky_color").float3(world.sky.color.r, world.sky.color.g, world.sky.color.b);
-        program.uniform("map_color").float3(.6f, 0f, 0f);
+        program.uniform("world").mat4f(world);
+        program.uniform("camera").mat4f(world.camera);
+        program.uniform("terrain").mat4f(terrain);
+        program.uniform("sky_color").float3(sky.color.r, sky.color.g, sky.color.b);
         program.uniform("hscale").float1(terrain.SCALE);
         program.uniform("twidth").float1(terrain.heightmap.width-1);
         program.uniform("theight").float1(terrain.heightmap.height-1);
@@ -130,6 +125,11 @@ public class TerrainPipeline extends RenderPipeline {
         
         buffer.unbind();
         program.disable();     
+    }
+    
+    private float quantize(float actual) {
+        return actual < 0 ? (float) Math.ceil(actual) :
+                            (float) Math.floor(actual);
     }
     
 }

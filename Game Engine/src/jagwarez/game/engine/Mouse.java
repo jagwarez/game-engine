@@ -9,20 +9,17 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Mouse {
     
     private final Window window;
-    private int x,y;
+    private int x = 0, y = 0;
     
     public Mouse(Window window) {
         this.window = window;
     }
     
     protected void init() {
-         glfwSetCursorPosCallback(window.id, (win, nx, ny) -> {
+        glfwSetCursorPosCallback(window.id, (win, nx, ny) -> {
             this.x = (int)nx; this.y = (int)ny;
         });
     }
-    
-    public int x() { return x; }
-    public int y() { return y; }
     
     public boolean pressed(Button button) {
         return glfwGetMouseButton(window.id, button.code) == GLFW_PRESS;

@@ -37,17 +37,7 @@ public class World extends Matrix4f {
         
         setPerspective((float) Math.toRadians(70), (float) window.width / window.height, 0.1f, 1000f);
 
-        mul(camera.update());
-        
-        mul(sky.update(), sky);
-        
-        mul(player.update(), player);
-        player.animate();
-        
-        for(Actor actor : actors) {
-            mul(actor.update(), actor);
-            actor.animate();
-        }
+        camera.update();
     }
     
     public void destroy() { }

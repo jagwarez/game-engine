@@ -8,8 +8,8 @@ import jagwarez.game.asset.model.Texture;
  */
 public class Terrain extends Identity {
     
-    public static final int SIZE = 600;
-    public static final int SCALE = 120;
+    public static final int SIZE = 800;
+    public static final int SCALE = 100;
     public static final int WIDTH = SIZE-1;
     public static final int OFFSET = SIZE/2;
     public static final int INDEX_COUNT = (SIZE-1)*(SIZE-1)*6;
