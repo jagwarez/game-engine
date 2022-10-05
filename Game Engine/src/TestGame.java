@@ -51,7 +51,7 @@ public class TestGame extends Game {
         });
         
         keyboard.binds.put(Key._TAB, (key) -> {
-            if(key.pressed()) graphics.wireframe();
+            if(key.released()) graphics.wireframe();
         });
         
         keyboard.binds.put(Key._W, (key) -> {

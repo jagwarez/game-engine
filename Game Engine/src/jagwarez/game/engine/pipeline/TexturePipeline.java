@@ -33,8 +33,12 @@ abstract class TexturePipeline implements Pipeline  {
     
     @Override
     public void destroy() throws Exception {
-        for(Texture texture : textures.values())
-            glDeleteTextures(texture.id);
+        for(Texture texture : textures.values()) {
+            if(texture.id != -1) {
+                glDeleteTextures(texture.id);
+                texture.id = -1;
+            }
+        }
     }
     
     protected void texture(Texture texture) throws Exception {

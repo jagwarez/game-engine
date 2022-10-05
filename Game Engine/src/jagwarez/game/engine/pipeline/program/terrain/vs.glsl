@@ -1,7 +1,7 @@
 #version 150
 
 const int MAX_LIGHTS = 10;
-const float FOG_DENSITY = 0.004;
+const float FOG_DENSITY = 0.005;
 const float FOG_GRADIENT = 5;
 
 in vec2 position;

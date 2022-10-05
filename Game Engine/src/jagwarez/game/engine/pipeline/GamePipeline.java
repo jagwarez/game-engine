@@ -7,7 +7,7 @@ package jagwarez.game.engine.pipeline;
 public class GamePipeline extends MultiPipeline {
     
     public GamePipeline() {
-        //pipelines.add(new PhysicsPipeline());
+        pipelines.add(new PhysicsPipeline());
         pipelines.add(new GraphicsPipeline());
     }
     

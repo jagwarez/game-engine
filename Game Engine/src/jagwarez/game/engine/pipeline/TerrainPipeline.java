@@ -10,6 +10,7 @@ import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Map;
+import org.joml.Vector3i;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -103,9 +104,10 @@ public class TerrainPipeline extends RenderPipeline {
         lights();
         
         Actor target = camera.target != null ? camera.target : camera;
+        Vector3i quantized = target.quantize();
         
         terrain.identity();
-        terrain.translate(quantize(target.position.x), 0f, quantize(target.position.z));
+        terrain.translate(quantized.x, 0f, quantized.z);
         
         program.uniform("world").mat4f(world);
         program.uniform("camera").mat4f(world.camera);
@@ -127,9 +129,6 @@ public class TerrainPipeline extends RenderPipeline {
         program.disable();     
     }
     
-    private float quantize(float actual) {
-        return actual < 0 ? (float) Math.ceil(actual) :
-                            (float) Math.floor(actual);
-    }
+    
     
 }

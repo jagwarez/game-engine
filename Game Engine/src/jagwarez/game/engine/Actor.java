@@ -10,7 +10,7 @@ import org.joml.Vector3i;
  */
 public class Actor extends Entity {
     
-    public float speed = .1f;   
+    public float speed = .5f;   
     public final Vector3i movement;
     
     private Animation animation = null;
