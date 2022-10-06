@@ -14,18 +14,17 @@ out vec3 to_lights[MAX_LIGHTS];
 uniform mat4 world;
 uniform mat4 camera;
 uniform mat4 terrain;
-uniform float hscale;
-uniform float twidth;
-uniform float theight;
-uniform vec2 offset;
+uniform int hscale;
+uniform int twidth;
+uniform int theight;
 uniform sampler2D hmap;
 uniform mat4x3 lights[MAX_LIGHTS];
 uniform int light_count;
 
 float map_height(vec2 pos) {
-    if(pos.x >= 0 && pos.y >= 0 && pos.x <= twidth && pos.y <= twidth) {
-        vec2 st = 1 - vec2(pos.x/twidth, pos.y/theight);
-        return hscale*texture(hmap, st).r;
+    if(pos.x >= 0 && pos.y >= 0 && pos.x <= twidth && pos.y <= theight) {
+        vec2 st = vec2(1-(pos.x/twidth), pos.y/theight);
+        return texture(hmap, st).r*255;
     } else
         return 0;
 }
@@ -49,7 +48,7 @@ void main(void) {
     float hB = map_height(world_pos.xz - off.yz);
     float hF = map_height(world_pos.xz + off.yz);
     
-    normal.x = hL - hR;
+    normal.x = hR - hL;
     normal.y = hF - hB;
     normal.z = 1;
     normal = normalize(normal);

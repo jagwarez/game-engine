@@ -20,11 +20,9 @@ public class Camera extends Actor {
     public Entity update() {
         
         if(target != null && target.id != this.id) {
-            position.set(target.update().position).add(new Vector3f(0,10f,-15f));
+            position.set(target.update().position).add(new Vector3f(0,10f,-30f));
         } else {
             move();
-            
-            
         }
         
         identity();

@@ -31,7 +31,7 @@ public class TestGame extends Game {
         world.lights.get(0).position.y = 100;
         world.lights.get(0).position.z = 0;
         
-        world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain.png"));
+        world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain-1.png"));
         
         Model model = new ColladaReader(new File(assetsDir, "models/thinmatrix/model.dae")).read();
         assets.models.add(model);
@@ -47,7 +47,7 @@ public class TestGame extends Game {
         //world.camera.follow(world.player);
         
         keyboard.binds.put(Key._ESCAPE, (key) -> {
-            if(key.pressed()) window.close();
+            if(key.pressed()) stop();
         });
         
         keyboard.binds.put(Key._TAB, (key) -> {
@@ -115,8 +115,7 @@ public class TestGame extends Game {
     
     @Override
     public void update() {
-        
-          
+        //world.lights.get(0).color.r = ((Time.millis())%255)/255f;
     }
     
     public static void main(String[] args) throws Exception {

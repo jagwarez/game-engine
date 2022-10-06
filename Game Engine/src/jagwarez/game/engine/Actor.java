@@ -75,13 +75,13 @@ public class Actor extends Entity {
         System.out.println("Setting animation="+name);
         if(animation == null || !animation.name.equals(name)) {
             animation = model.animations.get(name);
-            marker = Time.current();
+            marker = Time.millis();
         }
     }
     
     public void animate() {
         if(animation != null)
-            animation.play(Time.current()-marker);
+            animation.play(Time.millis()-marker);
     }
     
     protected Vector3f direction() {

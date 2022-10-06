@@ -62,13 +62,13 @@ public class TerrainPipeline extends RenderPipeline {
 
                 if(x > 0 && z > 0) {
                     
-                    indexBuffer.put(x * Terrain.SIZE + z);
                     indexBuffer.put(x * Terrain.SIZE + (z-1));
                     indexBuffer.put((x-1) * Terrain.SIZE + (z-1));
-                    
-                    indexBuffer.put((x-1) * Terrain.SIZE + (z-1));
                     indexBuffer.put((x-1) * Terrain.SIZE + z);
+                    
                     indexBuffer.put(x * Terrain.SIZE + z);
+                    indexBuffer.put(x * Terrain.SIZE + (z-1));
+                    indexBuffer.put((x-1) * Terrain.SIZE + z);
                     
                 }
             }
@@ -113,9 +113,9 @@ public class TerrainPipeline extends RenderPipeline {
         program.uniform("camera").mat4f(world.camera);
         program.uniform("terrain").mat4f(terrain);
         program.uniform("sky_color").float3(sky.color.r, sky.color.g, sky.color.b);
-        program.uniform("hscale").float1(terrain.SCALE);
-        program.uniform("twidth").float1(terrain.heightmap.width-1);
-        program.uniform("theight").float1(terrain.heightmap.height-1);
+        program.uniform("hscale").int1(terrain.SCALE);
+        program.uniform("twidth").int1(terrain.heightmap.width-1);
+        program.uniform("theight").int1(terrain.heightmap.height-1);
         
         glActiveTexture(GL_TEXTURE0 + 0);
         glBindTexture(GL_TEXTURE_2D, terrain.heightmap.id);

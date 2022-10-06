@@ -16,6 +16,7 @@ public class Mouse {
     }
     
     protected void init() {
+        glfwSetInputMode(window.id, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         glfwSetCursorPosCallback(window.id, (win, nx, ny) -> {
             this.x = (int)nx; this.y = (int)ny;
         });

@@ -20,7 +20,7 @@ public class Sky extends Entity {
     @Override
     public Entity update() {
         
-        if(Time.current() % 1f == 0)
+        if(Time.millis() % 1f == 0)
             rotation.y += .005f;
         
         return super.update();

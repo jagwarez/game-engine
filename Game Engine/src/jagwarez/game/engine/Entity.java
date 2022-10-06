@@ -48,4 +48,8 @@ public class Entity extends Identity {
                             position.z < 0 ? (int) Math.ceil(position.z) : (int) Math.floor(position.z));
     }
     
+    public Vector3f fracion() {
+        return new Vector3f(position.x % 1f, position.y % 1f, position.z % 1f);
+    }
+    
 }
