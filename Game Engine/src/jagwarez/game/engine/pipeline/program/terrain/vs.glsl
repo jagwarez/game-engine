@@ -1,8 +1,8 @@
 #version 150
 
 const int MAX_LIGHTS = 10;
-const float FOG_DENSITY = 0.005;
-const float FOG_GRADIENT = 5;
+const float FOG_DENSITY = 0.003;
+const float FOG_GRADIENT = 8;
 
 in vec2 position;
 
@@ -23,7 +23,7 @@ uniform int light_count;
 
 float map_height(vec2 pos) {
     if(pos.x >= 0 && pos.y >= 0 && pos.x <= twidth && pos.y <= theight) {
-        vec2 st = vec2(1-(pos.x/twidth), pos.y/theight);
+        vec2 st = 1-vec2(pos.x/twidth, pos.y/theight);
         return texture(hmap, st).r*255;
     } else
         return 0;

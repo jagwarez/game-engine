@@ -1,6 +1,7 @@
 package jagwarez.game.engine;
 
 import jagwarez.game.asset.model.Animation;
+import jagwarez.game.asset.model.Model;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -10,14 +11,18 @@ import org.joml.Vector3i;
  */
 public class Actor extends Entity {
     
-    public float speed = .5f;   
+    public float speed = .4f;   
     public final Vector3i movement;
     
     private Animation animation = null;
     private long marker = 0l;
     
     public Actor(String name) {
-        super(name);
+        this(name, null);
+    }
+    
+    public Actor(String name, Model model) {
+        super(name, model);
         movement = new Vector3i();
     }
     
@@ -80,8 +85,10 @@ public class Actor extends Entity {
     }
     
     public void animate() {
-        if(animation != null)
+        if(animation != null) {
             animation.play(Time.millis()-marker);
+        } else
+            model.pose();
     }
     
     protected Vector3f direction() {

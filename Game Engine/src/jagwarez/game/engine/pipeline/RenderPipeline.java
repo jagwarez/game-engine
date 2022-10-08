@@ -2,6 +2,7 @@ package jagwarez.game.engine.pipeline;
 
 import jagwarez.game.engine.Buffer;
 import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Graphics;
 import jagwarez.game.engine.Light;
 import jagwarez.game.engine.Player;
 import jagwarez.game.engine.Program;
@@ -15,6 +16,7 @@ import org.joml.Vector4f;
  */
 abstract class RenderPipeline extends TexturePipeline implements SharedPipeline {
     
+    protected Graphics graphics;
     protected final Program program;
     protected final Buffer buffer;
     
@@ -36,6 +38,7 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
         program.init();
         buffer.init();
         
+        graphics = game.graphics;
         player = game.world.player;
         lights = game.world.lights;
     }

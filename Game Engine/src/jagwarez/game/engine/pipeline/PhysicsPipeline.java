@@ -6,6 +6,7 @@ import jagwarez.game.engine.Player;
 import jagwarez.game.engine.Terrain;
 import jagwarez.game.engine.World;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.Map;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -44,14 +45,16 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
     private World world;
     private Terrain terrain;
     private Player player;
+    private List<Actor> actors;
     
     private static final ByteBuffer SAMPLE = BufferUtils.createByteBuffer(16);
     
     @Override
     public void init(Game game) throws Exception {
         world = game.world;
-        terrain = game.world.terrain;
-        player = game.world.player;
+        terrain = world.terrain;
+        player = world.player;
+        actors = world.actors;
     }
 
     @Override
@@ -71,8 +74,7 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
         glBindTexture(GL_TEXTURE_2D, terrain.heightmap.id);
         glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, terrain.heightmap.id, 0);
         
-        int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        if(status != GL_FRAMEBUFFER_COMPLETE)
+        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             throw new Exception("Unable to bind framebuffer");
         
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -88,6 +90,9 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
         
         gravity(world.player);
         
+        for(Actor actor : actors)
+            gravity(actor);
+        
         glReadBuffer(GL_NONE);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
         
@@ -97,40 +102,52 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
         
         Vector3i quantized = actor.quantize();
         Vector3f fraction = actor.fracion();
-        int height = 0;
+        float height = 0;
         
-        glReadPixels((terrain.heightmap.width-quantized.x)-2, quantized.z, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, SAMPLE);
+        int mapx = terrain.heightmap.width-quantized.x-1;
+        int mapy = terrain.heightmap.height-quantized.z-1;
+        
+        glReadPixels(mapx, mapy, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, SAMPLE);
 
-        int sw = SAMPLE.get(0) & 0xFF;
-        int se = SAMPLE.get(4) & 0xFF;
-        int nw = SAMPLE.get(8) & 0xFF;
-        int ne = SAMPLE.get(12) & 0xFF;
+        int nw = SAMPLE.get(0) & 0xFF;
+        int ne = SAMPLE.get(4) & 0xFF;
+        int sw = SAMPLE.get(8) & 0xFF;
+        int se = SAMPLE.get(12) & 0xFF;
         
-        //if(fraction.x+fraction.z > 1f)
-            //height = se + ((nw - ne)*fraction.x)+((nw - sw)*fraction.z);
-        //else
-            //height = se + ((sw - se)*fraction.x)+((ne - se)*fraction.z);
+        //System.out.println("mx="+mapx+",mz="+mapy);
+        //System.out.println("px="+actor.position.x+",pz="+actor.position.z);
+        //System.out.println("qx="+quantized.x+",qz="+quantized.z);
+        //System.out.println("fx="+fraction.x+",fz="+fraction.z);
+        //System.out.println("sw="+sw+",se="+se+",nw="+nw+",ne="+ne);
         
-        height = se;
+        if(fraction.x+fraction.z > 1f) {
+            float hx = ((float)(ne-nw)*(1-fraction.x));
+            float hz = ((float)(sw-nw)*(1-fraction.z));
+            //System.out.println("hx(ne-nw)="+hx);
+            //System.out.println("hz(sw-nw)="+hz);
+            height = nw + (hx + hz);
+            
+        } else {
+            float hx = ((float)(sw-se)*fraction.x);
+            float hz = ((float)(ne-se)*fraction.z);
+            //System.out.println("hx(sw-se)="+hx);
+            //System.out.println("hz(ne-se)="+hz);
+            height = se + hx + hz;
+        }
         
-        float y = actor.position.y;// * Terrain.SCALE;
-        System.out.println("px="+actor.position.x+",pz="+actor.position.z);
-        System.out.println("py="+actor.position.y+",se="+se+",h="+height+",a="+y);
-        if(y >= height)
+        //System.out.println("height="+height);
+        
+        float y = actor.position.y;
+        //System.out.println("px="+actor.position.x+",pz="+actor.position.z);
+        //System.out.println("py="+actor.position.y+",se="+se+",h="+height+",a="+y);
+        if(y > height)
             y -= .5f;
         
         if(y < height)
             y = height;
         
         actor.position.y = y;
-        
-        //for(int i = 0; i < SAMPLE.capacity(); i++) 
-            //System.out.println(i+"="+new Integer(SAMPLE.get(i)&0xFF));
-        //System.out.println("1-1="+height1+", 1-2="+height2+", 2-1="+height3+", 2-2="+height4);
-
-        //actor.position.y = SAMPLE.get(0);
-            //actor.update();
-
+                
     }
 
     @Override

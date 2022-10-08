@@ -23,6 +23,10 @@ public class Color extends Effect {
         this.a = a;
     }
     
+    public void rgb(float r, float g, float b) {
+        this.r = r; this.g = g; this.b = b;
+    }
+    
     public Vector3f rbg() {
         return new Vector3f(r,g,b);
     }

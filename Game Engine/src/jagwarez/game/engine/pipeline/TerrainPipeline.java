@@ -45,7 +45,7 @@ public class TerrainPipeline extends RenderPipeline {
         world = game.world;
         sky = world.sky;
         camera = world.camera;
-        terrain = world.terrain;
+        terrain = world.terrain;     
     }
     
     @Override
@@ -116,6 +116,7 @@ public class TerrainPipeline extends RenderPipeline {
         program.uniform("hscale").int1(terrain.SCALE);
         program.uniform("twidth").int1(terrain.heightmap.width-1);
         program.uniform("theight").int1(terrain.heightmap.height-1);
+        program.uniform("fog").bool(graphics.fog);
         
         glActiveTexture(GL_TEXTURE0 + 0);
         glBindTexture(GL_TEXTURE_2D, terrain.heightmap.id);

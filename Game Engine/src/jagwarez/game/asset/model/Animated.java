@@ -16,5 +16,9 @@ public abstract class Animated {
         this.name = name;
     }
     
+    public void pose() {
+        transform.identity();
+    }
+    
     public abstract void animate();
 }

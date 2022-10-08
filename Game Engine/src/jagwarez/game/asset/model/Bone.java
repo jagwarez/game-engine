@@ -42,4 +42,5 @@ public class Bone extends Animated {
         transform.mul(inverse);
 
     }
+
 }

@@ -11,11 +11,11 @@ import static org.lwjgl.opengl.GL11.glPolygonMode;
  */
 public class Graphics {
     
+    public boolean fog = true;
     private boolean wireframe = false;
     
     public void wireframe() {
         wireframe = !wireframe;
         glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
     }
-    
 }

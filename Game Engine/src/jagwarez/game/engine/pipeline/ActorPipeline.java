@@ -179,10 +179,15 @@ class ActorPipeline extends ModelPipeline {
         
         Model model = actor.model;
         
+        if(model == null)
+            return;
+        
+        actor.update();
+        
         for(int i = 0; i < model.bones.size(); i++)
             program.uniform("bone_transforms["+i+"]").mat4f(model.bones.get(i).transform);
         
-        render(model, world.mul(world.camera, new Matrix4f()).mul(actor.update(), actor));
+        render(model, world.mul(world.camera, new Matrix4f()).mul(actor, actor));
         
     }
 }

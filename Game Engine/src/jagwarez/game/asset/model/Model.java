@@ -30,5 +30,10 @@ public class Model {
     public boolean skeletal() {
         return !bones.isEmpty();
     }
+
+    public void pose() {
+        for(Bone bone : bones)
+            bone.pose();
+    }
     
 }
