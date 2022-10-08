@@ -77,7 +77,6 @@ public class Actor extends Entity {
     }
     
     public void animation(String name) {
-        System.out.println("Setting animation="+name);
         if(animation == null || !animation.name.equals(name)) {
             animation = model.animations.get(name);
             marker = Time.millis();
