@@ -1,6 +1,6 @@
 #version 150
 
-const int MAX_BONES = 150;//max bones allowed in a skeleton
+const int MAX_BONES = 100;//max bones allowed in a skeleton
 const int MAX_WEIGHTS = 4;//max number of bones that can affect a vertex
 
 in vec3 position;

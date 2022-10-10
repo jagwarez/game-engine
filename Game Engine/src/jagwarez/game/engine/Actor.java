@@ -11,6 +11,7 @@ import org.joml.Vector3i;
  */
 public class Actor extends Entity {
     
+    public float weight = .7f;
     public float speed = .4f;   
     public final Vector3i movement;
     
@@ -78,16 +79,18 @@ public class Actor extends Entity {
     
     public void animation(String name) {
         if(animation == null || !animation.name.equals(name)) {
+
             animation = model.animations.get(name);
             marker = Time.millis();
+            
+            if(animation == null)
+                model.pose();
         }
     }
     
     public void animate() {
-        if(animation != null) {
+        if(animation != null)
             animation.play(Time.millis()-marker);
-        } else
-            model.pose();
     }
     
     protected Vector3f direction() {

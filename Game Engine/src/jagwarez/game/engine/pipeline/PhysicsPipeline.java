@@ -88,6 +88,9 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fboId);
         glReadBuffer(GL_COLOR_ATTACHMENT0);
         
+        world.camera.update();
+        gravity(world.camera);
+        
         gravity(world.player);
         
         for(Actor actor : actors)
@@ -141,7 +144,7 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
         //System.out.println("px="+actor.position.x+",pz="+actor.position.z);
         //System.out.println("py="+actor.position.y+",se="+se+",h="+height+",a="+y);
         if(y > height)
-            y -= .5f;
+            y -= actor.weight;
         
         if(y < height)
             y = height;

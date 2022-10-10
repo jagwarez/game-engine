@@ -22,10 +22,14 @@ public class Animation {
     
     public void play(float time) {
         
+        for(Bone bone : model.bones)
+            bone.transform.set(bone.local);
+        
         for(Channel channel : channels.values())
             channel.play(time);
         
-        if(model.skeletal())
+        if(model.skeletal()) {
             model.bones.get(0).animate();
+        }
     }
 }

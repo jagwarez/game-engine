@@ -43,22 +43,24 @@ public class TestGame extends Game {
         
         world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain.png"));
         
-        Model model = new ColladaReader(new File(assetsDir, "models/thinmatrix/model.dae")).read();
+        //Model model = new ColladaReader(new File(assetsDir, "models/thinmatrix/model.dae")).read();
+        Model model = new ColladaReader(new File(assetsDir, "models/mawlaygo/mawlaygo.dae")).read();
         assets.models.add(model);
         
         world.player.model = model;
-        //world.player.scale.set(.01f);
+        world.player.scale.set(.08f);
         world.player.position.x = 146.5f;
         world.player.position.z = 141.5f;
-        world.camera.position.y = 80;
+        //world.camera.position.y = 80;
         //world.player.rotation.y = 180;
         
         Actor cowboy = new Actor("cowboy", model);
         cowboy.position.x = 100f;
         cowboy.position.z = 100f;
+        //cowboy.scale.set(.001f);
         cowboy.speed = .1f;
         cowboy.animation("Armature");
-        world.actors.add(cowboy);
+        //world.actors.add(cowboy);
         
         keyboard.binds.put(Key._ESCAPE, (key) -> {
             if(key.pressed()) stop();
@@ -75,13 +77,14 @@ public class TestGame extends Game {
         keyboard.binds.put(Key._W, (key) -> {
             switch(key.state) {
                 case PRESSED:
-                    if(world.camera.target.id == world.player.id)
-                        world.player.animation("Armature");
+                    if(world.camera.target.id != world.camera.id)
+                        world.camera.target.animation("Armature");
                 case DOWN:
                     world.camera.target.forward();
                     break;
                 case RELEASED:
-                    world.player.animation(null);
+                    if(world.camera.target.id != world.camera.id)
+                        world.camera.target.animation(null);
             }
         });
         
@@ -110,7 +113,7 @@ public class TestGame extends Game {
         });
         
         keyboard.binds.put(Key._SPACE, (key) -> {
-            if(key.down()) world.camera.target.position.y += 1f;
+            if(key.down()) world.camera.target.position.y += 4f;
         });
         
         keyboard.binds.put(Key._KP_7, (key) -> {
@@ -154,18 +157,18 @@ public class TestGame extends Game {
         });
         
         keyboard.binds.put(Key._LEFT, (key) -> {
-            if(key.down()) world.camera.target.rotation.y += .5f;
+            if(key.down()) world.camera.target.rotation.y += .8f;
         });
         
         keyboard.binds.put(Key._RIGHT, (key) -> {
-            if(key.down()) world.camera.target.rotation.y -= .5f;
+            if(key.down()) world.camera.target.rotation.y -= .8f;
         });
         
     }
     
     @Override
     public void update() {
-        world.actors.get(0).forward();
+        //world.actors.get(0).forward();
     }
     
     public static void main(String[] args) throws Exception {

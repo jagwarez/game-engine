@@ -49,9 +49,9 @@ public class Channel {
         Vector3f position = prevFrame.position.lerp(nextFrame.position, blend, new Vector3f());
         Quaternionf rotation = prevFrame.rotation.slerp(nextFrame.rotation, blend, new Quaternionf());
         
-        target.local.identity();
-        target.local.translate(position);
-        target.local.rotate(rotation);
+        target.transform.identity();
+        target.transform.translate(position);
+        target.transform.rotate(rotation);
         
     }
 }

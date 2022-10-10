@@ -35,7 +35,7 @@ public class Entity extends Identity {
         
         translate(position.x, position.y, position.z);
         rotateXYZ((float) Math.toRadians(rotation.x),
-                  (float) Math.toRadians(rotation.y+180),
+                  (float) Math.toRadians(rotation.y),
                   (float) Math.toRadians(rotation.z));
         scale(scale.x, scale.y, scale.z);
                      

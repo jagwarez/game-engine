@@ -129,9 +129,10 @@ public class ColladaReader implements AssetReader<Model> {
                     String nodeType = childElement.getAttribute("type");
                     if("NODE".equals(nodeType))
                         readNodes(model, childElement);
-                    else if("JOINT".equals(nodeType))
+                    else if("JOINT".equals(nodeType)) { 
                         readJoint(model, childElement, null);
-
+                    }
+                    
                     break;
             }
         }
@@ -157,6 +158,14 @@ public class ColladaReader implements AssetReader<Model> {
                 case "matrix":
                     
                     bone.local.set(readMatrix4f(childElement));
+                    
+                    if(parent != null) {
+                        parent.bind.mul(bone.local, bone.bind);                
+                    } else {
+                        bone.bind.set(bone.local);                
+                    }
+                    
+                    bone.bind.invert(bone.inverse);
                     
                     break;
                 case "node":
@@ -201,7 +210,7 @@ public class ColladaReader implements AssetReader<Model> {
                         Bone bone = boneMap.get(boneId);
                         
                         if(bone != null) {
-                            bone.inverse.set(inverses[matrixIndex]);
+                            //bone.inverse.set(inverses[matrixIndex]);
                         }
                     }
                     

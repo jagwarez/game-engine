@@ -20,11 +20,10 @@ public class GraphicsPipeline extends MultiPipeline {
      
     public GraphicsPipeline() {          
        
-        
-        pipelines.add(new EntityPipeline());
-        pipelines.add(new ActorPipeline());
         pipelines.add(new SkyPipeline());
         pipelines.add(new TerrainPipeline());
+        pipelines.add(new EntityPipeline());
+        pipelines.add(new ActorPipeline());
     }
     
     @Override
