@@ -49,6 +49,10 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
         buffer.destroy();     
     }
     
+    protected void fog() throws Exception {
+        program.uniform("fog").bool(graphics.fog);
+    }
+    
     protected void lights() throws Exception {
         program.uniform("light_count").int1(lights.size());
         for(int i = 0; i < lights.size(); i++) {

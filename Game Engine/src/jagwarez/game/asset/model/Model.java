@@ -1,8 +1,6 @@
 package jagwarez.game.asset.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,14 +11,14 @@ public class Model {
     
     public final String name;
     public final Map<String,Mesh> meshes;
-    public final List<Bone> bones;
     public final Map<String,Animation> animations;
-   
+    public final Skeleton skeleton;
+    
     public Model(String name) {
         this.name = name;
         this.meshes = new HashMap<>();
-        this.bones = new ArrayList<>();
         this.animations = new HashMap<>();
+        this.skeleton = new Skeleton();
     }
     
     public boolean animated() {
@@ -28,12 +26,11 @@ public class Model {
     }
     
     public boolean skeletal() {
-        return !bones.isEmpty();
+        return !skeleton.bones.isEmpty();
     }
-
+    
     public void pose() {
-        for(Bone bone : bones)
-            bone.pose();
+        skeleton.pose();
     }
     
 }

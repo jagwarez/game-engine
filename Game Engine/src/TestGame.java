@@ -2,8 +2,8 @@
 
 import jagwarez.game.asset.model.Model;
 import jagwarez.game.asset.model.Texture;
-import jagwarez.game.asset.model.reader.ColladaReader;
-import jagwarez.game.asset.model.reader.WavefrontReader;
+import jagwarez.game.asset.model.reader.dae.DAEModelReader;
+import jagwarez.game.asset.model.reader.obj.OBJModelReader;
 import jagwarez.game.engine.Actor;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Keyboard.Key;
@@ -24,35 +24,40 @@ public class TestGame extends Game {
     @Override
     public void load() throws Exception {
         
+        world.camera.position.x = 512f;
+        
         File assetsDir = new File("games/hello/assets");
         
-        world.sky.model = new WavefrontReader(new File(assetsDir, "models/skydome/skydome.obj")).read();
+        world.sky.model = new OBJModelReader().read(new File(assetsDir, "models/skydome/skydome.obj"));
         world.lights.add(new Light());
         world.lights.add(new Light());
         
         world.lights.get(0).color.rgb(1f, 0f, .1f);
-        world.lights.get(0).position.x = 100;
+        world.lights.get(0).position.x = 700;
         world.lights.get(0).position.y = 200;
         world.lights.get(0).position.z = 0;
         world.lights.get(0).intensity = .5f;
         
         world.lights.get(1).color.rgb(.1f, 0f, 1f);
-        world.lights.get(1).position.x = 500;
+        world.lights.get(1).position.x = 300;
         world.lights.get(1).position.y = 200;
         world.lights.get(1).position.z = 0;
         
-        world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain.png"));
+        world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/arena-1.png"));
         
-        //Model model = new ColladaReader(new File(assetsDir, "models/thinmatrix/model.dae")).read();
-        Model model = new ColladaReader(new File(assetsDir, "models/mawlaygo/mawlaygo.dae")).read();
+        DAEModelReader actorReader = new DAEModelReader();
+        Model model = actorReader.read(new File(assetsDir, "models/mawlaygo/mawlaygo.dae"));
         assets.models.add(model);
         
+        //new DAEAnimationReader(new File(assetsDir, "models/mawlaygo/
+        
         world.player.model = model;
-        world.player.scale.set(.08f);
-        world.player.position.x = 146.5f;
-        world.player.position.z = 141.5f;
+        //world.player.scale.set(.08f);
+        world.player.position.x = 512f;
+        world.player.position.z = 700f;
         //world.camera.position.y = 80;
-        //world.player.rotation.y = 180;
+        world.player.rotation.y = 180;
+        //world.player.animation("idle1");
         
         Actor cowboy = new Actor("cowboy", model);
         cowboy.position.x = 100f;
@@ -84,7 +89,7 @@ public class TestGame extends Game {
                     break;
                 case RELEASED:
                     if(world.camera.target.id != world.camera.id)
-                        world.camera.target.animation(null);
+                        world.camera.target.animation("idle1");
             }
         });
         

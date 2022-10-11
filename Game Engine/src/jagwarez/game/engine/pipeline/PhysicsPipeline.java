@@ -147,7 +147,7 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
             y -= actor.weight;
         
         if(y < height)
-            y = height;
+            y = actor.id == world.camera.id ? height+1f : height;
         
         actor.position.y = y;
                 

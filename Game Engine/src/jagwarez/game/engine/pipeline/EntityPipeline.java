@@ -54,7 +54,7 @@ class EntityPipeline extends ModelPipeline {
         
         for(Model model : assets.models) {
             
-            if(model.animated())
+            if(model.skeletal())
                 continue;
             
             models.add(model);

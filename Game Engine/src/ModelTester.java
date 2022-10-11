@@ -4,9 +4,9 @@ import jagwarez.game.asset.model.Bone;
 import jagwarez.game.asset.model.Channel;
 import jagwarez.game.asset.model.Mesh;
 import jagwarez.game.asset.model.Model;
-import jagwarez.game.asset.model.reader.ColladaReader;
+import jagwarez.game.asset.model.reader.dae.DAEModelReader;
 import java.io.File;
-import java.util.List;
+import java.util.Collection;
 
 /**
  *
@@ -14,7 +14,8 @@ import java.util.List;
  */
 public class ModelTester {
     public static void main(String[] args) throws Exception {
-         Model model = new ColladaReader(new File("games/hello/assets/models/mawjlaygo/mawlaygo.dae")).read();
+        
+         Model model = new DAEModelReader().read(new File("games/hello/assets/models/mawjlaygo/mawlaygo.dae"));
          
          for(Mesh mesh : model.meshes.values()) {
              System.out.println("mesh="+mesh.name);
@@ -33,10 +34,10 @@ public class ModelTester {
              }
          }
          
-         printBones(model.bones, "");
+         printBones(model.skeleton.bones, "");
     }
     
-    public static void printBones(List<Bone> bones, String tabs) {
+    public static void printBones(Collection<Bone> bones, String tabs) {
         for(Bone bone : bones) {
             System.out.println(tabs+"bone="+bone.name+" index="+bone.index);
             printBones(bone.children, tabs+"\t");

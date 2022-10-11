@@ -1,0 +1,32 @@
+package jagwarez.game.asset.model;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ *
+ * @author jacob
+ */
+public class Skeleton {
+    
+    public final List<Bone> bones;
+    public final Map<String,Bone> map;
+    
+    public Skeleton() {
+        bones = new ArrayList<>();
+        map = new HashMap<>();
+    }
+    
+    public void pose() {
+        for(Bone bone : bones)
+            bone.pose();
+    }
+    
+    public void add(Bone bone) {
+        bones.add(bone);
+        map.put(bone.name, bone);
+    }
+        
+}

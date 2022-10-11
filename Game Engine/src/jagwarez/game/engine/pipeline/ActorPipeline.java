@@ -4,6 +4,7 @@ import jagwarez.game.asset.model.Bone;
 import jagwarez.game.asset.model.Effect;
 import jagwarez.game.asset.model.Mesh;
 import jagwarez.game.asset.model.Model;
+import jagwarez.game.asset.model.Skeleton;
 import jagwarez.game.asset.model.Texture;
 import jagwarez.game.asset.model.Vertex;
 import jagwarez.game.engine.Actor;
@@ -16,7 +17,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
@@ -57,7 +57,7 @@ class ActorPipeline extends ModelPipeline {
         
         for(Model model : assets.models) {
             
-            if(!model.animated())
+            if(!model.skeletal())
                 continue;
             
             models.add(model);
@@ -164,7 +164,13 @@ class ActorPipeline extends ModelPipeline {
         program.enable();
         buffer.bind();
         
+        fog();
+        
         lights();
+        
+        program.uniform("world").mat4f(world);
+        program.uniform("camera").mat4f(world.camera.update());
+        program.uniform("sky_color").float3(world.sky.color.r, world.sky.color.g, world.sky.color.b);
         
         render(player);
         
@@ -184,10 +190,12 @@ class ActorPipeline extends ModelPipeline {
         
         actor.update();
         
-        for(int i = 0; i < model.bones.size(); i++)
-            program.uniform("bone_transforms["+i+"]").mat4f(model.bones.get(i).transform);
+        Skeleton skeleton = model.skeleton;
         
-        render(model, world.mul(world.camera, new Matrix4f()).mul(actor, actor));
+        for(int i = 0; i < skeleton.bones.size(); i++)
+            program.uniform("bone_transforms["+i+"]").mat4f(skeleton.bones.get(i).transform);
+        
+        render(model, actor);
         
     }
 }
