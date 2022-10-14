@@ -52,10 +52,9 @@ class ActorPipeline extends ModelPipeline {
     public void load() throws Exception {
         
         List<Model> models = new ArrayList<>();
-        int indexSize = 0;
-        int vertexSize = 0;
+        int vertexCount = 0;
         
-        for(Model model : assets.models) {
+        for(Model model : assets.models.values()) {
             
             if(!model.skeletal())
                 continue;
@@ -63,18 +62,16 @@ class ActorPipeline extends ModelPipeline {
             models.add(model);
             
             for(Mesh mesh : model.meshes.values())
-                for(Mesh.Group group : mesh.groups) {
-                    indexSize += group.indices.size();
-                    vertexSize += group.vertices.size();
-                }
+                for(Mesh.Group group : mesh.groups)
+                    vertexCount += group.vertices.size();
+         
         }
    
-        IntBuffer indices = BufferUtils.createIntBuffer(indexSize);
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(vertexSize*3);
-        FloatBuffer coords = BufferUtils.createFloatBuffer(vertexSize*2);
-        FloatBuffer normals = BufferUtils.createFloatBuffer(vertexSize*3);
-        IntBuffer bones = BufferUtils.createIntBuffer(vertexSize*4);
-        FloatBuffer weights = BufferUtils.createFloatBuffer(vertexSize*4);
+        FloatBuffer vertices = BufferUtils.createFloatBuffer(vertexCount*3);
+        FloatBuffer coords = BufferUtils.createFloatBuffer(vertexCount*2);
+        FloatBuffer normals = BufferUtils.createFloatBuffer(vertexCount*3);
+        IntBuffer bones = BufferUtils.createIntBuffer(vertexCount*4);
+        FloatBuffer weights = BufferUtils.createFloatBuffer(vertexCount*4);
         int offset = 0;
         
         for(Model model : models) {
@@ -85,9 +82,6 @@ class ActorPipeline extends ModelPipeline {
                     
                     group.offset = offset;
                     
-                    for(int index : group.indices)
-                        indices.put(index);
-
                     for(Vertex vertex : group.vertices) {
                         
                         vertices.put(vertex.position.x);
@@ -132,7 +126,7 @@ class ActorPipeline extends ModelPipeline {
                             texture(texture);
                         }
 
-                    offset += group.indices.size();
+                    offset += group.vertices.size();
                 }
             }
         }
@@ -148,7 +142,6 @@ class ActorPipeline extends ModelPipeline {
 
         buffer.bind();
         
-        buffer.elements((IntBuffer) indices.flip());
         buffer.attribute((FloatBuffer) vertices.flip(), 3);
         buffer.attribute((FloatBuffer) coords.flip(), 2);
         buffer.attribute((FloatBuffer) normals.flip(), 3);

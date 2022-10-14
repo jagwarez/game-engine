@@ -89,19 +89,19 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
         glReadBuffer(GL_COLOR_ATTACHMENT0);
         
         world.camera.update();
-        gravity(world.camera);
+        //gravity(world.camera);
         
-        gravity(world.player);
+        physics(world.player);
         
         for(Actor actor : actors)
-            gravity(actor);
+            physics(actor);
         
         glReadBuffer(GL_NONE);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
         
     }
     
-    private void gravity(Actor actor) {
+    private void physics(Actor actor) {
         
         Vector3i quantized = actor.quantize();
         Vector3f fraction = actor.fracion();
@@ -147,7 +147,7 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
             y -= actor.weight;
         
         if(y < height)
-            y = actor.id == world.camera.id ? height+1f : height;
+            y = height;
         
         actor.position.y = y;
                 

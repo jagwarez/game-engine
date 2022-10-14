@@ -30,7 +30,7 @@ public class DAEAnimationReader extends DAEFileReader<Animation> {
         
         Animation animation = new Animation(name, model);
         
-        Element animationElement = (Element) xpath.evaluate("//library_animations/animation::first-child", document, XPathConstants.NODE);
+        Element animationElement = (Element) xpath.evaluate("//library_animations/*[1]", document, XPathConstants.NODE);
         readAnimation(model, animationElement, animation);
         
         model.animations.put(name, animation);
@@ -42,8 +42,8 @@ public class DAEAnimationReader extends DAEFileReader<Animation> {
         
         if(animation == null) {
             String animationName = !animationElement.getAttribute("name").isEmpty() ?
-                                        animationElement.getAttribute("name") :
-                                        animationElement.getAttribute("id").replaceAll("_.*", "");
+                                    animationElement.getAttribute("name") :
+                                    animationElement.getAttribute("id").replaceAll("_.*", "");
             
             if(!model.animations.containsKey(animationName)) {
                 animation = new Animation(animationName, model);

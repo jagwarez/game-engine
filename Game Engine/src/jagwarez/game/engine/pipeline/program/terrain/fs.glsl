@@ -30,7 +30,7 @@ void main(void) {
 
         float brightness = clamp(dot(normal,to_lights[i]),0,1);
 
-        color += mix(color, light_color * intensity, brightness/att);
+        color += mix(color, light_color * intensity, brightness * att);
     }
 
     if(fog)

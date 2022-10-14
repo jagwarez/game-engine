@@ -39,7 +39,7 @@ class SkyPipeline extends ModelPipeline {
         super.init(game);
         world = game.world;
         sky = game.world.sky;     
-        game.assets.models.add(sky.model);
+        game.assets.models.put(sky.model.name, sky.model);
     }
     
     @Override

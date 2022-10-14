@@ -45,10 +45,10 @@ public class Window {
 
         GLFWVidMode video = glfwGetVideoMode(glfwGetPrimaryMonitor());
         
-        glfwSetWindowMonitor(id, glfwGetPrimaryMonitor(), 0, 0, this.width, this.height, GLFW_DONT_CARE);
+        glfwSetWindowMonitor(id, glfwGetPrimaryMonitor(), 0, 0, width, height, GLFW_DONT_CARE);
 
-        //if(video != null)
-            //glfwSetWindowPos(id, (video.width()-this.width)/2, (video.height()-this.height)/2);
+        if(video != null)
+            glfwSetWindowPos(id, (video.width()-width)/2, (video.height()-height)/2);
         
         glfwSetWindowSizeCallback(id, (long win, int w, int h) -> {
             Window.this.width = w;

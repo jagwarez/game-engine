@@ -15,7 +15,7 @@ import java.util.Collection;
 public class ModelTester {
     public static void main(String[] args) throws Exception {
         
-         Model model = new DAEModelReader().read(new File("games/hello/assets/models/mawjlaygo/mawlaygo.dae"));
+         Model model = new DAEModelReader().read(new File("games/hello/assets/models/nordstrom/nordstrom.dae"));
          
          for(Mesh mesh : model.meshes.values()) {
              System.out.println("mesh="+mesh.name);

@@ -26,6 +26,7 @@ import org.w3c.dom.NodeList;
  */
 public class DAEModelReader extends DAEFileReader<Model> {
     
+    @Override
     public Model read(File file) throws Exception {
         
         parse(file);
@@ -236,7 +237,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
             
             for(int trianglesIndex = 0; trianglesIndex < trianglesNodes.getLength(); trianglesIndex++) {
                 
-                Mesh.Group group = new Mesh.Group(mesh.groups.size());
+                Mesh.Group group = new Mesh.Group(0);
                 mesh.groups.add(group);
                 
                 int positionOffset = -1, normalOffset = -1, texcoordOffset = -1;
@@ -349,7 +350,6 @@ public class DAEModelReader extends DAEFileReader<Model> {
                     }
                 }
 
-                HashMap<String,Vertex> originals = new HashMap<>();
                 String[] triangles = trianglesElement.getElementsByTagName("p").item(0).getFirstChild().getNodeValue().split(" ");
                 for(int i = 0; i < triangles.length; i += inputCount) {
                     int positionIndex = Integer.parseInt(triangles[i + positionOffset]);
@@ -364,18 +364,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
                     if(skin != null)
                         vertex.weights.putAll(skin.get(positionIndex));
                     
-                    Vertex original = originals.get(vertex.toString());
-                    if(original == null) {
-
-                        original = vertex;
-
-                        group.vertices.add(original);
-
-                        originals.put(original.toString(), original);
-
-                    }
-
-                    group.indices.add(original.index);
+                    group.vertices.add(vertex);
                 }
             }
         }

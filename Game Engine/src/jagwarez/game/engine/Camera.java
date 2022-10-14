@@ -22,9 +22,19 @@ public class Camera extends Actor {
         
         identity();
         
+        scale(zoom);
+        
         if(target != null && target.id != this.id) {
+            
+            target.update();
+            
+            position.x = target.position.x;
+            position.y = target.position.y;
+            position.z = target.position.z;
+            position.add(new Vector3f(0f,10f,-30f));
+            
             lookAt(position, target.position.add(0,10,0, new Vector3f()), World.UP);
-            position.set(target.update().position).add(new Vector3f(0f,10f,-30f));
+            
         } else {
             
             move();
@@ -33,8 +43,6 @@ public class Camera extends Actor {
             translate(-position.x , -position.y, -position.z);
         
         }
-        
-        scale(zoom);
         
         return this;
     }

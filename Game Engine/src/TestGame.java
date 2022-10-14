@@ -2,7 +2,7 @@
 
 import jagwarez.game.asset.model.Model;
 import jagwarez.game.asset.model.Texture;
-import jagwarez.game.asset.model.reader.dae.DAEModelReader;
+import jagwarez.game.asset.model.reader.dae.DAEFolderReader;
 import jagwarez.game.asset.model.reader.obj.OBJModelReader;
 import jagwarez.game.engine.Actor;
 import jagwarez.game.engine.Game;
@@ -32,40 +32,40 @@ public class TestGame extends Game {
         world.lights.add(new Light());
         world.lights.add(new Light());
         
-        world.lights.get(0).color.rgb(1f, 0f, .1f);
-        world.lights.get(0).position.x = 700;
-        world.lights.get(0).position.y = 200;
+        world.lights.get(0).color.rgb(1f, 1f, 1f);
+        world.lights.get(0).position.x = 512;
+        world.lights.get(0).position.y = 80;
         world.lights.get(0).position.z = 0;
-        world.lights.get(0).intensity = .5f;
         
-        world.lights.get(1).color.rgb(.1f, 0f, 1f);
-        world.lights.get(1).position.x = 300;
-        world.lights.get(1).position.y = 200;
-        world.lights.get(1).position.z = 0;
+        world.lights.get(1).color.rgb(1f, 1f, 1f);
+        world.lights.get(1).position.x = 512;
+        world.lights.get(1).position.y = 80;
+        world.lights.get(1).position.z = 1024;
         
         world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/arena-1.png"));
         
-        DAEModelReader actorReader = new DAEModelReader();
-        Model model = actorReader.read(new File(assetsDir, "models/mawlaygo/mawlaygo.dae"));
-        assets.models.add(model);
+        String[] actors = new String[] {"helldemon", "nordstrom"};
+        DAEFolderReader actorReader = new DAEFolderReader();
+        for(String actor : actors) {
+            Model model = actorReader.read(new File(assetsDir, "models/"+actor+"/"+actor+".dae"));
+            assets.models.put(model.name, model);
+        }
         
-        //new DAEAnimationReader(new File(assetsDir, "models/mawlaygo/
-        
-        world.player.model = model;
-        //world.player.scale.set(.08f);
-        world.player.position.x = 512f;
-        world.player.position.z = 700f;
+        world.player.model = assets.models.get("nordstrom");
+        world.player.scale.set(.08f);
+        world.player.position.x = 400f;
+        world.player.position.z = 1f;
         //world.camera.position.y = 80;
-        world.player.rotation.y = 180;
-        //world.player.animation("idle1");
+        //world.player.rotation.y = 180;
         
-        Actor cowboy = new Actor("cowboy", model);
-        cowboy.position.x = 100f;
-        cowboy.position.z = 100f;
+        Actor boss = new Actor("boss", assets.models.get("helldemon"));
+        boss.position.x = 400f;
+        boss.position.z = 700f;
+        boss.rotation.y = 100f;
         //cowboy.scale.set(.001f);
-        cowboy.speed = .1f;
-        cowboy.animation("Armature");
-        //world.actors.add(cowboy);
+        //boss.speed = .1f;
+        boss.animation("idle1");
+        world.actors.add(boss);
         
         keyboard.binds.put(Key._ESCAPE, (key) -> {
             if(key.pressed()) stop();
@@ -83,7 +83,7 @@ public class TestGame extends Game {
             switch(key.state) {
                 case PRESSED:
                     if(world.camera.target.id != world.camera.id)
-                        world.camera.target.animation("Armature");
+                        world.camera.target.animation("run");
                 case DOWN:
                     world.camera.target.forward();
                     break;
@@ -94,7 +94,17 @@ public class TestGame extends Game {
         });
         
         keyboard.binds.put(Key._S, (key) -> {
-            if(key.down()) world.camera.target.backward();
+            switch(key.state) {
+                case PRESSED:
+                    if(world.camera.target.id != world.camera.id)
+                        world.camera.target.animation("back");
+                case DOWN:
+                    world.camera.target.backward();
+                    break;
+                case RELEASED:
+                    if(world.camera.target.id != world.camera.id)
+                        world.camera.target.animation("idle1");
+            }
         });
         
         keyboard.binds.put(Key._A, (key) -> {
@@ -106,11 +116,11 @@ public class TestGame extends Game {
         });
         
         keyboard.binds.put(Key._UP, (key) -> {
-            if(key.down() && world.camera.target.id == world.camera.id) world.camera.rotation.x += .5f;
+            if(key.down()) world.camera.rotation.x += .5f;
         });
         
         keyboard.binds.put(Key._DOWN, (key) -> {
-            if(key.down() && world.camera.target.id == world.camera.id) world.camera.rotation.x -= .5f;
+            if(key.down()) world.camera.rotation.x -= .5f;
         });
         
         keyboard.binds.put(Key._C, (key) -> {
@@ -118,7 +128,7 @@ public class TestGame extends Game {
         });
         
         keyboard.binds.put(Key._SPACE, (key) -> {
-            if(key.down()) world.camera.target.position.y += 4f;
+            if(key.down()) world.camera.target.position.y += 2f;
         });
         
         keyboard.binds.put(Key._KP_7, (key) -> {

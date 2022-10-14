@@ -1,8 +1,8 @@
 package jagwarez.game.engine;
 
 import jagwarez.game.asset.model.Model;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class Assets {
     
-    public final List<Model> models = new ArrayList();
+    public final Map<String,Model> models = new HashMap<>();
     
     protected Assets() { }
  

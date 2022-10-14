@@ -13,12 +13,15 @@ public class Animation {
     public final Model model;
     public final Map<String,Channel> channels;
     private float speed = .001f;
+    private long duration = -1;
     
     public Animation(String name, Model model) {
         this.name = name;
         this.model = model;
         this.channels = new HashMap<>();
     }
+    
+    
     
     public void play(float time) {
         
@@ -28,6 +31,6 @@ public class Animation {
         for(Channel channel : channels.values())
             channel.play(time);
         
-        model.skeleton.bones.get(0).animate();
+        model.skeleton.root.animate();
     }
 }

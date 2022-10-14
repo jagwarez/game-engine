@@ -14,6 +14,8 @@ public class Skeleton {
     public final List<Bone> bones;
     public final Map<String,Bone> map;
     
+    Bone root = null;
+    
     public Skeleton() {
         bones = new ArrayList<>();
         map = new HashMap<>();
@@ -25,8 +27,13 @@ public class Skeleton {
     }
     
     public void add(Bone bone) {
+        
+        if(root == null)
+            root = bone.root;
+        
         bones.add(bone);
         map.put(bone.name, bone);
+        
     }
         
 }

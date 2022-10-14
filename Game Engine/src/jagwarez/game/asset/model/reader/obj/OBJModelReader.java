@@ -1,12 +1,12 @@
 package jagwarez.game.asset.model.reader.obj;
 
+import jagwarez.game.asset.AssetReader;
 import jagwarez.game.asset.model.Effect;
 import jagwarez.game.asset.model.Material;
 import jagwarez.game.asset.model.Mesh;
 import jagwarez.game.asset.model.Model;
 import jagwarez.game.asset.model.Texture;
 import jagwarez.game.asset.model.Vertex;
-import jagwarez.game.asset.AssetReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -44,7 +44,6 @@ public class OBJModelReader implements AssetReader<Model> {
             ArrayList<Vertex> vertices = new ArrayList<>();
             ArrayList<Vector4f> normals = new ArrayList<>();
             ArrayList<Vector2f> uvcoords = new ArrayList<>();
-            HashMap<String,Vertex> originals = new HashMap<>();
 
             for(String line = reader.readLine(); line != null; line = reader.readLine()) {              
                 String[] fields = line.split("\\s+");
@@ -130,18 +129,8 @@ public class OBJModelReader implements AssetReader<Model> {
 
                                 if(field.length > 2)
                                     vertex.normal.set(normals.get(Integer.parseInt(field[2])-1));
-
-                                Vertex original = originals.get(vertex.toString());
-                                if(original == null) {
-                                    
-                                    original = new Vertex(group.vertices.size(), vertex);
-                                    
-                                    group.vertices.add(original);
-                                    
-                                    originals.put(original.toString(), original);                                   
-                                }
                                 
-                                group.indices.add(original.index);
+                                group.vertices.add(vertex);
                             }
 
                         } else if(fields.length == 5) { // quad
@@ -157,36 +146,27 @@ public class OBJModelReader implements AssetReader<Model> {
 
                                 if(field.length > 2)
                                     vertex.normal.set(normals.get(Integer.parseInt(field[2])-1));
-                                
-                                Vertex original = originals.get(vertex.toString());
-                                if(original == null) {                                   
-                                    original = new Vertex(group.vertices.size(), vertex);
-                                    
-                                    group.vertices.add(original);
-                                                                     
-                                    originals.put(original.toString(), original);                                  
-                                }
 
                                 if(vi == 0) {
-                                    face1[0] = original;
-                                    face2[0] = original;
+                                    face1[0] = vertex;
+                                    face2[0] = vertex;
                                 } else if(vi == 1) {
-                                    face1[1] = original;
+                                    face1[1] = vertex;
                                 } else if(vi == 2) {
-                                    face1[2] = original;
-                                    face2[1] = original;
+                                    face1[2] = vertex;
+                                    face2[1] = vertex;
                                 } else {
-                                    face2[2] = original;
+                                    face2[2] = vertex;
                                 }                                 
                             }
 
-                            group.indices.add(face1[0].index);
-                            group.indices.add(face1[1].index);
-                            group.indices.add(face1[2].index);
+                            group.vertices.add(face1[0]);
+                            group.vertices.add(face1[1]);
+                            group.vertices.add(face1[2]);
                             
-                            group.indices.add(face2[0].index);
-                            group.indices.add(face2[1].index);
-                            group.indices.add(face2[2].index);
+                            group.vertices.add(face2[0]);
+                            group.vertices.add(face2[1]);
+                            group.vertices.add(face2[2]);
 
                         }
                     }    
