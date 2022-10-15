@@ -20,9 +20,7 @@ public class Animation {
         this.model = model;
         this.channels = new HashMap<>();
     }
-    
-    
-    
+
     public void play(float time) {
         
         for(Bone bone : model.skeleton.bones)

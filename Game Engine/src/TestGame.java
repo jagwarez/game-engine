@@ -44,7 +44,7 @@ public class TestGame extends Game {
         
         world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/arena-1.png"));
         
-        String[] actors = new String[] {"helldemon", "nordstrom"};
+        String[] actors = new String[] {"nordstrom", "mawlaygo"};
         DAEFolderReader actorReader = new DAEFolderReader();
         for(String actor : actors) {
             Model model = actorReader.read(new File(assetsDir, "models/"+actor+"/"+actor+".dae"));
@@ -58,13 +58,13 @@ public class TestGame extends Game {
         //world.camera.position.y = 80;
         //world.player.rotation.y = 180;
         
-        Actor boss = new Actor("boss", assets.models.get("helldemon"));
+        Actor boss = new Actor("boss", assets.models.get("mawlaygo"));
         boss.position.x = 400f;
         boss.position.z = 700f;
-        boss.rotation.y = 100f;
+        boss.rotation.y = 160f;
         //cowboy.scale.set(.001f);
         //boss.speed = .1f;
-        boss.animation("idle1");
+        boss.animation("idle");
         world.actors.add(boss);
         
         keyboard.binds.put(Key._ESCAPE, (key) -> {
@@ -183,7 +183,7 @@ public class TestGame extends Game {
     
     @Override
     public void update() {
-        //world.actors.get(0).forward();
+
     }
     
     public static void main(String[] args) throws Exception {

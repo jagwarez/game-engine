@@ -18,8 +18,7 @@ public class GraphicsPipeline extends MultiPipeline {
     
     private Window window;
      
-    public GraphicsPipeline() {          
-       
+    public GraphicsPipeline() {    
         pipelines.add(new SkyPipeline());
         pipelines.add(new TerrainPipeline());
         pipelines.add(new EntityPipeline());

@@ -13,7 +13,6 @@ public abstract class Animated {
     public final Matrix4f bind = new Matrix4f();
     public final Matrix4f inverse = new Matrix4f();
     public final Matrix4f transform = new Matrix4f();
-    public final Matrix4f animation = new Matrix4f();
     
     public Animated(String name) { 
         this.name = name;

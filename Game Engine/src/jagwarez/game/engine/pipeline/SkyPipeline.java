@@ -74,8 +74,8 @@ class SkyPipeline extends ModelPipeline {
                     vertices.put(vertex.position.y);
                     vertices.put(vertex.position.z);
 
-                    coords.put(vertex.texcoord.x);
-                    coords.put(vertex.texcoord.y);
+                    coords.put(vertex.coordinate.x);
+                    coords.put(vertex.coordinate.y);
                 }
 
                 for(Effect effect : group.material.effects.values())

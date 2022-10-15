@@ -13,7 +13,7 @@ public class Mesh extends Animated {
     
     public Mesh(String name) {
         super(name);
-        this.groups = new ArrayList<>();
+        groups = new ArrayList<>();
     }
     
     @Override

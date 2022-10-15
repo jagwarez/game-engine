@@ -83,8 +83,8 @@ class EntityPipeline extends ModelPipeline {
                         vertices.put(vertex.position.y);
                         vertices.put(vertex.position.z);
                         
-                        coords.put(vertex.texcoord.x);
-                        coords.put(vertex.texcoord.y);
+                        coords.put(vertex.coordinate.x);
+                        coords.put(vertex.coordinate.y);
 
                         normals.put(vertex.normal.x);
                         normals.put(vertex.normal.y);

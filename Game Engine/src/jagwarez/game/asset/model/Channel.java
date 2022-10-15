@@ -48,10 +48,12 @@ public class Channel {
         float blend = (time-prevTime)/(nextFrame.time-prevTime);
         Vector3f position = prevFrame.position.lerp(nextFrame.position, blend, new Vector3f());
         Quaternionf rotation = prevFrame.rotation.slerp(nextFrame.rotation, blend, new Quaternionf());
+        Vector3f scale = prevFrame.scale.lerp(nextFrame.scale, blend, new Vector3f());
         
         target.transform.identity();
         target.transform.translate(position);
         target.transform.rotate(rotation);
+        target.transform.scale(scale);
         
     }
 }

@@ -1,17 +1,12 @@
 package jagwarez.game.engine;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author jacob
  */
-public class Graph {
-    
-    public Entity entity;
-    
-    public Graph nw;
-    public Graph ne;
-    public Graph sw;
-    public Graph se;
+public class Graph<T> extends ArrayList<T> {
     
     public void add(Entity e) {
         int locX = 0;

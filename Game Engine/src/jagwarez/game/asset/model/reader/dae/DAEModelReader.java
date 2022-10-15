@@ -47,7 +47,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
     private void readNodes(Model model, Element nodeElement) throws Exception {
         
         NodeList childNodes = (NodeList) xpath.evaluate("child::*", nodeElement, XPathConstants.NODESET);
-        Matrix4f localMatrix = new Matrix4f().identity();
+        Matrix4f localMatrix = new Matrix4f();
         
         for(int childIndex = 0; childIndex < childNodes.getLength(); childIndex++) {
 
@@ -55,16 +55,19 @@ public class DAEModelReader extends DAEFileReader<Model> {
 
             switch(childElement.getTagName()) {
                 case "translate":
+                    
                     float[] position = readFloatArray(childElement);                               
                     localMatrix.translate(position[0], position[1], position[2]);
 
                     break;                                  
                 case "rotate":
+                    
                     float[] rotation = readFloatArray(childElement);                                
                     localMatrix.rotate(rotation[3], rotation[0], rotation[1], rotation[2]);
 
                     break;
                 case "scale":
+                    
                     float[] scale = readFloatArray(childElement);                                   
                     localMatrix.scale(scale[0], scale[1], scale[2]);
 
@@ -152,17 +155,23 @@ public class DAEModelReader extends DAEFileReader<Model> {
         Element jointsElement = (Element) skinElement.getElementsByTagName("joints").item(0);
         NodeList inputNodes = (NodeList) xpath.evaluate("child::input", jointsElement, XPathConstants.NODESET);
         for(int inputIndex = 0; inputIndex < inputNodes.getLength(); inputIndex++) {
+            
             Element inputElement = (Element) inputNodes.item(inputIndex);    
             String sourceId = inputElement.getAttribute("source").substring(1);
             Element sourceElement = getElementById("child::source", sourceId, skinElement);
             
             switch(inputElement.getAttribute("semantic")) {
                 case "JOINT":
+                    
                     String boneData = (String) xpath.evaluate("child::Name_array/text()", sourceElement, XPathConstants.STRING);
                     bones = boneData.split(" ");
                     
                     break;
+                    
                 case "INV_BIND_MATRIX":
+                    
+                    // we're calculating the inverses
+                    /*
                     Element matrixElement = (Element) xpath.evaluate("child::float_array", sourceElement, XPathConstants.NODE);
                     Matrix4f[] inverses = readMatrix4fArray(matrixElement);
                     
@@ -174,6 +183,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
                             //bone.inverse.set(inverses[matrixIndex]);
                         }
                     }
+                    */
                     
                     break;
             }
@@ -183,6 +193,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
         Element vertexElement = (Element) xpath.evaluate("vertex_weights", skinElement, XPathConstants.NODE);
         inputNodes = vertexElement.getElementsByTagName("input");
         for(int inputIndex = 0; inputIndex < inputNodes.getLength(); inputIndex++) {
+            
             Element inputElement = (Element) inputNodes.item(inputIndex);
    
             switch(inputElement.getAttribute("semantic")) {
@@ -212,7 +223,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
                 int boneIndex = Integer.parseInt(vertexBones[dataIndex + boneOffset]);
                 int weightIndex = Integer.parseInt(vertexBones[dataIndex + weightOffset]);
                 
-                Bone bone = model.skeleton.map.get(bones[boneIndex]);
+                Bone bone = model.skeleton.anatomy.get(bones[boneIndex]);
                 boneWeights.put(bone, weights[weightIndex]);
                 
                 dataIndex += 2;
@@ -220,7 +231,6 @@ public class DAEModelReader extends DAEFileReader<Model> {
         }
          
         readMesh(model, skinElement.getAttribute("source").substring(1), skin);
- 
     }
     
     private void readMesh(Model model, String meshId, List<Map<Bone,Float>> skin) throws Exception {
@@ -248,7 +258,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
                 
                 List<Vector4f> positions = null;
                 List<Vector4f> normals = null;
-                List<Vector2f> texcoords = null;
+                List<Vector2f> coords = null;
                 
                 NodeList inputNodes = trianglesElement.getElementsByTagName("input");
                 int inputCount = inputNodes.getLength();
@@ -329,12 +339,12 @@ public class DAEModelReader extends DAEFileReader<Model> {
                             texcoordOffset = inputOffset;
                             
                             if(sources.containsKey(sourceId)) {
-                                texcoords = sources.get(sourceId);
+                                coords = sources.get(sourceId);
                                 continue;
                             }
                             
-                            texcoords = new ArrayList<>();
-                            sources.put(sourceId, texcoords);
+                            coords = new ArrayList<>();
+                            sources.put(sourceId, coords);
                             
                             String coordData = (String) xpath.evaluate("child::float_array[1]", sourceElement, XPathConstants.STRING);
                             String[] coordArray = coordData.split(" ");
@@ -343,7 +353,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
                                 float s = Float.parseFloat(coordArray[i++]);
                                 float t = 1f - Float.parseFloat(coordArray[i++]);
                                 
-                                texcoords.add(new Vector2f(s, t));                           
+                                coords.add(new Vector2f(s, t));                           
                             }
                             
                             break;
@@ -359,7 +369,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
                     Vertex vertex = new Vertex(group.vertices.size());
                     vertex.position.set(positions.get(positionIndex));
                     vertex.normal.set(normals.get(normalIndex));
-                    vertex.texcoord.set(texcoords.get(texIndex));
+                    vertex.coordinate.set(coords.get(texIndex));
                     
                     if(skin != null)
                         vertex.weights.putAll(skin.get(positionIndex));
@@ -382,11 +392,13 @@ public class DAEModelReader extends DAEFileReader<Model> {
             Element techniqueElement = (Element) xpath.evaluate("descendant::technique/child::*[1]", effectElement, XPathConstants.NODE);
             NodeList paramNodes = (NodeList) xpath.evaluate("child::*", techniqueElement, XPathConstants.NODESET);
             for(int paramIndex = 0; paramIndex < paramNodes.getLength(); paramIndex++) {
+                
                 Element paramElement = (Element) paramNodes.item(paramIndex);
                 String paramId = paramElement.getTagName();
                 Effect.Parameter param = Effect.Parameter.fromString(paramId);
 
-                if(param == null) continue;
+                if(param == null)
+                    continue;
                 
                 Element valueElement = (Element) xpath.evaluate("child::*[1]", paramElement, XPathConstants.NODE);
                 switch(valueElement.getTagName()) {
@@ -401,6 +413,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
                         group.material.effects.put(param, color);
                         
                         break;
+                        
                     case "texture":
                         String samplerId = valueElement.getAttribute("texture");
                         String sourceId = (String) xpath.evaluate("descendant::newparam[@sid='"+samplerId+"']/sampler2D/source/text()", effectElement, XPathConstants.STRING);
@@ -408,10 +421,8 @@ public class DAEModelReader extends DAEFileReader<Model> {
                         String imageName = (String) xpath.evaluate("//library_images/image[@id='"+imageId+"']/init_from/text()", effectElement, XPathConstants.STRING);                       
                         File imageFile = new File(file.getParentFile(), URLDecoder.decode(imageName, "UTF-8"));
                         
-                        if(imageFile.exists()) {
-                            Texture texture = new Texture(imageFile);
-                            group.material.effects.put(param, texture);
-                        }
+                        if(imageFile.exists())
+                            group.material.effects.put(param, new Texture(imageFile));
                         
                         break;
                 }

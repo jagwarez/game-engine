@@ -23,7 +23,7 @@ import org.joml.Vector4f;
  */
 public class OBJModelReader implements AssetReader<Model> {
     
-    private Map<String,Material> materials;
+    private final Map<String,Material> materials;
     
     public OBJModelReader() {
         materials = new HashMap<>();
@@ -41,9 +41,9 @@ public class OBJModelReader implements AssetReader<Model> {
         try {
             reader = new BufferedReader(new FileReader(file));
 
-            ArrayList<Vertex> vertices = new ArrayList<>();
+            ArrayList<Vertex> positions = new ArrayList<>();
             ArrayList<Vector4f> normals = new ArrayList<>();
-            ArrayList<Vector2f> uvcoords = new ArrayList<>();
+            ArrayList<Vector2f> coords = new ArrayList<>();
 
             for(String line = reader.readLine(); line != null; line = reader.readLine()) {              
                 String[] fields = line.split("\\s+");
@@ -81,14 +81,14 @@ public class OBJModelReader implements AssetReader<Model> {
                         mesh.groups.add(group);
                         
                     } else if(fields[0].equalsIgnoreCase("v")) {
-                        Vertex vertex = new Vertex(vertices.size());
+                        Vertex vertex = new Vertex(positions.size());
 
                         vertex.position.x = Float.parseFloat(fields[1]);
                         vertex.position.y = Float.parseFloat(fields[2]);
                         vertex.position.z = Float.parseFloat(fields[3]);
                         vertex.position.w = 1f;
 
-                        vertices.add(vertex);
+                        positions.add(vertex);
 
                     } else if(fields[0].equalsIgnoreCase("vn")) {
                         Vector4f normal = new Vector4f();
@@ -103,7 +103,7 @@ public class OBJModelReader implements AssetReader<Model> {
                         uv.x = Float.parseFloat(fields[1]);
                         uv.y = Float.parseFloat(fields[2]);
 
-                        uvcoords.add(uv);
+                        coords.add(uv);
 
                     } else if(fields[0].equalsIgnoreCase("f")) {
                         
@@ -122,10 +122,10 @@ public class OBJModelReader implements AssetReader<Model> {
 
                             for(int vi = 0; vi < 3; vi++) {
                                 String[] field = fields[vi+1].split("/");
-                                Vertex vertex = vertices.get(Integer.parseInt(field[0])-1);
+                                Vertex vertex = positions.get(Integer.parseInt(field[0])-1);
 
                                 if(field.length > 1)
-                                    vertex.texcoord.set(uvcoords.get(Integer.parseInt(field[1])-1));
+                                    vertex.coordinate.set(coords.get(Integer.parseInt(field[1])-1));
 
                                 if(field.length > 2)
                                     vertex.normal.set(normals.get(Integer.parseInt(field[2])-1));
@@ -139,10 +139,10 @@ public class OBJModelReader implements AssetReader<Model> {
 
                             for(int vi = 0; vi < 4; vi++) {
                                 String[] field = fields[vi+1].split("/");
-                                Vertex vertex = vertices.get(Integer.parseInt(field[0])-1);
+                                Vertex vertex = positions.get(Integer.parseInt(field[0])-1);
 
                                 if(field.length > 1)
-                                    vertex.texcoord.set(uvcoords.get(Integer.parseInt(field[1])-1));
+                                    vertex.coordinate.set(coords.get(Integer.parseInt(field[1])-1));
 
                                 if(field.length > 2)
                                     vertex.normal.set(normals.get(Integer.parseInt(field[2])-1));

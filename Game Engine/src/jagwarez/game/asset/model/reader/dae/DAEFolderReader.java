@@ -22,6 +22,7 @@ public class DAEFolderReader implements AssetReader<Model> {
         File[] animFiles = animDir.listFiles((File dir, String name) -> name.endsWith(".dae"));
         
         if(animFiles != null) {
+            
             DAEAnimationReader animReader = new DAEAnimationReader(model);
 
             for(File animFile : animFiles)           
