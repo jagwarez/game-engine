@@ -11,5 +11,5 @@ void main()
 {
     gl_Position = transform * vec4(position, 1.0);
     pass_texcoord = texcoord;
-    visibility = pow(position.y, .1);
+    visibility = pow(position.y, .01);
 }

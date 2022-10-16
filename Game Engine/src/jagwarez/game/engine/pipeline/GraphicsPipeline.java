@@ -37,12 +37,12 @@ public class GraphicsPipeline extends MultiPipeline {
     }
     
     @Override
-    public void process() throws Exception {
+    public void execute() throws Exception {
         
         glViewport(0, 0, window.width, window.height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        super.process();
+        super.execute();
 
     }
     

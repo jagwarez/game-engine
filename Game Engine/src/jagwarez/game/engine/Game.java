@@ -86,7 +86,7 @@ public abstract class Game implements AutoCloseable {
             
             world.update();
             
-            pipeline.process();
+            pipeline.execute();
             
             window.swap();
              

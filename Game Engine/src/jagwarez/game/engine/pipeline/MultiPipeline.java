@@ -26,9 +26,9 @@ public abstract class MultiPipeline implements Pipeline {
     }
 
     @Override
-    public void process() throws Exception {
+    public void execute() throws Exception {
         for(Pipeline pipeline : pipelines)
-            pipeline.process();
+            pipeline.execute();
     }
 
     @Override

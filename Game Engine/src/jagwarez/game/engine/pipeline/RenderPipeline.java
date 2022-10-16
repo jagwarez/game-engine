@@ -54,7 +54,7 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
     }
     
     protected void lights() throws Exception {
-        program.uniform("light_count").int1(lights.size());
+        program.uniform("light_count").integer(lights.size());
         for(int i = 0; i < lights.size(); i++) {
             Light light = lights.get(i);
 
@@ -63,7 +63,7 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
             data.setRow(1, new Vector4f(light.color.r, light.color.g, light.color.b, light.color.a));
             data.setRow(2, new Vector4f(light.attenuation, light.intensity));
             
-            program.uniform("lights["+i+"]").mat4x3f(data);
+            program.uniform("lights["+i+"]").matrix(data);
         }
     }
     

@@ -152,7 +152,7 @@ class ActorPipeline extends ModelPipeline {
     }
     
     @Override
-    public void process() throws Exception {
+    public void execute() throws Exception {
         
         program.enable();
         buffer.bind();
@@ -161,9 +161,9 @@ class ActorPipeline extends ModelPipeline {
         
         lights();
         
-        program.uniform("world").mat4f(world);
-        program.uniform("camera").mat4f(world.camera.update());
-        program.uniform("sky_color").float3(world.sky.color.r, world.sky.color.g, world.sky.color.b);
+        program.uniform("world").matrix(world);
+        program.uniform("camera").matrix(world.camera.update());
+        program.uniform("sky_color").vector(world.sky.color.r, world.sky.color.g, world.sky.color.b);
         
         render(player);
         
@@ -186,7 +186,7 @@ class ActorPipeline extends ModelPipeline {
         Skeleton skeleton = model.skeleton;
         
         for(int i = 0; i < skeleton.bones.size(); i++)
-            program.uniform("bone_transforms["+i+"]").mat4f(skeleton.bones.get(i).transform);
+            program.uniform("bone_transforms["+i+"]").matrix(skeleton.bones.get(i).transform);
         
         render(model, actor);
         

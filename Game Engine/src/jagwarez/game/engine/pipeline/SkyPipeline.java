@@ -108,7 +108,7 @@ class SkyPipeline extends ModelPipeline {
     }
     
     @Override
-    public void process() throws Exception {
+    public void execute() throws Exception {
         
         program.enable();
         buffer.bind();
@@ -119,7 +119,7 @@ class SkyPipeline extends ModelPipeline {
         
         glCullFace(GL_FRONT);
 
-        program.uniform("sky_color").float3(sky.color.r, sky.color.g, sky.color.b);
+        program.uniform("sky_color").vector(sky.color.r, sky.color.g, sky.color.b);
         
         sky.position.x = world.camera.target.position.x;
         //sky.position.y = world.camera.target.position.y*.5f;

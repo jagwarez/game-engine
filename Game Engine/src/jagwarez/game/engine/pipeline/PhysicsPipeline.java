@@ -83,7 +83,7 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
     }
 
     @Override
-    public void process() throws Exception {
+    public void execute() throws Exception {
 
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fboId);
         glReadBuffer(GL_COLOR_ATTACHMENT0);

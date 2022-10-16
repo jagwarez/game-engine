@@ -53,18 +53,18 @@ public class TestGame extends Game {
         
         world.player.model = assets.models.get("nordstrom");
         world.player.scale.set(.08f);
-        world.player.position.x = 400f;
+        world.player.position.x = 500f;
         world.player.position.z = 1f;
         //world.camera.position.y = 80;
         //world.player.rotation.y = 180;
         
         Actor boss = new Actor("boss", assets.models.get("mawlaygo"));
-        boss.position.x = 400f;
+        boss.position.x = 500f;
         boss.position.z = 700f;
         boss.rotation.y = 160f;
         //cowboy.scale.set(.001f);
-        //boss.speed = .1f;
-        boss.animation("idle");
+        boss.speed = .5f;
+        boss.animation("walk");
         world.actors.add(boss);
         
         keyboard.binds.put(Key._ESCAPE, (key) -> {
@@ -144,13 +144,13 @@ public class TestGame extends Game {
         keyboard.binds.put(Key._KP_8, (key) -> {
             if(key.down())
                 for(Light light : world.lights)
-                    light.position.y += 5f;
+                    light.intensity = (float) Math.min(light.intensity+.01f, 1.0);
         });
         
         keyboard.binds.put(Key._KP_2, (key) -> {
             if(key.down())
                 for(Light light : world.lights)
-                    light.position.y -= 5f;
+                    light.intensity = (float) Math.min(light.intensity-.01f, 1.0);
         });
         
         keyboard.binds.put(Key._KP_9, (key) -> {
@@ -183,7 +183,9 @@ public class TestGame extends Game {
     
     @Override
     public void update() {
-
+        float roty = 300f/360f;
+        world.actors.get(0).rotation.y += roty;
+        world.actors.get(0).forward();
     }
     
     public static void main(String[] args) throws Exception {

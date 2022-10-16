@@ -126,7 +126,7 @@ class EntityPipeline extends ModelPipeline {
     }
     
     @Override
-    public void process() throws Exception {   
+    public void execute() throws Exception {   
         program.enable();
         buffer.bind();
         

@@ -14,17 +14,18 @@ out vec3 to_lights[MAX_LIGHTS];
 uniform mat4 world;
 uniform mat4 camera;
 uniform mat4 terrain;
-uniform int hscale;
-uniform int twidth;
-uniform int theight;
-uniform sampler2D hmap;
+
+uniform sampler2D height_map;
+uniform int map_width;
+uniform int map_length;
+
 uniform mat4x3 lights[MAX_LIGHTS];
 uniform int light_count;
 
 float map_height(vec2 pos) {
-    if(pos.x >= 0 && pos.y >= 0 && pos.x <= twidth && pos.y <= theight) {
-        vec2 st = 1-vec2(pos.x/twidth, pos.y/theight);
-        return texture(hmap, st).r*255;
+    if(pos.x >= 0 && pos.y >= 0 && pos.x <= map_width && pos.y <= map_length) {
+        vec2 st = 1-vec2(pos.x/map_width, pos.y/map_length);
+        return texture(height_map, st).r*255;
     } else
         return 0;
 }

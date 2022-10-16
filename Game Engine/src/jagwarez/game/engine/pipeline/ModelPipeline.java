@@ -21,7 +21,7 @@ public abstract class ModelPipeline extends RenderPipeline {
     
     protected void render(Model model, Matrix4f transform) {
         
-        program.uniform("transform").mat4f(transform);
+        program.uniform("transform").matrix(transform);
         
         for(Mesh mesh : model.meshes.values()) {
 
@@ -37,14 +37,14 @@ public abstract class ModelPipeline extends RenderPipeline {
                         glBindTexture(GL_TEXTURE_2D, diffuseMap.id);
                         
                         program.uniform("useDiffuseMap").bool(true);
-                        program.uniform("diffuseMap").int1(0);
+                        program.uniform("diffuseMap").integer(0);
                         
                     } else if(diffuse.type == Effect.Type.COLOR) {                    
                         Color c = (Color)diffuse;
-                        program.uniform("diffuseColor").float4(c.r, c.g, c.b, c.a);
+                        program.uniform("diffuseColor").vector(c.r, c.g, c.b, c.a);
                     }
                 } else
-                    program.uniform("diffuseColor").float4(0f, 0f, 0f, 1f);
+                    program.uniform("diffuseColor").vector(0f, 0f, 0f, 1f);
            
                 glDrawArrays(GL_TRIANGLES, group.offset, group.vertices.size());
                 //glDrawElements(GL_TRIANGLES, group.indices.size(), GL_UNSIGNED_INT, group.offset);

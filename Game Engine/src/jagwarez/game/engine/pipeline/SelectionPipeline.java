@@ -1,5 +1,6 @@
 package jagwarez.game.engine.pipeline;
 
+import jagwarez.game.engine.Buffer;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Program;
 import jagwarez.game.engine.Shader;
@@ -11,10 +12,10 @@ import static org.lwjgl.opengl.GL30.*;
  *
  * @author jacob
  */
-public class SelectionPipeline extends RenderPipeline {
+public class SelectionPipeline extends TexturePipeline {
     
-    
-    protected final Program program;
+    private final Program program;
+    private Buffer buffer;
     private Window window;
     
     private int fboId = -1;
@@ -64,7 +65,7 @@ public class SelectionPipeline extends RenderPipeline {
     }
 
     @Override
-    public void process() throws Exception {
+    public void execute() throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

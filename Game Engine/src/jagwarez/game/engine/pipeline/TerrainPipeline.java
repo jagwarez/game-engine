@@ -96,7 +96,7 @@ public class TerrainPipeline extends RenderPipeline {
     }
 
     @Override
-    public void process() throws Exception {
+    public void execute() throws Exception {
         
         program.enable();
         buffer.bind();
@@ -111,17 +111,16 @@ public class TerrainPipeline extends RenderPipeline {
         terrain.identity();
         terrain.translate(quantized.x, 0f, quantized.z);
         
-        program.uniform("world").mat4f(world);
-        program.uniform("camera").mat4f(world.camera);
-        program.uniform("terrain").mat4f(terrain);
-        program.uniform("sky_color").float3(sky.color.r, sky.color.g, sky.color.b);
-        program.uniform("hscale").int1(terrain.SCALE);
-        program.uniform("twidth").int1(terrain.heightmap.width-1);
-        program.uniform("theight").int1(terrain.heightmap.height-1);
+        program.uniform("world").matrix(world);
+        program.uniform("camera").matrix(camera);
+        program.uniform("terrain").matrix(terrain);
+        program.uniform("sky_color").vector(sky.color.r, sky.color.g, sky.color.b);
+        program.uniform("map_width").integer(terrain.heightmap.width-1);
+        program.uniform("map_length").integer(terrain.heightmap.height-1);
         
         glActiveTexture(GL_TEXTURE0 + 0);
         glBindTexture(GL_TEXTURE_2D, terrain.heightmap.id);
-        program.uniform("hmap").int1(0);
+        program.uniform("height_map").integer(0);
 
         glDrawElements(GL_TRIANGLES, Terrain.INDEX_COUNT, GL_UNSIGNED_INT, 0);
         
@@ -130,7 +129,5 @@ public class TerrainPipeline extends RenderPipeline {
         buffer.unbind();
         program.disable();     
     }
-    
-    
     
 }
