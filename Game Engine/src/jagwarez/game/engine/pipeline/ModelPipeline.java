@@ -20,12 +20,13 @@ public abstract class ModelPipeline extends RenderPipeline {
     
     protected void render(Entity entity) {
         
+        program.uniform("identity").integer(entity.id);
         program.uniform("transform").matrix(entity);
         
         for(Mesh mesh : entity.model.meshes.values()) {
 
             for(Mesh.Group group : mesh.groups) {
-                
+                 
                 Effect diffuse = group.material.effects.get(Effect.Parameter.DIFFUSE);
                 
                 if(diffuse != null) {

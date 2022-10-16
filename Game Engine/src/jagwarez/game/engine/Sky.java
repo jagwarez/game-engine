@@ -12,7 +12,7 @@ public class Sky extends Entity {
     
     public Sky() {
         super("sky");
-        color = new Color(0.13f,0.23f,.38f,1f); //new Color(0.001f,0.001f,0.005f,1f);
+        color = new Color(0.28f,0.32f,.48f,1f); //new Color(0.001f,0.001f,0.005f,1f);
         scale.set(Terrain.WIDTH);
         //scale.y *= 1.5;
     }

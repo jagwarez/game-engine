@@ -53,7 +53,7 @@ public class TestGame extends Game {
         
         world.player.model = assets.models.get("nordstrom");
         world.player.scale.set(.08f);
-        world.player.position.x = 500f;
+        world.player.position.x = 525f;
         world.player.position.z = 1f;
         //world.camera.position.y = 80;
         //world.player.rotation.y = 180;
@@ -62,7 +62,7 @@ public class TestGame extends Game {
         boss.position.x = 500f;
         boss.position.z = 700f;
         boss.rotation.y = 160f;
-        //cowboy.scale.set(.001f);
+        boss.scale.set(.6f);
         boss.speed = .5f;
         boss.animation("walk");
         world.actors.add(boss);
@@ -183,7 +183,7 @@ public class TestGame extends Game {
     
     @Override
     public void update() {
-        float roty = 300f/360f;
+        float roty = 500f/360f;
         world.actors.get(0).rotation.y += roty;
         world.actors.get(0).forward();
     }

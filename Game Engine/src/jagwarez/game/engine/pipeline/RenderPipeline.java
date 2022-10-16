@@ -4,8 +4,8 @@ import jagwarez.game.engine.Buffer;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Graphics;
 import jagwarez.game.engine.Light;
-import jagwarez.game.engine.Player;
 import jagwarez.game.engine.Program;
+import jagwarez.game.engine.Sky;
 import java.util.List;
 import org.joml.Matrix4x3f;
 import org.joml.Vector4f;
@@ -20,16 +20,13 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
     protected final Program program;
     protected final Buffer buffer;
     
-    private Player player;
+    private Sky sky;
     private List<Light> lights;
       
-    public RenderPipeline() {
-        
+    public RenderPipeline() {  
         program = new Program();
         buffer = new Buffer();
- 
-        programs.put(getClass(), program);
-        buffers.put(getClass(), buffer);
+        pipelines.put(getClass(), this);
     }
     
     @Override
@@ -39,14 +36,21 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
         buffer.init();
         
         graphics = game.graphics;
-        player = game.world.player;
+        sky = game.world.sky;
         lights = game.world.lights;
+        
     }
     
     @Override
     public void destroy() throws Exception {    
         super.destroy();     
         buffer.destroy();     
+    }
+    
+    protected abstract void render() throws Exception;
+    
+    protected void sky() throws Exception {
+        program.uniform("sky_color").rgb(sky.color);
     }
     
     protected void fog() throws Exception {

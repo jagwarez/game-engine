@@ -13,7 +13,7 @@ out vec3 to_lights[MAX_LIGHTS];
 
 uniform mat4 world;
 uniform mat4 camera;
-uniform mat4 terrain;
+uniform mat4 transform;
 
 uniform sampler2D height_map;
 uniform int map_width;
@@ -32,7 +32,7 @@ float map_height(vec2 pos) {
 
 void main(void) {
 
-    vec4 world_pos = terrain * vec4(position.x, 0, position.y, 1);
+    vec4 world_pos = transform * vec4(position.x, 0, position.y, 1);
 
     world_pos.y = map_height(world_pos.xz);
 
@@ -49,10 +49,7 @@ void main(void) {
     float hB = map_height(world_pos.xz - off.yz);
     float hF = map_height(world_pos.xz + off.yz);
     
-    normal.x = hR - hL;
-    normal.y = hF - hB;
-    normal.z = 1;
-    normal = normalize(normal);
+    normal = normalize(vec3(hR-hL, hF-hB, 1));
 
     float distance = length(to_camera.xz);
 

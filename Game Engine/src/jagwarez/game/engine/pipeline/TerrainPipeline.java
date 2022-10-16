@@ -101,10 +101,20 @@ public class TerrainPipeline extends RenderPipeline {
         program.enable();
         buffer.bind();
         
+        sky();
+        
         fog();
         
         lights();
         
+        render();
+        
+        buffer.unbind();
+        program.disable();     
+    }
+    
+    @Override
+    public void render() throws Exception {
         Actor target = camera.target != null ? camera.target : camera;
         Vector3i quantized = target.quantize();
         
@@ -113,10 +123,10 @@ public class TerrainPipeline extends RenderPipeline {
         
         program.uniform("world").matrix(world);
         program.uniform("camera").matrix(camera);
-        program.uniform("terrain").matrix(terrain);
-        program.uniform("sky_color").vector(sky.color.r, sky.color.g, sky.color.b);
-        program.uniform("map_width").integer(terrain.heightmap.width-1);
-        program.uniform("map_length").integer(terrain.heightmap.height-1);
+        program.uniform("transform").matrix(terrain);
+        program.uniform("identity").integer(terrain.id);
+        program.uniform("map_width").integer(terrain.heightmap.width);
+        program.uniform("map_length").integer(terrain.heightmap.height);
         
         glActiveTexture(GL_TEXTURE0 + 0);
         glBindTexture(GL_TEXTURE_2D, terrain.heightmap.id);
@@ -126,8 +136,5 @@ public class TerrainPipeline extends RenderPipeline {
         
         glBindTexture(GL_TEXTURE_2D, 0);
         
-        buffer.unbind();
-        program.disable();     
     }
-    
 }

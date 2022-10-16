@@ -17,7 +17,9 @@ public class Buffer {
     private final ArrayList<Integer> buffers;
     private int vaoId = -1;
     private int elementsId = -1;
-    private int attributeIndex = 0;
+    
+    private int attributeCount = 0;
+    private int bindIndex = 0;
     
     public Buffer() {
         buffers = new ArrayList<>();
@@ -28,20 +30,25 @@ public class Buffer {
     }
     
     public void bind() {
-        
         glBindVertexArray(vaoId);
             
-        for(int i = 0; i < attributeIndex; i++)
-            glEnableVertexAttribArray(i);
+        for(bindIndex = 0; bindIndex < attributeCount; bindIndex++)
+            glEnableVertexAttribArray(bindIndex);
+    }
+    
+    public void bind(int index) {
+        glBindVertexArray(vaoId);
+            
+        for(bindIndex = 0; bindIndex < index+1; bindIndex++)
+            glEnableVertexAttribArray(bindIndex);
     }
     
     public void unbind() {
        
-        for(int i = 0; i < attributeIndex; i++)
+        for(int i = 0; i < bindIndex; i++)
             glDisableVertexAttribArray(i);
 
         glBindVertexArray(0);
-
     }
      
     public void elements(IntBuffer buffer) {
@@ -60,7 +67,7 @@ public class Buffer {
         
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
         glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(attributeIndex++, size, GL_FLOAT, false, size*Float.BYTES, 0L);
+        glVertexAttribPointer(attributeCount++, size, GL_FLOAT, false, size*Float.BYTES, 0L);
     }
     
     public void attribute(IntBuffer buffer, int size) {
@@ -70,7 +77,7 @@ public class Buffer {
 
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
         glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-        glVertexAttribIPointer(attributeIndex++, size, GL_INT, size*Integer.BYTES, 0L);
+        glVertexAttribIPointer(attributeCount++, size, GL_INT, size*Integer.BYTES, 0L);
     }
     
     public void destroy() {

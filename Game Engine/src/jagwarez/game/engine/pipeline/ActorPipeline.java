@@ -152,26 +152,32 @@ class ActorPipeline extends ModelPipeline {
     }
     
     @Override
-    public void execute() throws Exception {
-        
+    public void execute() throws Exception {       
         program.enable();
         buffer.bind();
+        
+        sky();
         
         fog();
         
         lights();
         
+        render();
+        
+        buffer.unbind();
+        program.disable();
+    }
+    
+    @Override
+    public void render() {
+        
         program.uniform("world").matrix(world);
         program.uniform("camera").matrix(world.camera.update());
-        program.uniform("sky_color").vector(world.sky.color.r, world.sky.color.g, world.sky.color.b);
-        
+
         render(player);
         
         for(Actor actor : actors)
             render(actor);
-        
-        buffer.unbind();
-        program.disable();
     }
     
     private void render(Actor actor) {

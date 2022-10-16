@@ -113,13 +113,20 @@ class SkyPipeline extends ModelPipeline {
         program.enable();
         buffer.bind();
         
-        glClearColor(sky.color.r, sky.color.g, sky.color.b, 1f);
+        render();        
         
-        lights();
+        buffer.unbind();
+        program.disable();    
+    }
+
+    @Override
+    public void render() throws Exception {
+        
+        glClearColor(sky.color.r, sky.color.g, sky.color.b, 1f);
         
         glCullFace(GL_FRONT);
 
-        program.uniform("sky_color").rgb(sky.color);
+        sky();
         
         sky.position.x = world.camera.target.position.x;
         //sky.position.y = world.camera.target.position.y*.5f;
@@ -130,9 +137,5 @@ class SkyPipeline extends ModelPipeline {
         render(sky);
         
         glCullFace(GL_BACK);
-
-        buffer.unbind();
-        program.disable();    
     }
-
 }

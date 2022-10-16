@@ -89,7 +89,6 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
         glReadBuffer(GL_COLOR_ATTACHMENT0);
         
         world.camera.update();
-        //gravity(world.camera);
         
         physics(world.player);
         

@@ -9,7 +9,6 @@ import jagwarez.game.engine.Assets;
 import jagwarez.game.engine.Entity;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Shader;
-import jagwarez.game.engine.Sky;
 import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 class EntityPipeline extends ModelPipeline {
     
     private World world;
-    private Sky sky;
     private Assets assets;
     
     @Override
@@ -39,9 +37,7 @@ class EntityPipeline extends ModelPipeline {
         super.init(game);
         
         world = game.world;
-        sky = game.world.sky;
         assets = game.assets;
-
     }
     
     @Override
@@ -131,13 +127,14 @@ class EntityPipeline extends ModelPipeline {
         buffer.bind();
         
         lights();
-        
-        for(Entity entity : world.entities)
-            render(entity);
 
         buffer.unbind();
         program.disable();
     }
     
-    
+    @Override
+    public void render() throws Exception {
+        for(Entity entity : world.entities)
+            render(entity);
+    }
 }
