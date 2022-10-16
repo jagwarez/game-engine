@@ -10,6 +10,6 @@ uniform mat4 transform;
 
 void main()
 {
-    world_position = transform * vec4(position, 1.0);
-    gl_Position = world * camera * world_position;
+    world_position = world * camera * transform * vec4(position, 1.0);
+    gl_Position = world_position;
 }

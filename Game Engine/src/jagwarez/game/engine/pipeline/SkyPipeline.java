@@ -6,6 +6,7 @@ import jagwarez.game.asset.model.Model;
 import jagwarez.game.asset.model.Texture;
 import jagwarez.game.asset.model.Vertex;
 import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Program;
 import jagwarez.game.engine.Shader;
 import jagwarez.game.engine.Sky;
 import jagwarez.game.engine.World;
@@ -22,7 +23,6 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
-import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glCullFace;
 
 /**
@@ -97,13 +97,12 @@ class SkyPipeline extends ModelPipeline {
         program.attribute(0, "position");
         program.attribute(1, "texcoord");
         program.fragment(0, "color");
+        program.link();
 
         buffer.bind();
-        
         buffer.elements((IntBuffer) indices.flip());
         buffer.attribute((FloatBuffer) vertices.flip(), 3);
-        buffer.attribute((FloatBuffer) coords.flip(), 2);
-        
+        buffer.attribute((FloatBuffer) coords.flip(), 2); 
         buffer.unbind();
     }
     
@@ -113,17 +112,15 @@ class SkyPipeline extends ModelPipeline {
         program.enable();
         buffer.bind();
         
-        render();        
+        render(program);        
         
         buffer.unbind();
         program.disable();    
     }
 
     @Override
-    public void render() throws Exception {
-        
-        glClearColor(sky.color.r, sky.color.g, sky.color.b, 1f);
-        
+    public void render(Program program) throws Exception {
+         
         glCullFace(GL_FRONT);
 
         sky();

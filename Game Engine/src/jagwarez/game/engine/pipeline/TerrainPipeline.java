@@ -1,8 +1,8 @@
 package jagwarez.game.engine.pipeline;
 
-import jagwarez.game.engine.Actor;
 import jagwarez.game.engine.Camera;
 import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Program;
 import jagwarez.game.engine.Shader;
 import jagwarez.game.engine.Sky;
 import jagwarez.game.engine.Terrain;
@@ -10,7 +10,6 @@ import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Map;
-import org.joml.Vector3i;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -78,12 +77,11 @@ public class TerrainPipeline extends RenderPipeline {
         program.attach(new Shader("jagwarez/game/engine/pipeline/program/terrain/fs.glsl", Shader.Type.FRAGMENT));
         program.attribute(0, "position");
         program.fragment(0, "color");
+        program.link();
         
-        buffer.bind();
-        
+        buffer.bind();        
         buffer.elements((IntBuffer) indexBuffer.flip());
-        buffer.attribute((FloatBuffer)vertexBuffer.flip(), 2);
-        
+        buffer.attribute((FloatBuffer)vertexBuffer.flip(), 2);       
         buffer.unbind();
         
         Map<Integer,Integer> parameters = terrain.heightmap.parameters;
@@ -114,12 +112,7 @@ public class TerrainPipeline extends RenderPipeline {
     }
     
     @Override
-    public void render() throws Exception {
-        Actor target = camera.target != null ? camera.target : camera;
-        Vector3i quantized = target.quantize();
-        
-        terrain.identity();
-        terrain.translate(quantized.x, 0f, quantized.z);
+    public void render(Program program) throws Exception {
         
         program.uniform("world").matrix(world);
         program.uniform("camera").matrix(camera);
@@ -127,7 +120,7 @@ public class TerrainPipeline extends RenderPipeline {
         program.uniform("identity").integer(terrain.id);
         program.uniform("map_width").integer(terrain.heightmap.width);
         program.uniform("map_length").integer(terrain.heightmap.height);
-        
+            
         glActiveTexture(GL_TEXTURE0 + 0);
         glBindTexture(GL_TEXTURE_2D, terrain.heightmap.id);
         program.uniform("height_map").integer(0);

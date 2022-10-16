@@ -5,6 +5,7 @@ import jagwarez.game.asset.model.Effect;
 import jagwarez.game.asset.model.Mesh;
 import jagwarez.game.asset.model.Texture;
 import jagwarez.game.engine.Entity;
+import jagwarez.game.engine.Program;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glBindTexture;
@@ -19,6 +20,10 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 public abstract class ModelPipeline extends RenderPipeline {
     
     protected void render(Entity entity) {
+        render(entity, program);
+    }
+    
+    protected void render(Entity entity, Program program) {
         
         program.uniform("identity").integer(entity.id);
         program.uniform("transform").matrix(entity);

@@ -1,4 +1,4 @@
-#version 150
+#version 330
 
 in vec2 position;
 
@@ -21,7 +21,6 @@ float map_height(vec2 pos) {
 }
 
 void main(void) {
-
     world_position = transform * vec4(position.x, 0, position.y, 1);
 
     world_position.y = map_height(world_position.xz);

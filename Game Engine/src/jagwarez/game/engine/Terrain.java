@@ -1,6 +1,7 @@
 package jagwarez.game.engine;
 
 import jagwarez.game.asset.model.Texture;
+import org.joml.Vector3i;
 
 /**
  *
@@ -17,5 +18,19 @@ public class Terrain extends Identity {
     
     public Texture heightmap = null;
     public Texture blendmap = null;
+    
+    private final Camera camera;
+    
+    public Terrain(Camera camera) {
+        this.camera = camera;
+    }
+    
+    public void update() {
+        Actor target = camera.target != null ? camera.target : camera;
+        Vector3i quantized = target.quantize();
+        
+        identity();
+        translate(quantized.x, 0f, quantized.z);
+    }
         
 }

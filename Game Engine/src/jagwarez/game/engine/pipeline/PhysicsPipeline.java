@@ -95,12 +95,16 @@ public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
         for(Actor actor : actors)
             physics(actor);
         
+        terrain.update();
+        
         glReadBuffer(GL_NONE);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
         
     }
     
     private void physics(Actor actor) {
+        
+        actor.update();
         
         Vector3i quantized = actor.quantize();
         Vector3f fraction = actor.fracion();

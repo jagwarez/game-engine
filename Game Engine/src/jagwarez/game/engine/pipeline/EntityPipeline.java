@@ -8,6 +8,7 @@ import jagwarez.game.asset.model.Vertex;
 import jagwarez.game.engine.Assets;
 import jagwarez.game.engine.Entity;
 import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Program;
 import jagwarez.game.engine.Shader;
 import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
@@ -110,15 +111,13 @@ class EntityPipeline extends ModelPipeline {
         program.attribute(1, "texcoord");
         program.attribute(2, "normal");
         program.fragment(0, "color");
+        program.link();
 
-        buffer.bind();
-        
+        buffer.bind();  
         buffer.attribute((FloatBuffer) vertices.flip(), 3);
         buffer.attribute((FloatBuffer) coords.flip(), 2);
-        buffer.attribute((FloatBuffer) normals.flip(), 3);
-        
-        buffer.unbind();  
-        
+        buffer.attribute((FloatBuffer) normals.flip(), 3);    
+        buffer.unbind();      
     }
     
     @Override
@@ -133,8 +132,8 @@ class EntityPipeline extends ModelPipeline {
     }
     
     @Override
-    public void render() throws Exception {
+    public void render(Program program) throws Exception {
         for(Entity entity : world.entities)
-            render(entity);
+            render(entity, program);
     }
 }

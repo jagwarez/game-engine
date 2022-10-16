@@ -25,28 +25,24 @@ public class Program {
     public final Map<String,Uniform> uniforms = new HashMap<>();
     
     private int id;
-    private boolean linked = false;
     
     public void init() {
         id = glCreateProgram(); 
     }
     
-    public void enable() {
-        
-        if(!linked) {
-            glLinkProgram(id);
-            int link = glGetProgrami(this.id, GL_LINK_STATUS);
-            String programLog = glGetProgramInfoLog(id);
-            if (programLog.trim().length() > 0) {
-                System.err.println(programLog);
-            }
-            if (link == 0) {
-                throw new AssertionError("Could not link program");
-            }
-            
-            linked = true;
+    public void link() {
+        glLinkProgram(id);
+        int link = glGetProgrami(this.id, GL_LINK_STATUS);
+        String programLog = glGetProgramInfoLog(id);
+        if (programLog.trim().length() > 0) {
+            System.out.println(programLog);
         }
-        
+        if (link == 0) {
+            throw new AssertionError("Could not link program");
+        }  
+    }
+    
+    public void enable() {
         glUseProgram(id); 
     }
     

@@ -1,10 +1,10 @@
 #version 330
 
-varying vec4 world_position;
+in vec4 world_position;
 
 out vec4 color;
 
-uniform uint identity;
+uniform int identity;
 
 void main()
 {

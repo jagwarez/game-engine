@@ -24,20 +24,17 @@ public class World extends Matrix4f {
     
     public World(Window window) {
         this.window = window;
-        sky = new Sky();
-        terrain = new Terrain();
         camera = new Camera();
+        terrain = new Terrain(camera);
+        sky = new Sky();
         player = new Player();
         actors = new ArrayList<>();
         entities = new ArrayList<>();
         lights = new ArrayList<>();
     }
     
-    public void update() {
-        
+    public void update() {      
         setPerspective((float) Math.toRadians(70), (float) window.width / window.height, 0.1f, 1000f);
-
-        camera.update();
     }
     
     public void destroy() { }

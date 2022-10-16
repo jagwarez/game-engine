@@ -10,6 +10,7 @@ import jagwarez.game.asset.model.Vertex;
 import jagwarez.game.engine.Actor;
 import jagwarez.game.engine.Assets;
 import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Program;
 import jagwarez.game.engine.Shader;
 import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
@@ -138,16 +139,15 @@ class ActorPipeline extends ModelPipeline {
         program.attribute(2, "normal");
         program.attribute(3, "bones");
         program.attribute(4, "weights");
-        program.fragment(0, "color");
+        program.fragment(0, "color");       
+        program.link();
 
-        buffer.bind();
-        
+        buffer.bind();       
         buffer.attribute((FloatBuffer) vertices.flip(), 3);
         buffer.attribute((FloatBuffer) coords.flip(), 2);
         buffer.attribute((FloatBuffer) normals.flip(), 3);
         buffer.attribute((IntBuffer) bones.flip(), 4);
-        buffer.attribute((FloatBuffer) weights.flip(), 4);
-        
+        buffer.attribute((FloatBuffer) weights.flip(), 4);      
         buffer.unbind();
     }
     
@@ -169,32 +169,30 @@ class ActorPipeline extends ModelPipeline {
     }
     
     @Override
-    public void render() {
+    public void render(Program program) {
         
         program.uniform("world").matrix(world);
-        program.uniform("camera").matrix(world.camera.update());
+        program.uniform("camera").matrix(world.camera);
 
-        render(player);
+        render(player, program);
         
         for(Actor actor : actors)
-            render(actor);
+            render(actor, program);
     }
     
-    private void render(Actor actor) {
+    private void render(Actor actor, Program program) {
         
         Model model = actor.model;
         
         if(model == null)
             return;
         
-        actor.update();
-        
         Skeleton skeleton = model.skeleton;
         
         for(int i = 0; i < skeleton.bones.size(); i++)
             program.uniform("bone_transforms["+i+"]").matrix(skeleton.bones.get(i).transform);
         
-        super.render(actor);
+        super.render(actor, program);
         
     }
 }

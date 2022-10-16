@@ -47,7 +47,11 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
         buffer.destroy();     
     }
     
-    protected abstract void render() throws Exception;
+    public void render() throws Exception {
+        render(program);
+    }
+    
+    protected abstract void render(Program program) throws Exception;
     
     protected void sky() throws Exception {
         program.uniform("sky_color").rgb(sky.color);
