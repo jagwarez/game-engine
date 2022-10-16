@@ -133,7 +133,7 @@ class EntityPipeline extends ModelPipeline {
         lights();
         
         for(Entity entity : world.entities)
-            render(entity.model, entity);
+            render(entity);
 
         buffer.unbind();
         program.disable();

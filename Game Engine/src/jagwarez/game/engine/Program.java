@@ -1,5 +1,6 @@
 package jagwarez.game.engine;
 
+import jagwarez.game.asset.model.Color;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,6 +113,14 @@ public class Program {
         
         public void floating(float f1) {
             glUniform1f(id, f1);
+        }
+        
+        public void rgb(Color c) {
+            vector(c.r, c.g, c.b);
+        }
+        
+        public void rgba(Color c) {
+            vector(c.r, c.g, c.b, c.a);
         }
         
         public void vector(float f1, float f2) {

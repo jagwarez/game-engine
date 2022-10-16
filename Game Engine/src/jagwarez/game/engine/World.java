@@ -24,13 +24,13 @@ public class World extends Matrix4f {
     
     public World(Window window) {
         this.window = window;
-        this.sky = new Sky();
-        this.terrain = new Terrain();
-        this.camera = new Camera();
-        this.player = new Player();
-        this.actors = new ArrayList<>();
-        this.entities = new ArrayList<>();
-        this.lights = new ArrayList<>();
+        sky = new Sky();
+        terrain = new Terrain();
+        camera = new Camera();
+        player = new Player();
+        actors = new ArrayList<>();
+        entities = new ArrayList<>();
+        lights = new ArrayList<>();
     }
     
     public void update() {

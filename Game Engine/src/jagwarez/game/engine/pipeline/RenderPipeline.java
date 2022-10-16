@@ -60,7 +60,7 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
 
             Matrix4x3f data = new Matrix4x3f();
             data.setRow(0, new Vector4f(light.position, 1f));
-            data.setRow(1, new Vector4f(light.color.r, light.color.g, light.color.b, light.color.a));
+            data.setRow(1, light.color.rgba());
             data.setRow(2, new Vector4f(light.attenuation, light.intensity));
             
             program.uniform("lights["+i+"]").matrix(data);

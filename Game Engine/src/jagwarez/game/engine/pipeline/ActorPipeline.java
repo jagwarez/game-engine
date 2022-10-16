@@ -188,7 +188,7 @@ class ActorPipeline extends ModelPipeline {
         for(int i = 0; i < skeleton.bones.size(); i++)
             program.uniform("bone_transforms["+i+"]").matrix(skeleton.bones.get(i).transform);
         
-        render(model, actor);
+        super.render(actor);
         
     }
 }

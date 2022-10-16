@@ -118,8 +118,7 @@ public class OBJModelReader implements AssetReader<Model> {
                         }
                         
                         if(fields.length == 4) {
-                            Vertex[] face = new Vertex[3];
-
+                            
                             for(int vi = 0; vi < 3; vi++) {
                                 String[] field = fields[vi+1].split("/");
                                 Vertex vertex = positions.get(Integer.parseInt(field[0])-1);
@@ -147,17 +146,22 @@ public class OBJModelReader implements AssetReader<Model> {
                                 if(field.length > 2)
                                     vertex.normal.set(normals.get(Integer.parseInt(field[2])-1));
 
-                                if(vi == 0) {
-                                    face1[0] = vertex;
-                                    face2[0] = vertex;
-                                } else if(vi == 1) {
-                                    face1[1] = vertex;
-                                } else if(vi == 2) {
-                                    face1[2] = vertex;
-                                    face2[1] = vertex;
-                                } else {
-                                    face2[2] = vertex;
-                                }                                 
+                                switch (vi) {
+                                    case 0:
+                                        face1[0] = vertex;
+                                        face2[0] = vertex;
+                                        break;
+                                    case 1:
+                                        face1[1] = vertex;
+                                        break;
+                                    case 2:
+                                        face1[2] = vertex;
+                                        face2[1] = vertex;                                 
+                                        break;
+                                    default:
+                                        face2[2] = vertex;
+                                        break;
+                                }
                             }
 
                             group.vertices.add(face1[0]);
@@ -175,7 +179,7 @@ public class OBJModelReader implements AssetReader<Model> {
         } finally {
             if(reader != null) {
                 try { reader.close(); }
-                catch(Exception ex) { ex.printStackTrace(System.err); }
+                catch(IOException ex) { ex.printStackTrace(System.err); }
             }
         }
         
@@ -216,7 +220,7 @@ public class OBJModelReader implements AssetReader<Model> {
         } finally {
             if(reader != null) {
                 try { reader.close(); }
-                catch(Exception ex) { ex.printStackTrace(System.err); }
+                catch(IOException ex) { ex.printStackTrace(System.err); }
             }
         }
         

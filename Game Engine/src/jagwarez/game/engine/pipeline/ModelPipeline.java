@@ -3,9 +3,8 @@ package jagwarez.game.engine.pipeline;
 import jagwarez.game.asset.model.Color;
 import jagwarez.game.asset.model.Effect;
 import jagwarez.game.asset.model.Mesh;
-import jagwarez.game.asset.model.Model;
 import jagwarez.game.asset.model.Texture;
-import org.joml.Matrix4f;
+import jagwarez.game.engine.Entity;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glBindTexture;
@@ -19,11 +18,11 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  */
 public abstract class ModelPipeline extends RenderPipeline {
     
-    protected void render(Model model, Matrix4f transform) {
+    protected void render(Entity entity) {
         
-        program.uniform("transform").matrix(transform);
+        program.uniform("transform").matrix(entity);
         
-        for(Mesh mesh : model.meshes.values()) {
+        for(Mesh mesh : entity.model.meshes.values()) {
 
             for(Mesh.Group group : mesh.groups) {
                 
@@ -39,9 +38,8 @@ public abstract class ModelPipeline extends RenderPipeline {
                         program.uniform("useDiffuseMap").bool(true);
                         program.uniform("diffuseMap").integer(0);
                         
-                    } else if(diffuse.type == Effect.Type.COLOR) {                    
-                        Color c = (Color)diffuse;
-                        program.uniform("diffuseColor").vector(c.r, c.g, c.b, c.a);
+                    } else if(diffuse.type == Effect.Type.COLOR) {
+                        program.uniform("diffuseColor").rgba((Color)diffuse);
                     }
                 } else
                     program.uniform("diffuseColor").vector(0f, 0f, 0f, 1f);

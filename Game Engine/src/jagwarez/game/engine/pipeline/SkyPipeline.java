@@ -119,13 +119,15 @@ class SkyPipeline extends ModelPipeline {
         
         glCullFace(GL_FRONT);
 
-        program.uniform("sky_color").vector(sky.color.r, sky.color.g, sky.color.b);
+        program.uniform("sky_color").rgb(sky.color);
         
         sky.position.x = world.camera.target.position.x;
         //sky.position.y = world.camera.target.position.y*.5f;
         sky.position.z = world.camera.target.position.z;
         
-        render(sky.model, world.mul(world.camera, new Matrix4f()).mul(sky.update(), sky));
+        world.mul(world.camera, new Matrix4f()).mul(sky.update(), sky);
+        
+        render(sky);
         
         glCullFace(GL_BACK);
 
