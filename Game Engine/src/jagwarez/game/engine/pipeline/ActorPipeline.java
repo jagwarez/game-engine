@@ -135,19 +135,20 @@ class ActorPipeline extends ModelPipeline {
         program.attach(new Shader("jagwarez/game/engine/pipeline/program/actor/vs.glsl", Shader.Type.VERTEX));
         program.attach(new Shader("jagwarez/game/engine/pipeline/program/actor/fs.glsl", Shader.Type.FRAGMENT));
         program.attribute(0, "position");
-        program.attribute(1, "texcoord");
-        program.attribute(2, "normal");
-        program.attribute(3, "bones");
-        program.attribute(4, "weights");
+        program.attribute(1, "bones");
+        program.attribute(2, "weights");
+        program.attribute(3, "texcoord");
+        program.attribute(4, "normal");
         program.fragment(0, "color");       
         program.link();
 
         buffer.bind();       
         buffer.attribute((FloatBuffer) vertices.flip(), 3);
+        buffer.attribute((IntBuffer) bones.flip(), 4);
+        buffer.attribute((FloatBuffer) weights.flip(), 4); 
         buffer.attribute((FloatBuffer) coords.flip(), 2);
         buffer.attribute((FloatBuffer) normals.flip(), 3);
-        buffer.attribute((IntBuffer) bones.flip(), 4);
-        buffer.attribute((FloatBuffer) weights.flip(), 4);      
+             
         buffer.unbind();
     }
     

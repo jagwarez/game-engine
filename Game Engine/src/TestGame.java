@@ -18,13 +18,13 @@ import java.io.File;
 public class TestGame extends Game { 
     
     public TestGame() {
-        super(new Settings().title("Test Game").size(1600, 1200));
+        super(new Settings().title("Test Game").size(1600, 900));
     }
     
     @Override
     public void load() throws Exception {
         
-        world.camera.position.x = 512f;
+        world.camera.position.x = 500f;
         
         File assetsDir = new File("games/hello/assets");
         

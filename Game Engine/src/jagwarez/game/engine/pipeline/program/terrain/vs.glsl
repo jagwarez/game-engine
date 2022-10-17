@@ -6,6 +6,7 @@ const float FOG_GRADIENT = 8;
 
 in vec2 position;
 
+out vec4 world_position;
 out vec3 normal;
 out float visibility;
 out vec3 to_camera;
@@ -32,22 +33,22 @@ float map_height(vec2 pos) {
 
 void main(void) {
 
-    vec4 world_pos = transform * vec4(position.x, 0, position.y, 1);
+    world_position = transform * vec4(position.x, 0, position.y, 1);
 
-    world_pos.y = map_height(world_pos.xz);
+    world_position.y = map_height(world_position.xz);
 
-    to_camera = (inverse(camera)*vec4(0,0,0,1)).xyz - world_pos.xyz;
+    to_camera = (inverse(camera)*vec4(0,0,0,1)).xyz - world_position.xyz;
 
     for(int i = 0; i < light_count; i++) {
        mat4x3 light = lights[i];
-       to_lights[i] = normalize(vec3(light[0][0],light[1][0],light[2][0]) - world_pos.xyz);
+       to_lights[i] = normalize(vec3(light[0][0],light[1][0],light[2][0]) - world_position.xyz);
     }
 
     vec3 off = vec3(1, 0, 1);
-    float hR = map_height(world_pos.xz - off.xy);
-    float hL = map_height(world_pos.xz + off.xy);
-    float hB = map_height(world_pos.xz - off.yz);
-    float hF = map_height(world_pos.xz + off.yz);
+    float hR = map_height(world_position.xz - off.xy);
+    float hL = map_height(world_position.xz + off.xy);
+    float hB = map_height(world_position.xz - off.yz);
+    float hF = map_height(world_position.xz + off.yz);
     
     normal = normalize(vec3(hR-hL, hF-hB, 1));
 
@@ -55,5 +56,5 @@ void main(void) {
 
     visibility = clamp(exp(-pow(distance*FOG_DENSITY, FOG_GRADIENT)), 0, 1);
 
-    gl_Position = world * camera * world_pos;
+    gl_Position = world * camera * world_position;
 }

@@ -81,6 +81,7 @@ public abstract class Game implements AutoCloseable {
             Time.update();
             
             keyboard.update();
+            mouse.update();
             
             update();
             

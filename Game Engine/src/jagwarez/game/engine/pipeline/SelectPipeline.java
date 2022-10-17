@@ -2,11 +2,14 @@ package jagwarez.game.engine.pipeline;
 
 import jagwarez.game.asset.model.Texture;
 import jagwarez.game.engine.Game;
+import jagwarez.game.engine.Mouse;
 import jagwarez.game.engine.Program;
 import jagwarez.game.engine.Shader;
 import jagwarez.game.engine.Terrain;
 import jagwarez.game.engine.Window;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL30.*;
 
 /**
@@ -15,15 +18,19 @@ import static org.lwjgl.opengl.GL30.*;
  */
 public class SelectPipeline extends TexturePipeline implements SharedPipeline {
     
+    private static final FloatBuffer SAMPLE = BufferUtils.createFloatBuffer(4);
+    
     private Window window;
+    private Mouse mouse;
     private Terrain terrain;
     
     private final Program terrainProgram;
     private final Program entityProgram;
+    private final Program actorProgram;
     
-    private TerrainPipeline terrainPipeline = null;
-    private ActorPipeline actorPipeline = null;
+    private TerrainPipeline terrainPipeline = null;  
     private EntityPipeline entityPipeline = null;
+    private ActorPipeline actorPipeline = null;
     
     private int fboId = -1;
     private Texture identityTexture = null;
@@ -32,19 +39,22 @@ public class SelectPipeline extends TexturePipeline implements SharedPipeline {
     public SelectPipeline() {
         terrainProgram = new Program();
         entityProgram = new Program();
+        actorProgram = new Program();
     }
     
     @Override
     public void init(Game game) throws Exception {
         window = game.window;
+        mouse = game.mouse;
         terrain = game.world.terrain;
         
         terrainProgram.init();
         entityProgram.init();
+        actorProgram.init();
         
         terrainPipeline = (TerrainPipeline) pipelines.get(TerrainPipeline.class);
-        actorPipeline = (ActorPipeline) pipelines.get(ActorPipeline.class);
         entityPipeline = (EntityPipeline) pipelines.get(EntityPipeline.class);
+        actorPipeline = (ActorPipeline) pipelines.get(ActorPipeline.class);
     }
     
     @Override
@@ -91,36 +101,66 @@ public class SelectPipeline extends TexturePipeline implements SharedPipeline {
         entityProgram.attribute(0, "position");
         entityProgram.fragment(0, "color");
         entityProgram.link();
+        
+        actorProgram.attach(new Shader("jagwarez/game/engine/pipeline/program/select/actor-vs.glsl", Shader.Type.VERTEX));
+        actorProgram.attach(identityShader);
+        actorProgram.attribute(0, "position");
+        actorProgram.attribute(1, "bones");
+        actorProgram.attribute(2, "weights");
+        actorProgram.fragment(0, "color");
+        actorProgram.link();
     }
 
     @Override
     public void execute() throws Exception {
         
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboId);
+        glBindFramebuffer(GL_FRAMEBUFFER, fboId);
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
         
         glClearColor(0f, 0f, 0f, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        terrainProgram.enable();
-        render(terrainPipeline, terrainProgram);        
-        terrainProgram.disable();
+        render(terrainPipeline, terrainProgram, 0);        
         
-        entityProgram.enable();
-        render(actorPipeline, entityProgram);
-        render(entityPipeline, entityProgram);
-        entityProgram.disable();
+        render(entityPipeline, entityProgram, 0);
+        
+        render(actorPipeline, actorProgram, 2);
         
         glDrawBuffer(GL_NONE);
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        
+        int mx = mouse.cursor.x;
+        int my = window.height-mouse.cursor.y;
+        
+        glReadPixels(mx, my, 1, 1, GL_RGBA, GL_FLOAT, SAMPLE);
+        
+        float id = SAMPLE.get(0);
+        float ex = SAMPLE.get(1);
+        float ey = SAMPLE.get(2);
+        float ez = SAMPLE.get(3);
+        
+        System.out.println("mx="+mx+",my="+my);
+        System.out.println("id="+id+",ex="+ex+",ey="+ey+",ez="+ez);
+        
+        mouse.target.set((int)id, ex, ey, ez);
+        
+        glReadBuffer(GL_NONE);
+        
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    private void render(RenderPipeline pipeline, Program program) throws Exception {
-        pipeline.buffer.bind(0);
+    private void render(RenderPipeline pipeline, Program program, int attribs) throws Exception {
+      
+        program.enable();
+        
+        pipeline.buffer.bind(attribs);
             
         pipeline.render(program);
             
         pipeline.buffer.unbind();
+        
+        program.disable();
     }
     
     @Override

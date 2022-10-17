@@ -7,10 +7,10 @@ const int MAX_BONES = 100;//max bones allowed in a skeleton
 const int MAX_WEIGHTS = 4;//max number of bones that can affect a vertex
 
 in vec3 position;
-in vec2 texcoord;
-in vec3 normal;
 in ivec4 bones;
 in vec4 weights;
+in vec2 texcoord;
+in vec3 normal;
 
 out vec3 to_camera;
 out float visibility;
@@ -31,7 +31,7 @@ void main(void){
     vec4 world_position = vec4(0);
     vec4 world_normal = vec4(0);
 
-    for(int i = 0; i < 4 && bones[i] != -1; i++) {
+    for(int i = 0; i < MAX_WEIGHTS && bones[i] != -1; i++) {
         
         mat4 bone_transform = bone_transforms[bones[i]];
         vec4 bone_position = bone_transform * vec4(position, 1.0);

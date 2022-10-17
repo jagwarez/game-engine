@@ -2,6 +2,7 @@
 
 const int MAX_LIGHTS = 10;
 
+in vec4 world_position;
 in vec3 normal;
 in float visibility;
 in vec3 to_lights[MAX_LIGHTS];
@@ -12,6 +13,8 @@ uniform bool fog;
 uniform vec3 sky_color;
 uniform mat4x3 lights[MAX_LIGHTS];
 uniform int light_count;
+uniform bool target = false;
+uniform vec3 target_position;
 
 void main(void) {
 
@@ -31,6 +34,13 @@ void main(void) {
         float brightness = clamp(dot(normal,to_lights[i]),0,1);
 
         color += mix(color, light_color * intensity, brightness * att);
+    }
+
+    if(target) {
+        float distance = distance(target_position.xyz, world_position.xyz);
+        
+        if(distance >= 30 && distance <= 40)
+            color = mix(color, vec4(1,0,0,1), 1);
     }
 
     if(fog)
