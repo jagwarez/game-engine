@@ -16,7 +16,7 @@ import static org.lwjgl.opengl.GL30.*;
  *
  * @author jacob
  */
-public class SelectPipeline extends TexturePipeline implements SharedPipeline {
+public class TargetPipeline extends TexturePipeline implements SharedPipeline {
     
     private static final FloatBuffer SAMPLE = BufferUtils.createFloatBuffer(4);
     
@@ -36,7 +36,7 @@ public class SelectPipeline extends TexturePipeline implements SharedPipeline {
     private Texture identityTexture = null;
     private Texture depthTexture = null;
     
-    public SelectPipeline() {
+    public TargetPipeline() {
         terrainProgram = new Program();
         entityProgram = new Program();
         actorProgram = new Program();
@@ -88,21 +88,21 @@ public class SelectPipeline extends TexturePipeline implements SharedPipeline {
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         
-        Shader identityShader = new Shader("jagwarez/game/engine/pipeline/program/select/identity-fs.glsl", Shader.Type.FRAGMENT);
+        Shader identityShader = new Shader("jagwarez/game/engine/pipeline/program/target/identity-fs.glsl", Shader.Type.FRAGMENT);
         
-        terrainProgram.attach(new Shader("jagwarez/game/engine/pipeline/program/select/terrain-vs.glsl", Shader.Type.VERTEX));
+        terrainProgram.attach(new Shader("jagwarez/game/engine/pipeline/program/target/terrain-vs.glsl", Shader.Type.VERTEX));
         terrainProgram.attach(identityShader);
         terrainProgram.attribute(0, "position");
         terrainProgram.fragment(0, "color");
         terrainProgram.link();
         
-        entityProgram.attach(new Shader("jagwarez/game/engine/pipeline/program/select/entity-vs.glsl", Shader.Type.VERTEX));
+        entityProgram.attach(new Shader("jagwarez/game/engine/pipeline/program/target/entity-vs.glsl", Shader.Type.VERTEX));
         entityProgram.attach(identityShader);
         entityProgram.attribute(0, "position");
         entityProgram.fragment(0, "color");
         entityProgram.link();
         
-        actorProgram.attach(new Shader("jagwarez/game/engine/pipeline/program/select/actor-vs.glsl", Shader.Type.VERTEX));
+        actorProgram.attach(new Shader("jagwarez/game/engine/pipeline/program/target/actor-vs.glsl", Shader.Type.VERTEX));
         actorProgram.attach(identityShader);
         actorProgram.attribute(0, "position");
         actorProgram.attribute(1, "bones");
@@ -140,9 +140,6 @@ public class SelectPipeline extends TexturePipeline implements SharedPipeline {
         float ey = SAMPLE.get(2);
         float ez = SAMPLE.get(3);
         
-        System.out.println("mx="+mx+",my="+my);
-        System.out.println("id="+id+",ex="+ex+",ey="+ey+",ez="+ez);
-        
         mouse.target.set((int)id, ex, ey, ez);
         
         glReadBuffer(GL_NONE);
@@ -150,8 +147,7 @@ public class SelectPipeline extends TexturePipeline implements SharedPipeline {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    private void render(RenderPipeline pipeline, Program program, int attribs) throws Exception {
-      
+    private void render(RenderPipeline pipeline, Program program, int attribs) throws Exception {   
         program.enable();
         
         pipeline.buffer.bind(attribs);
