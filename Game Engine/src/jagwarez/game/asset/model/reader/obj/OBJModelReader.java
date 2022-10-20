@@ -44,138 +44,162 @@ public class OBJModelReader implements AssetReader<Model> {
             ArrayList<Vertex> positions = new ArrayList<>();
             ArrayList<Vector4f> normals = new ArrayList<>();
             ArrayList<Vector2f> coords = new ArrayList<>();
+            Vertex vertex;
 
-            for(String line = reader.readLine(); line != null; line = reader.readLine()) {              
+            for(String line = reader.readLine(); line != null; line = reader.readLine()) {
+                
                 String[] fields = line.split("\\s+");
 
                 if(fields.length > 1) {
                     
-                    if(fields[0].equals("mtllib")) {
+                    switch(fields[0].toLowerCase()) {
                         
-                        readMaterials(new File(file.getParentFile(), fields[1]));
-                    
-                    } else if(fields[0].equalsIgnoreCase("usemtl")) {
+                        case "mtllib":
                         
-                        if(mesh == null) {
-                            mesh = new Mesh(model.name);
-                            model.meshes.put(mesh.name, mesh);
-                        }
+                            readMaterials(new File(file.getParentFile(), fields[1]));
                         
-                        if(group == null) {
-                            group = new Mesh.Group(mesh.groups.size());
-                            mesh.groups.add(group);
-                        }
-                 
-                        Material material = materials.get(fields[1]);                    
-                        if(material != null)
-                            group.material.effects.putAll(material.effects);
-                    
-                    } else if(fields[0].equalsIgnoreCase("o")) {
+                            break;
                         
-                        mesh = new Mesh(fields[1]);
-                        model.meshes.put(mesh.name, mesh);
+                        case "usemtl":
                         
-                    } else if(fields[0].equalsIgnoreCase("g")) {
-                        
-                        group = new Mesh.Group(mesh.groups.size());
-                        mesh.groups.add(group);
-                        
-                    } else if(fields[0].equalsIgnoreCase("v")) {
-                        Vertex vertex = new Vertex(positions.size());
-
-                        vertex.position.x = Float.parseFloat(fields[1]);
-                        vertex.position.y = Float.parseFloat(fields[2]);
-                        vertex.position.z = Float.parseFloat(fields[3]);
-                        vertex.position.w = 1f;
-
-                        positions.add(vertex);
-
-                    } else if(fields[0].equalsIgnoreCase("vn")) {
-                        Vector4f normal = new Vector4f();
-                        normal.x = Float.parseFloat(fields[1]);
-                        normal.y = Float.parseFloat(fields[2]);
-                        normal.z = Float.parseFloat(fields[3]);
-
-                        normals.add(normal);
-
-                    } else if(fields[0].equalsIgnoreCase("vt")) {
-                        Vector2f uv = new Vector2f();
-                        uv.x = Float.parseFloat(fields[1]);
-                        uv.y = Float.parseFloat(fields[2]);
-
-                        coords.add(uv);
-
-                    } else if(fields[0].equalsIgnoreCase("f")) {
-                        
-                        if(mesh == null) {
-                            mesh = new Mesh(model.name);
-                            model.meshes.put(mesh.name, mesh);
-                        }
-                        
-                        if(group == null) {
-                            group = new Mesh.Group(mesh.groups.size());
-                            mesh.groups.add(group);
-                        }
-                        
-                        if(fields.length == 4) {
-                            
-                            for(int vi = 0; vi < 3; vi++) {
-                                String[] field = fields[vi+1].split("/");
-                                Vertex vertex = positions.get(Integer.parseInt(field[0])-1);
-
-                                if(field.length > 1)
-                                    vertex.coordinate.set(coords.get(Integer.parseInt(field[1])-1));
-
-                                if(field.length > 2)
-                                    vertex.normal.set(normals.get(Integer.parseInt(field[2])-1));
-                                
-                                group.vertices.add(vertex);
+                            if(mesh == null) {
+                                mesh = new Mesh(model.name);
+                                model.meshes.put(mesh.name, mesh);
                             }
 
-                        } else if(fields.length == 5) { // quad
-                            Vertex[] face1 = new Vertex[3];
-                            Vertex[] face2 = new Vertex[3];
+                            if(group == null) {
+                                group = new Mesh.Group(mesh.groups.size());
+                                mesh.groups.add(group);
+                            }
 
-                            for(int vi = 0; vi < 4; vi++) {
-                                String[] field = fields[vi+1].split("/");
-                                Vertex vertex = positions.get(Integer.parseInt(field[0])-1);
+                            Material material = materials.get(fields[1]);                    
+                            if(material != null)
+                                group.material.effects.putAll(material.effects);
+                            
+                            break;
+                            
+                        case "o":
+                        
+                            mesh = new Mesh(fields[1]);
+                            model.meshes.put(mesh.name, mesh);
+                            
+                            break;
+                        
+                        case "g":
+                        
+                            group = new Mesh.Group(mesh.groups.size());
+                            mesh.groups.add(group);
+                            
+                            break;
+                            
+                        case "v":
+                            
+                            vertex = new Vertex(positions.size());
 
-                                if(field.length > 1)
-                                    vertex.coordinate.set(coords.get(Integer.parseInt(field[1])-1));
+                            vertex.position.x = Float.parseFloat(fields[1]);
+                            vertex.position.y = Float.parseFloat(fields[2]);
+                            vertex.position.z = Float.parseFloat(fields[3]);
+                            vertex.position.w = 1f;
 
-                                if(field.length > 2)
-                                    vertex.normal.set(normals.get(Integer.parseInt(field[2])-1));
+                            positions.add(vertex);
 
-                                switch (vi) {
-                                    case 0:
-                                        face1[0] = vertex;
-                                        face2[0] = vertex;
-                                        break;
-                                    case 1:
-                                        face1[1] = vertex;
-                                        break;
-                                    case 2:
-                                        face1[2] = vertex;
-                                        face2[1] = vertex;                                 
-                                        break;
-                                    default:
-                                        face2[2] = vertex;
-                                        break;
+                            break;
+                            
+                        case "vn":
+                            
+                            Vector4f normal = new Vector4f();
+                            normal.x = Float.parseFloat(fields[1]);
+                            normal.y = Float.parseFloat(fields[2]);
+                            normal.z = Float.parseFloat(fields[3]);
+
+                            normals.add(normal);
+                            
+                            break;
+
+                        case "vt":
+                            
+                            Vector2f uv = new Vector2f();
+                            uv.x = Float.parseFloat(fields[1]);
+                            uv.y = Float.parseFloat(fields[2]);
+
+                            coords.add(uv);
+                            
+                            break;
+
+                        case "f":
+                        
+                            if(mesh == null) {
+                                mesh = new Mesh(model.name);
+                                model.meshes.put(mesh.name, mesh);
+                            }
+
+                            if(group == null) {
+                                group = new Mesh.Group(mesh.groups.size());
+                                mesh.groups.add(group);
+                            }
+
+                            if(fields.length == 4) {
+
+                                for(int vi = 0; vi < 3; vi++) {
+                                    String[] field = fields[vi+1].split("/");
+                                    vertex = positions.get(Integer.parseInt(field[0])-1);
+
+                                    if(field.length > 1)
+                                        vertex.coordinate.set(coords.get(Integer.parseInt(field[1])-1));
+
+                                    if(field.length > 2)
+                                        vertex.normal.set(normals.get(Integer.parseInt(field[2])-1));
+
+                                    group.vertices.add(vertex);
                                 }
+
+                            } else if(fields.length == 5) { // quad
+                                Vertex[] face1 = new Vertex[3];
+                                Vertex[] face2 = new Vertex[3];
+
+                                for(int vi = 0; vi < 4; vi++) {
+                                    String[] field = fields[vi+1].split("/");
+                                    vertex = positions.get(Integer.parseInt(field[0])-1);
+
+                                    if(field.length > 1)
+                                        vertex.coordinate.set(coords.get(Integer.parseInt(field[1])-1));
+
+                                    if(field.length > 2)
+                                        vertex.normal.set(normals.get(Integer.parseInt(field[2])-1));
+
+                                    switch (vi) {
+                                        case 0:
+                                            face1[0] = vertex;
+                                            face2[0] = vertex;
+                                            break;
+                                        case 1:
+                                            face1[1] = vertex;
+                                            break;
+                                        case 2:
+                                            face1[2] = vertex;
+                                            face2[1] = vertex;                                 
+                                            break;
+                                        default:
+                                            face2[2] = vertex;
+                                            break;
+                                    }
+                                }
+
+                                group.vertices.add(face1[0]);
+                                group.vertices.add(face1[1]);
+                                group.vertices.add(face1[2]);
+
+                                group.vertices.add(face2[0]);
+                                group.vertices.add(face2[1]);
+                                group.vertices.add(face2[2]);
+
                             }
-
-                            group.vertices.add(face1[0]);
-                            group.vertices.add(face1[1]);
-                            group.vertices.add(face1[2]);
                             
-                            group.vertices.add(face2[0]);
-                            group.vertices.add(face2[1]);
-                            group.vertices.add(face2[2]);
-
-                        }
+                            break;
                     }    
                 }
             }
+            
         } finally {
             if(reader != null) {
                 try { reader.close(); }
@@ -199,7 +223,8 @@ public class OBJModelReader implements AssetReader<Model> {
                 
                 String fields[] = line.split("\\s+");
                 
-                switch(fields[0]) {
+                switch(fields[0].toLowerCase()) {
+                    
                     case "newmtl":
 
                         material = new Material();
@@ -207,7 +232,7 @@ public class OBJModelReader implements AssetReader<Model> {
                         
                         break;
                         
-                    case "map_Kd":
+                    case "map_kd":
                         
                         if(material != null) {
                             Texture texture = new Texture(new File(mtl.getParentFile(), fields[1]));

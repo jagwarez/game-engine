@@ -223,7 +223,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
                 int boneIndex = Integer.parseInt(vertexBones[dataIndex + boneOffset]);
                 int weightIndex = Integer.parseInt(vertexBones[dataIndex + weightOffset]);
                 
-                Bone bone = model.skeleton.anatomy.get(bones[boneIndex]);
+                Bone bone = model.skeleton.map.get(bones[boneIndex]);
                 boneWeights.put(bone, weights[weightIndex]);
                 
                 dataIndex += 2;

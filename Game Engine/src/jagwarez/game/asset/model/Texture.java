@@ -20,6 +20,11 @@ public class Texture extends Effect {
         this(null);
     }
     
+    public Texture(int id) {
+        this(null);
+        this.id = id;   
+    }
+    
     public Texture(File file) {
         super(Type.TEXTURE);
         this.file = file;

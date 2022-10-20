@@ -74,7 +74,7 @@ public class DAEAnimationReader extends DAEFileReader<Animation> {
                     
                     String targetType = targetNode.getAttribute("type");
                     Animated target = "NODE".equals(targetType) ? model.meshes.get(targetId) : 
-                                      "JOINT".equals(targetType) ? model.skeleton.anatomy.get(targetNode.getAttribute("sid")) : null;
+                                      "JOINT".equals(targetType) ? model.skeleton.map.get(targetNode.getAttribute("sid")) : null;
                     
                     if(target == null)
                         continue;

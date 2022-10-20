@@ -41,26 +41,28 @@ abstract class TexturePipeline implements Pipeline  {
         }
     }
     
-    protected void texture(Texture texture) throws Exception {
+    protected Texture texture(Texture texture) throws Exception {
         
-        if(texture == null)
-            return;
+        if(texture != null) {
         
-        if(texture.id == -1) {
-            texture.id = glGenTextures();
-            glBindTexture(GL_TEXTURE_2D, texture.id);
+            if(texture.id == -1) {
+                texture.id = glGenTextures();
+                glBindTexture(GL_TEXTURE_2D, texture.id);
 
-            ByteBuffer imageBuffer = buffer(texture);
+                ByteBuffer imageBuffer = buffer(texture);
 
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texture.width, texture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texture.width, texture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
 
-            for(Entry<Integer,Integer> param : texture.parameters.entrySet())
-                glTexParameteri(GL_TEXTURE_2D, param.getKey(), param.getValue());
+                for(Entry<Integer,Integer> param : texture.parameters.entrySet())
+                    glTexParameteri(GL_TEXTURE_2D, param.getKey(), param.getValue());
 
-            glBindTexture(GL_TEXTURE_2D, 0);
+                glBindTexture(GL_TEXTURE_2D, 0);
+            }
+
+            textures.put(texture.id, texture);
         }
         
-        textures.put(texture.id, texture);
+        return texture;
     }
     
     private ByteBuffer buffer(Texture texture) throws Exception {

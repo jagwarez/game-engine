@@ -16,7 +16,6 @@ public class Buffer {
     
     private final ArrayList<Integer> buffers;
     private int vaoId = -1;
-    private int elementsId = -1;
     
     private int attributeCount = 0;
     private int bindIndex = 0;

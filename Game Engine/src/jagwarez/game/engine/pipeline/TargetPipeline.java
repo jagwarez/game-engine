@@ -5,7 +5,6 @@ import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Mouse;
 import jagwarez.game.engine.Program;
 import jagwarez.game.engine.Shader;
-import jagwarez.game.engine.Terrain;
 import jagwarez.game.engine.Window;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -22,7 +21,6 @@ public class TargetPipeline extends TexturePipeline implements SharedPipeline {
     
     private Window window;
     private Mouse mouse;
-    private Terrain terrain;
     
     private final Program terrainProgram;
     private final Program entityProgram;
@@ -46,7 +44,6 @@ public class TargetPipeline extends TexturePipeline implements SharedPipeline {
     public void init(Game game) throws Exception {
         window = game.window;
         mouse = game.mouse;
-        terrain = game.world.terrain;
         
         terrainProgram.init();
         entityProgram.init();
@@ -63,23 +60,19 @@ public class TargetPipeline extends TexturePipeline implements SharedPipeline {
         fboId = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fboId);
         
-        identityTexture = new Texture();
-        identityTexture.id = glGenTextures();
-        texture(identityTexture);
-        
+        identityTexture = texture(new Texture(glGenTextures()));
+
         glBindTexture(GL_TEXTURE_2D, identityTexture.id);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, window.width, window.height, 0, GL_RGBA, GL_FLOAT, (ByteBuffer)null);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, identityTexture.id, 0);
         
-        depthTexture = new Texture();
-        depthTexture.id = glGenTextures();
-        texture(depthTexture);
+        depthTexture = texture(new Texture(glGenTextures()));
         
         glBindTexture(GL_TEXTURE_2D, depthTexture.id);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, window.width, window.height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer)null);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture.id, 0);
         
-         glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
         
         int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if(status != GL_FRAMEBUFFER_COMPLETE)

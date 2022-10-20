@@ -12,13 +12,13 @@ import java.util.Map;
 public class Skeleton {
     
     public final List<Bone> bones;
-    public final Map<String,Bone> anatomy;
+    public final Map<String,Bone> map;
     
     Bone root = null;
     
     public Skeleton() {
         bones = new ArrayList<>();
-        anatomy = new HashMap<>();
+        map = new HashMap<>();
     }
     
     public void pose() {
@@ -32,7 +32,7 @@ public class Skeleton {
             root = bone.root;
         
         bones.add(bone);
-        anatomy.put(bone.name, bone);
+        map.put(bone.name, bone);
         
     }
         
