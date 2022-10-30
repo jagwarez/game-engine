@@ -34,15 +34,15 @@ public class TestGame extends Game {
         
         world.lights.get(0).color.rgb(1f, 1f, 1f);
         world.lights.get(0).position.x = 512;
-        world.lights.get(0).position.y = 80;
+        world.lights.get(0).position.y = 180;
         world.lights.get(0).position.z = 0;
         
         world.lights.get(1).color.rgb(1f, 1f, 1f);
         world.lights.get(1).position.x = 512;
-        world.lights.get(1).position.y = 80;
+        world.lights.get(1).position.y = 180;
         world.lights.get(1).position.z = 1024;
         
-        world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/arena-1.png"));
+        world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain.png"));
         
         String[] actors = new String[] {"nordstrom", "mawlaygo"};
         DAEFolderReader actorReader = new DAEFolderReader();

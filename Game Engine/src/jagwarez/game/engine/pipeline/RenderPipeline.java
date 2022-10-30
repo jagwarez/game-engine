@@ -1,11 +1,13 @@
 package jagwarez.game.engine.pipeline;
 
 import jagwarez.game.engine.Buffer;
+import jagwarez.game.engine.Camera;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Graphics;
 import jagwarez.game.engine.Light;
 import jagwarez.game.engine.Program;
 import jagwarez.game.engine.Sky;
+import jagwarez.game.engine.World;
 import java.util.List;
 import org.joml.Matrix4x3f;
 import org.joml.Vector4f;
@@ -20,8 +22,10 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
     protected final Program program;
     protected final Buffer buffer;
     
-    private Sky sky;
-    private List<Light> lights;
+    protected World world;
+    protected Camera camera;
+    protected Sky sky;
+    protected List<Light> lights;
       
     public RenderPipeline() {  
         program = new Program();
@@ -35,6 +39,8 @@ abstract class RenderPipeline extends TexturePipeline implements SharedPipeline 
         program.init();
         buffer.init();
         
+        world = game.world;
+        camera = world.camera;       
         graphics = game.graphics;
         sky = game.world.sky;
         lights = game.world.lights;

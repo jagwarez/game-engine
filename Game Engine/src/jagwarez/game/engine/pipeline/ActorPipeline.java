@@ -12,7 +12,6 @@ import jagwarez.game.engine.Assets;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Program;
 import jagwarez.game.engine.Shader;
-import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
  */
 class ActorPipeline extends ModelPipeline {
     
-    private World world;
     private Assets assets;
     private Actor player;
     private List<Actor> actors;
@@ -42,7 +40,6 @@ class ActorPipeline extends ModelPipeline {
         
         super.init(game);
         
-        world = game.world;
         assets = game.assets;
         player = game.world.player;
         actors = game.world.actors;
@@ -173,7 +170,7 @@ class ActorPipeline extends ModelPipeline {
     public void render(Program program) {
         
         program.uniform("world").matrix(world);
-        program.uniform("camera").matrix(world.camera);
+        program.uniform("camera").matrix(camera);
 
         render(player, program);
         

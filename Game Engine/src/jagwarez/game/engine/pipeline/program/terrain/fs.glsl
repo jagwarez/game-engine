@@ -39,7 +39,7 @@ void main(void) {
     if(target) {
         float distance = distance(target_position.xyz, world_position.xyz);
         
-        if(distance >= 30 && distance <= 40)
+        if(distance >= 35 && distance <= 40)
             color = mix(color, vec4(1,0,0,1), 1);
     }
 

@@ -1,13 +1,10 @@
 package jagwarez.game.engine.pipeline;
 
-import jagwarez.game.engine.Camera;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Mouse;
 import jagwarez.game.engine.Program;
 import jagwarez.game.engine.Shader;
-import jagwarez.game.engine.Sky;
 import jagwarez.game.engine.Terrain;
-import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Map;
@@ -33,9 +30,6 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 public class TerrainPipeline extends RenderPipeline {
     
     private Mouse mouse;
-    private World world;
-    private Sky sky;
-    private Camera camera;
     private Terrain terrain;
     
     @Override
@@ -44,9 +38,6 @@ public class TerrainPipeline extends RenderPipeline {
         super.init(game);
         
         mouse = game.mouse;
-        world = game.world;
-        sky = world.sky;
-        camera = world.camera;
         terrain = world.terrain;     
     }
     
@@ -111,7 +102,8 @@ public class TerrainPipeline extends RenderPipeline {
         if(mouse.target.id == terrain.id) {
             program.uniform("target").bool(true);
             program.uniform("target_position").vector(mouse.target.position);
-        }
+        } else
+            program.uniform("target").bool(false);
         
         render();
         

@@ -113,7 +113,7 @@ public class TargetPipeline extends TexturePipeline implements SharedPipeline {
         glClearColor(0f, 0f, 0f, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        render(terrainPipeline, terrainProgram, 0);        
+        render(terrainPipeline, terrainProgram, 0);
         
         render(entityPipeline, entityProgram, 0);
         

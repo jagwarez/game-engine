@@ -26,6 +26,7 @@ public class GraphicsPipeline extends MultiPipeline {
         pipelines.add(new TerrainPipeline());
         pipelines.add(new EntityPipeline());
         pipelines.add(new ActorPipeline());
+        pipelines.add(new LightPipeline());
     }
     
     @Override

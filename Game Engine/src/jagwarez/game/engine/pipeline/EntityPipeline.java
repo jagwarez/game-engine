@@ -10,7 +10,6 @@ import jagwarez.game.engine.Entity;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Program;
 import jagwarez.game.engine.Shader;
-import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +28,12 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
  */
 class EntityPipeline extends ModelPipeline {
     
-    private World world;
     private Assets assets;
     
     @Override
-    public void init(Game game) throws Exception {
-        
+    public void init(Game game) throws Exception {        
         super.init(game);
         
-        world = game.world;
         assets = game.assets;
     }
     
