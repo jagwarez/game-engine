@@ -26,12 +26,14 @@ import org.w3c.dom.NodeList;
  */
 public class DAEModelReader extends DAEFileReader<Model> {
     
+    private Model model;
+    
     @Override
     public Model read(File file) throws Exception {
         
         parse(file);
         
-        Model model = new Model(name);
+        model = new Model(name);
         
         Element element = (Element) xpath.evaluate("//scene/instance_visual_scene", document, XPathConstants.NODE);
         String sceneId = element.getAttribute("url").substring(1);
@@ -39,7 +41,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
 
         NodeList childNodes = (NodeList) xpath.evaluate("child::node", element, XPathConstants.NODESET);
         for(int nodeIndex = 0; nodeIndex < childNodes.getLength(); nodeIndex++)
-            readNodes(model, (Element) childNodes.item(nodeIndex));
+            readNodes((Element) childNodes.item(nodeIndex));
         
         File animDir = new File(file.getParentFile(), "animations");
         if(animDir.exists() && animDir.isDirectory()) {
@@ -58,7 +60,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
         return model;
     }
     
-    private void readNodes(Model model, Element nodeElement) throws Exception {
+    private void readNodes(Element nodeElement) throws Exception {
         
         NodeList childNodes = (NodeList) xpath.evaluate("child::*", nodeElement, XPathConstants.NODESET);
         Matrix4f localMatrix = new Matrix4f();
@@ -94,22 +96,22 @@ public class DAEModelReader extends DAEFileReader<Model> {
                 case "instance_geometry":
                     
                     String meshId = childElement.getAttribute("url").substring(1);
-                    readMesh(model, meshId, null);
+                    readMesh(meshId, null);
                     
                     break;
                 case "instance_controller":
                     
                     String skinId = childElement.getAttribute("url").substring(1);
-                    readSkin(model, skinId);
+                    readSkin(skinId);
                     
                     break;
                 case "node":
                     
                     String nodeType = childElement.getAttribute("type");
                     if("NODE".equals(nodeType))
-                        readNodes(model, childElement);
+                        readNodes(childElement);
                     else if("JOINT".equals(nodeType)) { 
-                        readJoint(model, childElement, null);
+                        readJoint(childElement, null);
                     }
                     
                     break;
@@ -117,7 +119,7 @@ public class DAEModelReader extends DAEFileReader<Model> {
         }
     }
     
-    private void readJoint(Model model, Element jointElement, Bone parent) throws Exception {
+    private void readJoint(Element jointElement, Bone parent) throws Exception {
         
         if(!"JOINT".equals(jointElement.getAttribute("type")))
             return;
@@ -148,14 +150,14 @@ public class DAEModelReader extends DAEFileReader<Model> {
                     break;
                 case "node":
                     
-                    readJoint(model, childElement, bone);
+                    readJoint(childElement, bone);
                     
                     break;
             }
         }
     }
     
-    private void readSkin(Model model, String skinId) throws Exception {
+    private void readSkin(String skinId) throws Exception {
         
         Element controllerElement = getElementById("//library_controllers/controller", skinId);
         Element skinElement = (Element) xpath.evaluate("child::skin", controllerElement, XPathConstants.NODE);
@@ -244,10 +246,10 @@ public class DAEModelReader extends DAEFileReader<Model> {
             }
         }
          
-        readMesh(model, skinElement.getAttribute("source").substring(1), skin);
+        readMesh(skinElement.getAttribute("source").substring(1), skin);
     }
     
-    private void readMesh(Model model, String meshId, List<Map<Bone,Float>> skin) throws Exception {
+    private void readMesh(String meshId, List<Map<Bone,Float>> skin) throws Exception {
         
         Mesh mesh = new Mesh(meshId);
         model.meshes.put(mesh.name, mesh);

@@ -22,10 +22,15 @@ abstract class DAEFileReader<A> implements AssetReader<A> {
     
     public static final String FILE_EXT = ".dae";
     
+    protected final XPath xpath;
+    
     protected File file;
     protected String name;
-    protected  Document document;
-    protected XPath xpath;
+    protected Document document;
+    
+    public DAEFileReader() {
+        xpath = XPathFactory.newInstance().newXPath();
+    }
     
     protected void parse(File file)throws Exception {
         this.file = file;
@@ -33,9 +38,7 @@ abstract class DAEFileReader<A> implements AssetReader<A> {
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        document = builder.parse(file);
-        
-        xpath = XPathFactory.newInstance().newXPath();
+        document = builder.parse(file);     
     }
             
     protected Matrix4f readMatrix4f(Element matrixElement) {

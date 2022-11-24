@@ -31,14 +31,14 @@ public class DAEAnimationReader extends DAEFileReader<Animation> {
         Animation animation = new Animation(name, model);
         
         Element animationElement = (Element) xpath.evaluate("//library_animations/*[1]", document, XPathConstants.NODE);
-        readAnimation(model, animationElement, animation);
+        readAnimation(animationElement, animation);
         
         model.animations.put(name, animation);
         
         return animation;
     }
     
-    private void readAnimation(Model model, Element animationElement, Animation animation) throws Exception {
+    private void readAnimation(Element animationElement, Animation animation) throws Exception {
         
         if(animation == null) {
             String animationName = !animationElement.getAttribute("name").isEmpty() ?
@@ -58,7 +58,7 @@ public class DAEAnimationReader extends DAEFileReader<Animation> {
             switch(childElement.getTagName()) {
                 case "animation":
                      
-                    readAnimation(model, childElement, animation);
+                    readAnimation(childElement, animation);
                     
                     break;
                 case "channel":

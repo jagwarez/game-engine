@@ -29,6 +29,7 @@ public class TestGame extends Game {
         world.lights.add(new Light());
         world.lights.add(new Light());
         
+        world.lights.get(0).radius = 100f;
         world.lights.get(0).color.rgb(1f, 0f, 1f);
         world.lights.get(0).position.x = 512;
         world.lights.get(0).position.y = 180;
