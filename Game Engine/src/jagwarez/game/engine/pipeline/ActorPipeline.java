@@ -49,7 +49,7 @@ class ActorPipeline extends ModelPipeline {
     @Override
     public void load() throws Exception {
         
-        List<Model> models = new ArrayList<>();
+        List<Model> animations = new ArrayList<>();
         int vertexCount = 0;
         
         for(Model model : assets.models.values()) {
@@ -57,7 +57,7 @@ class ActorPipeline extends ModelPipeline {
             if(!model.skeletal())
                 continue;
             
-            models.add(model);
+            animations.add(model);
             
             for(Mesh mesh : model.meshes.values())
                 for(Mesh.Group group : mesh.groups)
@@ -72,7 +72,7 @@ class ActorPipeline extends ModelPipeline {
         FloatBuffer weights = BufferUtils.createFloatBuffer(vertexCount*4);
         int offset = 0;
         
-        for(Model model : models) {
+        for(Model model : animations) {
             
             for(Mesh mesh : model.meshes.values()) {
                 

@@ -27,7 +27,7 @@ public class Color extends Effect {
         this.r = r; this.g = g; this.b = b;
     }
     
-    public Vector3f rbg() {
+    public Vector3f rgb() {
         return new Vector3f(r,g,b);
     }
     

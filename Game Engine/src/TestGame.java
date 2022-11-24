@@ -1,9 +1,6 @@
 
 
-import jagwarez.game.asset.model.Model;
 import jagwarez.game.asset.model.Texture;
-import jagwarez.game.asset.model.reader.dae.DAEFolderReader;
-import jagwarez.game.asset.model.reader.obj.OBJModelReader;
 import jagwarez.game.engine.Actor;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Keyboard.Key;
@@ -28,16 +25,16 @@ public class TestGame extends Game {
         
         File assetsDir = new File("games/hello/assets");
         
-        world.sky.model = new OBJModelReader().read(new File(assetsDir, "models/skydome/skydome.obj"));
+        world.sky.model = assets.read.model(new File(assetsDir, "models/skydome/skydome.obj"));
         world.lights.add(new Light());
         world.lights.add(new Light());
         
-        world.lights.get(0).color.rgb(1f, 1f, 1f);
+        world.lights.get(0).color.rgb(1f, 0f, 1f);
         world.lights.get(0).position.x = 512;
         world.lights.get(0).position.y = 180;
         world.lights.get(0).position.z = 0;
         
-        world.lights.get(1).color.rgb(1f, 1f, 1f);
+        world.lights.get(1).color.rgb(1f, 1f, 0f);
         world.lights.get(1).position.x = 512;
         world.lights.get(1).position.y = 180;
         world.lights.get(1).position.z = 1024;
@@ -45,11 +42,8 @@ public class TestGame extends Game {
         world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain.png"));
         
         String[] actors = new String[] {"nordstrom", "mawlaygo"};
-        DAEFolderReader actorReader = new DAEFolderReader();
-        for(String actor : actors) {
-            Model model = actorReader.read(new File(assetsDir, "models/"+actor+"/"+actor+".dae"));
-            assets.models.put(model.name, model);
-        }
+        for(String actor : actors)
+            assets.read.model(new File(assetsDir, "models/"+actor+"/"+actor+".dae"));
         
         world.player.model = assets.models.get("nordstrom");
         world.player.scale.set(.08f);
@@ -144,13 +138,13 @@ public class TestGame extends Game {
         keyboard.binds.put(Key._KP_8, (key) -> {
             if(key.down())
                 for(Light light : world.lights)
-                    light.intensity = (float) Math.min(light.intensity+.01f, 1.0);
+                    light.intensity+=.01f;
         });
         
         keyboard.binds.put(Key._KP_2, (key) -> {
             if(key.down())
                 for(Light light : world.lights)
-                    light.intensity = (float) Math.min(light.intensity-.01f, 1.0);
+                    light.intensity = (float) Math.max(light.intensity-.01f, 0);
         });
         
         keyboard.binds.put(Key._KP_9, (key) -> {

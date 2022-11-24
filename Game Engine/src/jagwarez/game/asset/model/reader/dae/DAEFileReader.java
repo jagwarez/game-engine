@@ -20,6 +20,8 @@ import org.w3c.dom.Node;
  */
 abstract class DAEFileReader<A> implements AssetReader<A> {
     
+    public static final String FILE_EXT = ".dae";
+    
     protected File file;
     protected String name;
     protected  Document document;
@@ -27,7 +29,7 @@ abstract class DAEFileReader<A> implements AssetReader<A> {
     
     protected void parse(File file)throws Exception {
         this.file = file;
-        this.name = file.getName().toLowerCase().replace(".dae", "");
+        this.name = file.getName().toLowerCase().replace(FILE_EXT, "");
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();

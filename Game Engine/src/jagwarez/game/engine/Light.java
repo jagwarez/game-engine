@@ -13,6 +13,7 @@ public class Light extends Identity {
     public final Vector3f attenuation;
     public final Color color;
     public float intensity = 1f;
+    public float radius = 10f;
     
     public Light() {
         position = new Vector3f();

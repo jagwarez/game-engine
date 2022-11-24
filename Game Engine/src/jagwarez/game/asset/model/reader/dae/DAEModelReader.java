@@ -41,6 +41,20 @@ public class DAEModelReader extends DAEFileReader<Model> {
         for(int nodeIndex = 0; nodeIndex < childNodes.getLength(); nodeIndex++)
             readNodes(model, (Element) childNodes.item(nodeIndex));
         
+        File animDir = new File(file.getParentFile(), "animations");
+        if(animDir.exists() && animDir.isDirectory()) {
+            
+            File[] animFiles = animDir.listFiles((File f, String name) -> name.endsWith(FILE_EXT));
+
+            if(animFiles != null) {
+
+                DAEAnimationReader animReader = new DAEAnimationReader(model);
+
+                for(File animFile : animFiles)           
+                    animReader.read(animFile);
+            }
+        }
+        
         return model;
     }
     
