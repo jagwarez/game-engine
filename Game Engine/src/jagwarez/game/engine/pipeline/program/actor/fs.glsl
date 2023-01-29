@@ -36,8 +36,10 @@ void main(void) {
 
         float brightness = clamp(dot(pass_normal,to_lights[i]),0,1);
 
-        color += mix(color, diffuse * light_color * intensity, brightness * att);
+        color += (brightness * light_color)/att;
     }
+
+    color *= diffuse;
     
     if(fog)
          color = mix(vec4(sky_color, 1), color, visibility);

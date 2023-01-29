@@ -12,7 +12,6 @@ in vec4 weights;
 in vec2 texcoord;
 in vec3 normal;
 
-out vec3 to_camera;
 out float visibility;
 out vec3 to_lights[MAX_LIGHTS];
 out vec2 pass_texcoord;
@@ -43,21 +42,19 @@ void main(void){
     }
 
     world_position = transform * world_position;
-    world_normal = transform * world_normal;
-
-    to_camera = (inverse(camera)*vec4(0,0,0,1)).xyz - world_position.xyz;
 
     for(int i = 0; i < light_count; i++) {
        mat4x3 light = lights[i];
-       to_lights[i] = normalize(vec3(light[0][0],light[1][0],light[2][0]) - world_position.xyz);
+       vec4 light_position = vec4(light[0][0],light[1][0],light[2][0],1);
+       to_lights[i] = normalize(light_position.xyz - world_position.xyz);
     }
 
+    vec3 to_camera = (inverse(camera)*vec4(0,0,0,1)).xyz - world_position.xyz;
     float distance = length(to_camera.xz);
-
     visibility = clamp(exp(-pow(distance*FOG_DENSITY, FOG_GRADIENT)), 0, 1);
 
     gl_Position = world * camera * world_position;
-    pass_normal = normalize((world_normal).xyz);
+    pass_normal = normalize((transform * world_normal).xyz);
     pass_texcoord = texcoord;
     pass_weights = weights;
 }

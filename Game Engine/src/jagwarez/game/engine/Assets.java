@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  *
- * @author Jake
+ * @author jacob
  */
 public class Assets {
     

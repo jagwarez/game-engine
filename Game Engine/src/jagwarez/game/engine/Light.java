@@ -17,7 +17,7 @@ public class Light extends Identity {
     
     public Light() {
         position = new Vector3f();
-        attenuation = new Vector3f(1, .1f, .05f);
+        attenuation = new Vector3f(1f, .01f, .002f);
         color = new Color();
     }
 }

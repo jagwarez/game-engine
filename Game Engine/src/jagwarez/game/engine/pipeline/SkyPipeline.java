@@ -8,8 +8,6 @@ import jagwarez.game.asset.model.Vertex;
 import jagwarez.game.engine.Game;
 import jagwarez.game.engine.Program;
 import jagwarez.game.engine.Shader;
-import jagwarez.game.engine.Sky;
-import jagwarez.game.engine.World;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Map;
@@ -31,14 +29,10 @@ import static org.lwjgl.opengl.GL11.glCullFace;
  */
 class SkyPipeline extends ModelPipeline {
     
-    private World world;
-    private Sky sky;
-    
     @Override
     public void init(Game game) throws Exception {
         super.init(game);
-        world = game.world;
-        sky = game.world.sky;     
+        
         game.assets.models.put(sky.model.name, sky.model);
     }
     
@@ -102,17 +96,16 @@ class SkyPipeline extends ModelPipeline {
         buffer.bind();
         buffer.elements((IntBuffer) indices.flip());
         buffer.attribute((FloatBuffer) vertices.flip(), 3);
-        buffer.attribute((FloatBuffer) coords.flip(), 2); 
+        buffer.attribute((FloatBuffer) coords.flip(), 2);
         buffer.unbind();
     }
     
     @Override
     public void execute() throws Exception {
-        
         program.enable();
         buffer.bind();
         
-        render(program);        
+        render(program);
         
         buffer.unbind();
         program.disable();    
@@ -126,7 +119,7 @@ class SkyPipeline extends ModelPipeline {
         sky();
         
         sky.position.x = world.camera.target.position.x;
-        //sky.position.y = world.camera.target.position.y*.5f;
+        sky.position.y = world.camera.target.position.y;//*.5f;
         sky.position.z = world.camera.target.position.z;
         
         world.mul(world.camera, new Matrix4f()).mul(sky.update(), sky);

@@ -41,7 +41,8 @@ void main(void) {
 
     for(int i = 0; i < light_count; i++) {
        mat4x3 light = lights[i];
-       to_lights[i] = normalize(vec3(light[0][0],light[1][0],light[2][0]) - world_position.xyz);
+       vec4 light_position = transform * vec4(light[0][0],light[1][0],light[2][0],0);
+       to_lights[i] = normalize(light_position.xyz - world_position.xyz);
     }
 
     vec3 off = vec3(1, 0, 1);
@@ -50,7 +51,7 @@ void main(void) {
     float hB = map_height(world_position.xz - off.yz);
     float hF = map_height(world_position.xz + off.yz);
     
-    normal = normalize(vec3(hR-hL, hF-hB, 1));
+    normal = normalize(transform * vec4(hR-hL, hB-hF, 1, 0)).xyz;
 
     float distance = length(to_camera.xz);
 

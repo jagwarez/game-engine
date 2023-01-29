@@ -18,7 +18,7 @@ uniform vec3 target_position;
 
 void main(void) {
 
-    color = vec4(0,0,0,1.0);
+    color = vec4(0,0,0,1);
 
     for(int i = 0; i < light_count; i++) {
 
@@ -33,8 +33,10 @@ void main(void) {
 
         float brightness = clamp(dot(normal,to_lights[i]),0,1);
 
-        color += mix(color, light_color * intensity, brightness * att);
+        color += (brightness * light_color)/att;
     }
+
+    color = max(color, .3);
 
     if(target) {
         float distance = distance(target_position.xyz, world_position.xyz);
