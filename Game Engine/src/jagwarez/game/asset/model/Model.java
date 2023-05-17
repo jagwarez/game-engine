@@ -29,6 +29,10 @@ public class Model {
         return !skeleton.bones.isEmpty();
     }
     
+    public void animate() {
+        skeleton.animate();
+    }
+    
     public void pose() {
         skeleton.pose();
     }

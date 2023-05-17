@@ -12,9 +12,9 @@ import java.io.File;
  *
  * @author jacob
  */
-public class TestGame extends Game { 
+public class HelloGame extends Game { 
     
-    public TestGame() {
+    public HelloGame() {
         super(new Settings().title("Test Game").size(1600, 900));
     }
     
@@ -22,10 +22,11 @@ public class TestGame extends Game {
     public void load() throws Exception {
         
         world.camera.position.x = 500f;
+        world.camera.position.y = 200f;
         
         File assetsDir = new File("games/hello/assets");
         
-        world.sky.model = assets.read.model(new File(assetsDir, "models/skydome/skydome.obj"));
+        world.sky.model = assets.models.load(new File(assetsDir, "models/skydome/skydome.obj"));
         world.lights.add(new Light());
         world.lights.add(new Light());
         
@@ -35,22 +36,20 @@ public class TestGame extends Game {
         world.lights.get(0).position.y = 180;
         world.lights.get(0).position.z = 0;
         
-        world.lights.get(1).color.rgb(1f, 1f, 0f);
+        world.lights.get(1).color.rgb(1f, 0f, 0f);
         world.lights.get(1).position.x = 512;
         world.lights.get(1).position.y = 180;
         world.lights.get(1).position.z = 1024;
         
         world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain.png"));
         
-        String[] actors = new String[] {"nordstrom", "mawlaygo"};
-        for(String actor : actors)
-            assets.read.model(new File(assetsDir, "models/"+actor+"/"+actor+".dae"));
+        for(String actor : new String[] {"nordstrom", "mawlaygo"})
+            assets.models.load(new File(assetsDir, "models/"+actor+"/"+actor+".dae"));
         
         world.player.model = assets.models.get("nordstrom");
         world.player.scale.set(.08f);
         world.player.position.x = 525f;
         world.player.position.z = 1f;
-        //world.camera.position.y = 80;
         //world.player.rotation.y = 180;
         
         Actor boss = new Actor("boss", assets.models.get("mawlaygo"));
@@ -63,7 +62,7 @@ public class TestGame extends Game {
         world.actors.add(boss);
         
         keyboard.binds.put(Key._ESCAPE, (key) -> {
-            if(key.pressed()) stop();
+            if(key.pressed()) exit();
         });
         
         keyboard.binds.put(Key._TAB, (key) -> {
@@ -178,14 +177,13 @@ public class TestGame extends Game {
     
     @Override
     public void update() {
-        float roty = 500f/360f;
-        world.actors.get(0).rotation.y += roty;
+        world.actors.get(0).rotation.y += .2f;
         world.actors.get(0).forward();
     }
     
     public static void main(String[] args) throws Exception {
-        try(TestGame test = new TestGame()) {
-            test.play();
+        try(Game game = new HelloGame()) {
+            game.play();
         }
     }
 }

@@ -95,7 +95,7 @@ public abstract class Game implements AutoCloseable {
         
     }
     
-    public void stop() {
+    public void exit() {
         window.close();
     }
     

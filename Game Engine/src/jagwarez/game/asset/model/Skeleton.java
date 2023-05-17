@@ -21,6 +21,10 @@ public class Skeleton {
         map = new HashMap<>();
     }
     
+    public void animate() {
+        root.animate();
+    }
+    
     public void pose() {
         for(Bone bone : bones)
             bone.pose();

@@ -83,6 +83,7 @@ abstract class TexturePipeline implements Pipeline  {
                 buffer.put((byte) (0xFF));
             }
         }
+        
         return (ByteBuffer) buffer.flip();
     }
 }

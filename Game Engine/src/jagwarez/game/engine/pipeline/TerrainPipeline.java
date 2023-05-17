@@ -108,7 +108,7 @@ public class TerrainPipeline extends RenderPipeline {
         render();
         
         buffer.unbind();
-        program.disable();     
+        program.disable();   
     }
     
     @Override

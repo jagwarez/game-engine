@@ -29,6 +29,6 @@ public class Animation {
         for(Channel channel : channels.values())
             channel.play(time);
         
-        model.skeleton.root.animate();
+        model.animate();
     }
 }
