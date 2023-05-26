@@ -50,7 +50,7 @@ public class HelloGame extends Game {
         world.player.scale.set(.08f);
         world.player.position.x = 525f;
         world.player.position.z = 1f;
-        //world.player.rotation.y = 180;
+        ////world.player.rotation.y = 180;
         
         Actor boss = new Actor("boss", assets.models.get("mawlaygo"));
         boss.position.x = 500f;
