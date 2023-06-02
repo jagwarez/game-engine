@@ -15,6 +15,7 @@ hs_err_pid*
 /nbproject/private/
 /build/
 /dist/
+/trace/
 
 /libs/lwjgl/*-javadoc.jar
 /libs/lwjgl/*-sources.jar
