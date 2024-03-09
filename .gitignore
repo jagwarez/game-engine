@@ -17,6 +17,7 @@ hs_err_pid*
 /dist/
 /trace/
 
+build.xml
 /libs/nblibraries.properties
 /libs/lwjgl/*-javadoc.jar
 /libs/lwjgl/*-sources.jar
