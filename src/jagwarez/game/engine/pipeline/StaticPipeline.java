@@ -8,6 +8,6 @@ import java.util.Map;
  *
  * @author jacob
  */
-public interface SharedPipeline extends Pipeline {
+public interface StaticPipeline extends Pipeline {
     public static final Map<Class<? extends Pipeline>,Pipeline> pipelines = new HashMap<>();
 }

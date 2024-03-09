@@ -38,7 +38,7 @@ import static org.lwjgl.opengl.GL30.glGenFramebuffers;
  *
  * @author jacob
  */
-public class PhysicsPipeline extends TexturePipeline implements SharedPipeline {
+public class PhysicsPipeline extends TexturePipeline implements StaticPipeline {
     
     private int fboId = -1;
     

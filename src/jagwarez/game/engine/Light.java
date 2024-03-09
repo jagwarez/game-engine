@@ -20,4 +20,20 @@ public class Light extends Identity {
         attenuation = new Vector3f(1f, .01f, .002f);
         color = new Color();
     }
+    
+    public Light color(float r, float g, float b) {
+        color.rgb(r, g, b);
+        return this;
+    }
+    
+    public Light position(float x, float y, float z) {
+        position.set(x, y, z);
+        return this;
+    }
+    
+    public Light radius(float r) {
+        radius = r;
+        return this;
+    }
+    
 }

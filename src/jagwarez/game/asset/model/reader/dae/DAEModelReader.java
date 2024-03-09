@@ -29,9 +29,9 @@ public class DAEModelReader extends DAEFileReader<Model> {
     private Model model;
     
     @Override
-    public Model read(File file) throws Exception {
+    public Model read(File modelFile) throws Exception {
         
-        parse(file);
+        parse(modelFile);
         
         model = new Model(name);
         
@@ -43,10 +43,10 @@ public class DAEModelReader extends DAEFileReader<Model> {
         for(int nodeIndex = 0; nodeIndex < childNodes.getLength(); nodeIndex++)
             readNodes((Element) childNodes.item(nodeIndex));
         
-        File animDir = new File(file.getParentFile(), "animations");
+        File animDir = new File(modelFile.getParentFile(), "animations");
         if(animDir.exists() && animDir.isDirectory()) {
             
-            File[] animFiles = animDir.listFiles((File f, String name) -> name.endsWith(FILE_EXT));
+            File[] animFiles = animDir.listFiles((File f, String fileName) -> fileName.endsWith(FILE_EXT));
 
             if(animFiles != null) {
 
@@ -121,9 +121,6 @@ public class DAEModelReader extends DAEFileReader<Model> {
     
     private void readJoint(Element jointElement, Bone parent) throws Exception {
         
-        if(!"JOINT".equals(jointElement.getAttribute("type")))
-            return;
-        
         String boneName = jointElement.getAttribute("sid");
         
         Bone bone = new Bone(boneName, model.skeleton.bones.size(), parent);
@@ -150,7 +147,8 @@ public class DAEModelReader extends DAEFileReader<Model> {
                     break;
                 case "node":
                     
-                    readJoint(childElement, bone);
+                    if("JOINT".equals(childElement.getAttribute("type")))
+                        readJoint(childElement, bone);
                     
                     break;
             }

@@ -15,7 +15,7 @@ import static org.lwjgl.opengl.GL30.*;
  *
  * @author jacob
  */
-public class TargetPipeline extends TexturePipeline implements SharedPipeline {
+public class TargetPipeline extends TexturePipeline implements StaticPipeline {
     
     private static final FloatBuffer SAMPLE = BufferUtils.createFloatBuffer(4);
     

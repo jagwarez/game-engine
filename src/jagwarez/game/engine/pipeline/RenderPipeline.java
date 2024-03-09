@@ -16,7 +16,7 @@ import org.joml.Vector4f;
  *
  * @author jacob
  */
-abstract class RenderPipeline extends TexturePipeline implements SharedPipeline {
+abstract class RenderPipeline extends TexturePipeline implements StaticPipeline {
     
     protected Graphics graphics;
     protected final Program program;

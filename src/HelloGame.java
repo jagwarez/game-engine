@@ -27,19 +27,8 @@ public class HelloGame extends Game {
         File assetsDir = new File("games/hello/assets");
         
         world.sky.model = assets.models.load(new File(assetsDir, "models/skydome/skydome.obj"));
-        world.lights.add(new Light());
-        world.lights.add(new Light());
-        
-        world.lights.get(0).radius = 100f;
-        world.lights.get(0).color.rgb(1f, 0f, 1f);
-        world.lights.get(0).position.x = 512;
-        world.lights.get(0).position.y = 180;
-        world.lights.get(0).position.z = 0;
-        
-        world.lights.get(1).color.rgb(1f, 0f, 0f);
-        world.lights.get(1).position.x = 512;
-        world.lights.get(1).position.y = 180;
-        world.lights.get(1).position.z = 1024;
+        world.lights.add(new Light().radius(100f).position(512f, 180f, 0).color(.5f, 0f, 1f));
+        world.lights.add(new Light().position(512f, 180f, 1024f).color(1f, 0f, 0f));
         
         world.terrain.heightmap = new Texture(new File(assetsDir, "terrain/terrain.png"));
         
